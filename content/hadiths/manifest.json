@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-05-30T21:40:38.155Z",
+  "source": "fawazahmed0/hadith-api via jsDelivr CDN",
+  "apiVersion": "1",
+  "collections": [
+    "nawawi",
+    "bukhari",
+    "muslim",
+    "abudawud",
+    "tirmidhi",
+    "ibnmajah",
+    "malik"
+  ],
+  "languages": [
+    "ar",
+    "en",
+    "tr",
+    "fr",
+    "id"
+  ],
+  "count": 500,
+  "note": "Translations are imported as source text and should be reviewed before marking verified=true."
+}

@@ -1,0 +1,972 @@
+[
+  {
+    "id": "dua_daily-dua_1_supplication-before-sleeping",
+    "language": "id",
+    "text": "Dengan menyebut nama-Mu, ya Allah! Aku mati dan dan hidup.",
+    "title": "Doa Sebelum Tidur",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_2_supplication-upon-waking-up",
+    "language": "id",
+    "text": "Segala puji bagi Allah, yang telah membangunkan kami setelah menidurkan kami dan kepada-Nya lah kami dibangkitkan.",
+    "title": "Doa Bangun Tidur",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_3_supplication-entering-the-bathroom",
+    "language": "id",
+    "text": "Ya Allah, aku berlindung pada-Mu dari (godaan) syaitan laki-laki dan perempuan.",
+    "title": "Doa Masuk Kamar Mandi",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_4_supplication-leaving-the-bathroom",
+    "language": "id",
+    "text": "Aku mohon ampunan-Mu (ya Allah).",
+    "title": "Doa Keluar Kamar Mandi",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_5_supplication-before-eating",
+    "language": "id",
+    "text": "Dengan nama Allah (aku mulai makan).",
+    "title": "Doa Sebelum Makan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_6_supplication-if-forgetting-bismillah-at-the-beginning-of-a-meal",
+    "language": "id",
+    "text": "Dengan menyebut nama Allah, untuk awal dan akhir (makan).",
+    "title": "Doa Jika Terlupa Basmallah Diawal Makan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_7_supplication-after-eating",
+    "language": "id",
+    "text": "Segala puji bagi Allah yang telah memberiku makanan ini, dan memberikan rezeki kepadaku tanpa daya serta kekuatan dariku.",
+    "title": "Doa Sesudah Makan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_8_supplication-entering-the-mosque",
+    "language": "id",
+    "text": "Ya Allah, bukalah pintu-pintu rahmat-Mu untukku.",
+    "title": "Doa Masuk Masjid",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_9_supplication-leaving-the-mosque",
+    "language": "id",
+    "text": "Ya Allah, sesungguhnya aku memohon karunia-Mu.",
+    "title": "Doa Keluar Masjid",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_10_supplication-before-performing-ablution",
+    "language": "id",
+    "text": "Dengan nama Allah (aku mulai berwudhu).",
+    "title": "Doa Sebelum Berwudhu",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_11_supplication-after-performing-ablution",
+    "language": "id",
+    "text": "Aku bersaksi bahwa tidak ada tuhan selain Allah semata yang tidak ada sekutu bagi-Nya dan aku pun bersaksi bahwa Muhammad adalah hamba sekaligus Rasul utusan-Nya. Ya Allah, jadikanlah aku termasuk orang-orang yang bertaubat dan jadikanlah aku termasuk orang-orang yang bersuci. Maha Suci Engkau wahai tuhan kami dan segala puji bagi-Mu. Aku bersaksi bahwa tiada tuhan selain Engkau. Aku memohon ampunan dan bertaubat kepada-Mu.",
+    "title": "Doa Sesudah Berwudhu",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_12_supplication-for-breaking-the-fast",
+    "language": "id",
+    "text": "Rasa haus telah hilang, urat-urat telah basah, dan pahala telah ditetapkan insya Allah.",
+    "title": "Doa Buka Puasa",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_13_supplication-entering-the-house-1",
+    "language": "id",
+    "text": "Semoga keselamatan terlimpah untukmu.",
+    "title": "Doa Masuk Rumah #1",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_14_supplication-entering-the-house-2",
+    "language": "id",
+    "text": "Semoga keselamatan, rahmat dan keberkahan terlimpah untukmu.",
+    "title": "Doa Masuk Rumah #2",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_15_supplication-leaving-the-house",
+    "language": "id",
+    "text": "Dengan nama Allah, aku bertawakkal kepada Allah, tiada daya dan kekuatan kecuali dengan pertolongan Allah.",
+    "title": "Doa Keluar Rumah",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_16_supplication-for-protection-from-causing-or-experiencing-harm-outside-the-house",
+    "language": "id",
+    "text": "Ya Allah, aku berlindung kepada-Mu, jangan sampai aku sesat atau disesatkan (setan atau orang yang berwatak setan), berbuat kesalahan atau disalahi, menganiaya atau dianiaya (orang), dan berbuat bodoh atau dibodohi.",
+    "title": "Doa Agar Tidak Menyebabkan Keburukan atau Terkena Keburukan Di luar Rumah",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_17_travel-supplication",
+    "language": "id",
+    "text": "Allah Maha Besar, Allah Maha Besar, Allah Maha Besar. Maha Suci Allah yang telah menundukkan untuk kami kendaraan ini, padahal kami sebelumnya tidak mempunyai kemampuan untuk melakukannya, dan sesungguhnya hanya kepada Rabb kami, kami akan kembali. Ya Allah, sesungguhnya kami memohon kepada-Mu kebaikan, ketakwaan, dan amal yang Engkau ridhai dalam perjalanan kami ini. Ya Allah, mudahkanlah perjalanan kami ini, dekatkanlah bagi kami jarak yang jauh. Ya Allah, Engkau adalah rekan dalam perjalanan dan pengganti di tengah keluarga. Ya Allah, sesungguhnya aku berlindung kepada-Mu dari kesukaran perjalanan, tempat kembali yang menyedihkan, dan pemandangan yang buruk pada harta, keluarga, dan anak.",
+    "title": "Doa Safar",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_18_supplication-of-a-resident-for-someone-who-is-traveling",
+    "language": "id",
+    "text": "Aku menetipkan agamamu, amanahmu, dan amal terakhir kepada Allah.",
+    "title": "Doa Orang Mukim Kepada Orang yang Hendak Bersafar",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_19_supplication-for-piety-from-a-resident-to-someone-who-is-traveling",
+    "language": "id",
+    "text": "Semoga Allah membekalimu ketakwaan, mengampuni dosamu, dan memudahkan kebaikan untukmu dimanapun kamu berada.",
+    "title": "Doa Bekal Takwa dari Orang Mukim Kepada yang Hendak Bersafar",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_20_supplication-when-wearing-new-clothes",
+    "language": "id",
+    "text": "Ya Allah, hanya milik-Mu lah segala pujian. Engkaulah yang memberi pakaian ini kepadaku. Aku memohon kepada-Mu agar memperoleh kebaikan dari pakaian ini dan kebaikan yang ia diciptakan karenanya. Aku berlindung kepada-Mu dari kejahatannya dan kejahatan yang diciptakan karenanya.",
+    "title": "Doa Memakai Pakaian Baru",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_21_supplication-when-wearing-clothes",
+    "language": "id",
+    "text": "Segala puji bagi Allah yang memberi pakaian ini kepadaku sebagai rezeki dari-Nya tanpa daya dan kekuatan dariku.",
+    "title": "Doa Memakai Pakaian",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_22_supplication-when-mounting-a-vehicle",
+    "language": "id",
+    "text": "Dengan menyebut nama Allah (3x). Segala puji bagi Allah. Maha Suci Allah yang telah menundukkan semua ini bagi kami padahal kami sebelumnya tidak mampu menguasainya, dan sesungguhnya kami akan kembali kepada Rabb kami. Maha Suci Engkau, sesungguhnya aku telah mendzalimi diriku sendiri maka ampunilah aku, karena tidak ada yang mengampuni dosa-dosa selain Engkau.",
+    "title": "Doa Menaiki Kendaraan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_23_supplication-when-it-rains",
+    "language": "id",
+    "text": "Ya Allah turunkanlah pada kami hujan yang bermanfaat.",
+    "title": "Doa Ketika Turun Hujan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_24_supplication-during-heavy-rain",
+    "language": "id",
+    "text": "Ya Allah, turunkanlah hujan di sekitar kami, bukan untuk merusak kami. Ya Allah, turunkanlah hujan ke dataran tinggi, gunung-gunung, bukit-bukit, perut lembah dan tempat tumbuhnya pepohonan.",
+    "title": "Doa Ketika Hujan Lebat",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_25_supplication-after-it-rains",
+    "language": "id",
+    "text": "Kita diberi hujan karena karunia dan rahmat Allah.",
+    "title": "Doa Setelah Turun Hujan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_26_supplication-during-strong-wind",
+    "language": "id",
+    "text": "Ya Allah, sesungguhnya aku memohon kepada-Mu kebaikan angin ini dan aku berlindung kepada-Mu dari keburukannya.",
+    "title": "Doa Ketika Angin Kencang",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_27_the-best-supplication-for-seeking-forgiveness-sayyid-al-istighfar",
+    "language": "id",
+    "text": "Ya Allah, Engkau adalah Rabb-ku, tidak ada Ilah (yang berhak diibadahi dengan benar) kecuali Engkau, Engkau-lah yang menciptakanku. Aku adalah hamba-Mu. Aku akan setia pada perjanjianku dengan-Mu semampuku. Aku berlindung kepada-Mu dari kejelekan (apa) yang kuperbuat. Aku mengakui nikmat-Mu (yang diberikan) kepadaku dan aku mengakui dosaku, oleh karena itu, ampunilah aku. Sesungguhnya tidak ada yang dapat mengampuni dosa kecuali Engkau.",
+    "title": "Sayyid al-Istighfar",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_28_supplication-for-ease-in-all-matters",
+    "language": "id",
+    "text": "Ya Allah, tidak ada kemudahan kecuali Engkau buat mudah. Dan engkau menjadikan kesedihan (kesulitan), jika Engkau kehendaki pasti akan menjadi mudah.",
+    "title": "Doa Meminta Kemudahan Dalam Segala Urusan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_29_supplication-when-afflicted-by-calamity",
+    "language": "id",
+    "text": "Segala sesuatu adalah milik Allah dan akan kembali pada-Nya. Ya Allah, berilah ganjaran terhadap musibah yang menimpaku dan berilah ganti dengan yang lebih baik.",
+    "title": "Doa Tertimpa Musibah",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_30_supplication-when-in-debt",
+    "language": "id",
+    "text": "Ya Allah cukupkanlah aku dengan yang halal dan jauhkanlah aku dari yang haram, dan cukupkanlah aku dengan karunia-Mu dari bergantung pada selain-Mu.",
+    "title": "Doa Ketika Terlilit Hutang",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_31_supplication-for-protection-from-laziness-sadness-and-debt",
+    "language": "id",
+    "text": "Ya Allah, aku berlindung kepada-Mu dari kebingungan dan kesedihan, aku berlindung kepada-Mu dari kelemahan dan kemalasan, aku berlindung kepada-Mu dari ketakutan dan kekikiran, aku berlindung kepada-Mu dari lilitan hutang dan tekanan orang-orang.",
+    "title": "Doa Memohon Perlindungan Dari Sifat Malas, Kesedihan, dan Lilitan Hutang",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_32_supplication-after-sneezing",
+    "language": "id",
+    "text": "Segala puji bagi Allah.",
+    "title": "Doa Setelah Bersin",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_33_supplication-upon-hearing-someone-sneeze",
+    "language": "id",
+    "text": "Semoga Allah merahmatimu.",
+    "title": "Doa Saat Mendengar Orang Bersin",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_34_response-to-someone-who-says-yarhamukallah-after-you-sneeze",
+    "language": "id",
+    "text": "Semoga Allah memberikan petunjuk, dan memperbaiki keadaan kalian.",
+    "title": "Doa Balasan Kepada yang Mendoakan Kamu Bersin",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_35_supplication-for-good-character",
+    "language": "id",
+    "text": "Ya Allah, sebagaimana Engkau memperbagus badanku maka perbaguslah akhlaku.",
+    "title": "Doa Meminta Akhlak yang Baik",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_36_prayer-for-protection-from-satan",
+    "language": "id",
+    "text": "Ya Tuhanku aku berlindung kepada Engkau dari bisikan-bisikan syaitan dan aku berlindung (pula) kepada Engkau ya Tuhanku, dari kedatangan mereka kepadaku.",
+    "title": "Doa Berlindung dari Syaitan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_37_prayer-after-the-adhan",
+    "language": "id",
+    "text": "Ya Allah, pemilik seruan yang sempurna ini dan sholat yang ditegakkan, anugerahkanlah kepada Nabi Muhammad; wasilah (kedudukan yang tinggi di surga) dan keutamaan (melebihi seluruh makhluk), dan bangkitkanlah beliau dalam kedudukan terpuji (memberi syafa'at) yang telah Engkau janjikan.",
+    "title": "Doa Sesudah Adzan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_daily-dua_38_prayer-for-forgiveness-for-parents",
+    "language": "id",
+    "text": "Ya Tuhan kami, beri ampunilah aku dan kedua ibu bapaku dan sekalian orang-orang mukmin pada hari terjadinya hisab (hari kiamat)",
+    "title": "Doa Memohon Ampunan untuk Kedua Orang Tua",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_1_ayatul-kursi",
+    "language": "id",
+    "text": "Allah, tidak ada Tuhan (yang berhak disembah) melainkan Dia Yang Hidup kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang di langit dan di bumi. Tiada yang dapat memberi syafa'at di sisi Allah tanpa izin-Nya? Allah mengetahui apa-apa yang di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar.",
+    "title": "Ayat al-Kursi",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_2_al-ikhlas",
+    "language": "id",
+    "text": "Katakanlah: \"Dialah Allah, Yang Maha Esa. Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu. Dia tiada beranak dan tidak pula diperanakkan, dan tidak ada seorangpun yang setara dengan Dia\".",
+    "title": "Al-Ikhlas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_3_al-falaq",
+    "language": "id",
+    "text": "Katakanlah: \"Aku berlindung kepada Tuhan Yang Menguasai subuh, dari kejahatan makhluk-Nya, dan dari kejahatan malam apabila telah gelap gulita, dan dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul, dan dari kejahatan pendengki bila ia dengki\".",
+    "title": "Al-Falaq",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_4_an-nas",
+    "language": "id",
+    "text": "Katakanlah: “Aku berlindung kepada Tuhan (yang memelihara dan menguasai) manusia. (1) Raja manusia. (2) Sembahan manusia. (3) Dari kejahatan (bisikan) syaitan yang biasa bersembunyi, (4) yang membisikkan (kejahatan) ke dalam dada manusia, (5) dari (golongan) jin dan manusia. (6)",
+    "title": "An-Naas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_5_upon-entering-the-morning-by-asking-for-protection-from-allah",
+    "language": "id",
+    "text": "Kami telah memasuki waktu pagi dan kerajaan hanya milik Allah, segala puji bagi Allah. Tidak ada ilah (yang berhak disembah) kecuali Allah semata, tiada sekutu bagi-Nya. Milik Allah kerajaan dan bagi-Nya pujian. Dia-lah Yang Mahakuasa atas segala sesuatu. Wahai Rabbku, aku mohon kepada-Mu kebaikan di hari ini dan kebaikan sesudahnya. Aku berlindung kepada-Mu dari kejahatan hari ini dan kejahatan sesudahnya. Wahai Rabbku, aku berlindung kepada-Mu dari kemalasan dan kejelekan di hari tua. Wahai Rabbku, aku berlindung kepada-Mu dari siksaan di neraka dan siksaan di alam kubur.",
+    "title": "Memasuki Pagi dalam Kerajaan Allah dan Memohon Perlindungan dari-Nya",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_6_upon-entering-the-morning-with-the-grace-of-allah",
+    "language": "id",
+    "text": "Ya Allah, dengan rahmat dan pertolongan-Mu kami memasuki waktu pagi, dan dengan rahmat dan pertolongan-Mu kami memasuki waktu petang. Dengan rahmat dan pertolongan-Mu kami hidup dan dengan kehendak-Mu kami mati. Dan kepada-Mu kebangkitan (bagi semua makhluk).",
+    "title": "Memasuki Pagi dengan Memohon Rahmat Allah",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_7_sayyid-al-istighfar",
+    "language": "id",
+    "text": "Ya Allah, Engkau adalah Rabb-ku, tidak ada Ilah (yang berhak diibadahi dengan benar) kecuali Engkau, Engkau-lah yang menciptakanku. Aku adalah hamba-Mu. Aku akan setia pada perjanjianku dengan-Mu semampuku. Aku berlindung kepada-Mu dari kejelekan (apa) yang kuperbuat. Aku mengakui nikmat-Mu (yang diberikan) kepadaku dan aku mengakui dosaku, oleh karena itu, ampunilah aku. Sesungguhnya tidak ada yang dapat mengampuni dosa kecuali Engkau.",
+    "title": "Sayyid al-Istighfar",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_8_dua-for-protection-and-good-health",
+    "language": "id",
+    "text": "Ya Allah, selamatkanlah tubuhku (dari penyakit dan dari apa yang tidak aku inginkan). Ya Allah, selamatkanlah pendengaranku (dari penyakit dan maksiat atau dari apa yang tidak aku inginkan). Ya Allah, selamatkanlah penglihatanku, tidak ada Ilah yang berhak diibadahi dengan benar kecuali Engkau. Ya Allah, sesungguhnya aku berlindung kepada-Mu dari kekufuran dan kefakiran. Aku berlindung kepada-Mu dari siksa kubur, tidak ada Ilah yang berhak diibadahi dengan benar kecuali Engkau.",
+    "title": "Doa Memohon Kesehatan dan Perlindungan",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_9_dua-for-salvation-in-the-world-and-hereafter",
+    "language": "id",
+    "text": "Ya Allah, sesungguhnya aku memohon kebajikan dan keselamatan di dunia dan akhirat. Ya Allah, sesungguhnya aku memohon kebajikan dan keselamatan dalam agama, dunia, keluarga dan hartaku. Ya Allah, tutupilah auratku (aib dan sesuatu yang tidak layak dilihat orang) dan tenteramkanlah aku dari rasa takut. Ya Allah, peliharalah aku dari muka, belakang, kanan, kiri dan atasku. Aku berlindung dengan kebesaran-Mu, agar aku tidak disambar dari bawahku (oleh ular atau tenggelam dalam bumi dan lain-lain yang membuat aku jatuh).",
+    "title": "Doa Memohon Keselamatan di Dunia dan Akhirat",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_10_dua-for-protection-from-shaytan-whispers",
+    "language": "id",
+    "text": "Ya Allah, Yang Maha Mengetahui yang ghaib dan yang nyata, wahai Rabb pencipta langit dan bumi, Rabb segala sesuatu dan yang merajainya. Aku bersaksi bahwa tidak ada ilah yang berhak disembah kecuali Engkau. Aku berlindung kepada-Mu dari kejahatan diriku, setan dan balatentaranya (godaan untuk berbuat syirik pada Allah), dan aku (berlindung kepada-Mu) dari berbuat kejelekan terhadap diriku atau menyeretnya kepada seorang muslim.",
+    "title": "Doa Memohon Perlindungan dari Bisikan Syaitan",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_11_asking-for-protection-from-all-harms",
+    "language": "id",
+    "text": "Dengan nama Allah yang bila disebut, segala sesuatu di bumi dan langit tidak akan berbahaya, Dia-lah Yang Maha Mendengar lagi Maha Mengetahui.",
+    "title": "Dzikir Agar Terhindar dari Semua Bahaya",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_12_declaration-of-pleasure-with-allah-islam-and-the-prophet-muhammad-sallallah",
+    "language": "id",
+    "text": "Aku ridha Allah sebagai Rabb, Islam sebagai agama dan Muhammad shallallahu 'alaihi wa sallam sebagai nabi.",
+    "title": "Pernyataan Keridhaan dengan Allah, Islam, dan Nabi Muhammad Shallallaahu 'Alaihi Wa Sallam",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_13_asking-allah-for-guidance",
+    "language": "id",
+    "text": "Wahai Rabb Yang Maha Hidup, wahai Rabb Yang Berdiri Sendiri (tidak butuh segala sesuatu), dengan rahmat-Mu aku minta pertolongan, perbaikilah segala urusanku dan jangan diserahkan kepadaku sekali pun sekejap mata (tanpa mendapat pertolongan dari-Mu).",
+    "title": "Meminta Petunjuk Kepada Allah",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_14_entering-the-morning-upon-the-natural-religion-of-islam",
+    "language": "id",
+    "text": "Di waktu pagi kami memegang agama Islam, kalimat ikhlas (kalimat syahadat), agama Nabi kami Muhammad shallallahu 'alaihi wa sallam, dan agama bapak kami Ibrahim, yang berdiri di atas jalan yang lurus, muslim dan tidak tergolong orang-orang musyrik.",
+    "title": "Memasuki Pagi di atas Fitrah Islam",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_15_tawheed-dhikr",
+    "language": "id",
+    "text": "Tidak ada ilah yang berhak disembah selain Allah semata, tidak ada sekutu bagiNya. Bagi-Nya kerajaan dan segala pujian. Dia-lah yang berkuasa atas segala sesuatu.",
+    "title": "Dzikir Tauhid",
+    "notes": "Dibaca 1x atau 10x di pagi hari, Dibaca 100x dalam sehari",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_16_read-tasbih",
+    "language": "id",
+    "text": "Maha Suci Allah, sebanyak makhluk-Nya, Maha Suci Allah sejauh kerelaan-Nya, Maha Suci Allah seberat timbangan 'Arsy-Nya, dan sebanyak tinta tulisan kalimat-Nya.",
+    "title": "Membaca Tasbih kepada Allah",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_17_dua-for-useful-knowledge-good-sustenance-and-accepted-deeds",
+    "language": "id",
+    "text": "Ya Allah, sungguh aku memohon kepada-Mu ilmu yang bermanfaat (bagi diriku dan orang lain), rizki yang halal dan amal yang diterima (di sisi-Mu dan mendapatkan ganjaran yang baik).",
+    "title": "Doa Memohon Ilmu yang Bermanfaat, Rezeki yang Baik, dan Amal yang Diterima",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_18_daily-tasbih-and-tahmid",
+    "language": "id",
+    "text": "Maha Suci Allah, aku memuji-Nya.",
+    "title": "Tasbih dan Tahmid Harian",
+    "notes": "Dibaca 100x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_morning-dhikr_19_istighfar-100x-a-day",
+    "language": "id",
+    "text": "Aku memohon ampunan kepada Allah dan bertaubat kepada-Nya.",
+    "title": "Istighfar 100x Sehari",
+    "notes": "Dibaca 100x sehari",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_1_ayat-al-kursi",
+    "language": "id",
+    "text": "Allah, tidak ada Tuhan (yang berhak disembah) melainkan Dia Yang Hidup kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang di langit dan di bumi. Tiada yang dapat memberi syafa'at di sisi Allah tanpa izin-Nya? Allah mengetahui apa-apa yang di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar.",
+    "title": "Ayat al-Kursi",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_2_al-ikhlas",
+    "language": "id",
+    "text": "Katakanlah: \"Dialah Allah, Yang Maha Esa. Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu. Dia tiada beranak dan tidak pula diperanakkan, dan tidak ada seorangpun yang setara dengan Dia\".",
+    "title": "Al-Ikhlas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_3_al-falaq",
+    "language": "id",
+    "text": "Katakanlah: \"Aku berlindung kepada Tuhan Yang Menguasai subuh, dari kejahatan makhluk-Nya, dan dari kejahatan malam apabila telah gelap gulita, dan dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul, dan dari kejahatan pendengki bila ia dengki\".",
+    "title": "Al-Falaq",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_4_an-nas",
+    "language": "id",
+    "text": "Katakanlah: “Aku berlindung kepada Tuhan (yang memelihara dan menguasai) manusia. (1) Raja manusia. (2) Sembahan manusia. (3) Dari kejahatan (bisikan) syaitan yang biasa bersembunyi, (4) yang membisikkan (kejahatan) ke dalam dada manusia, (5) dari (golongan) jin dan manusia. (6)",
+    "title": "An-Naas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_5_entering-the-evening-in-the-kingdom-of-allah-and-seeking-his-protection",
+    "language": "id",
+    "text": "Kami telah memasuki waktu petang dan kerajaan hanya milik Allah, segala puji bagi Allah. Tidak ada ilah (yang berhak disembah) kecuali Allah semata, tiada sekutu bagi-Nya. Milik Allah kerajaan dan bagi-Nya pujian. Dia-lah Yang Mahakuasa atas segala sesuatu. Wahai Rabbku, aku mohon kepada-Mu kebaikan di malam ini dan kebaikan sesudahnya. Aku berlindung kepada-Mu dari kejahatan malam ini dan kejahatan sesudahnya. Wahai Rabbku, aku berlindung kepada-Mu dari kemalasan dan kejelekan di hari tua. Wahai Rabbku, aku berlindung kepada-Mu dari siksaan di neraka dan siksaan di kubur.",
+    "title": "Memasuki Sore dalam Kerajaan Allah dan Memohon Perlindungan dari-Nya",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_6_entering-the-evening-by-seeking-allah-s-mercy",
+    "language": "id",
+    "text": "Ya Allah, dengan rahmat dan pertolongan-Mu kami memasuki waktu petang, dan dengan rahmat dan pertolongan-Mu kami memasuki waktu pagi. Dengan rahmat dan pertolongan-Mu kami hidup dan dengan kehendak-Mu kami mati. Dan kepada-Mu tempat kembali (bagi semua makhluk).",
+    "title": "Memasuki Sore dengan Memohon Rahmat Allah",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_7_the-master-of-seeking-forgiveness",
+    "language": "id",
+    "text": "Ya Allah, Engkau adalah Rabb-ku, tidak ada Ilah (yang berhak diibadahi dengan benar) kecuali Engkau, Engkau-lah yang menciptakanku. Aku adalah hamba-Mu. Aku akan setia pada perjanjianku dengan-Mu semampuku. Aku berlindung kepada-Mu dari kejelekan (apa) yang kuperbuat. Aku mengakui nikmat-Mu (yang diberikan) kepadaku dan aku mengakui dosaku, oleh karena itu, ampunilah aku. Sesungguhnya tidak ada yang dapat mengampuni dosa kecuali Engkau.",
+    "title": "Sayyid al-Istighfar",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_8_prayer-for-health-and-protection",
+    "language": "id",
+    "text": "Ya Allah, selamatkanlah tubuhku (dari penyakit dan dari apa yang tidak aku inginkan). Ya Allah, selamatkanlah pendengaranku (dari penyakit dan maksiat atau dari apa yang tidak aku inginkan). Ya Allah, selamatkanlah penglihatanku, tidak ada Ilah yang berhak diibadahi dengan benar kecuali Engkau. Ya Allah, sesungguhnya aku berlindung kepada-Mu dari kekufuran dan kefakiran. Aku berlindung kepada-Mu dari siksa kubur, tidak ada Ilah yang berhak diibadahi dengan benar kecuali Engkau.",
+    "title": "Doa Memohon Kesehatan dan Perlindungan",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_9_prayer-for-safety-in-this-world-and-the-hereafter",
+    "language": "id",
+    "text": "Ya Allah, sesungguhnya aku memohon kebajikan dan keselamatan di dunia dan akhirat. Ya Allah, sesungguhnya aku memohon kebajikan dan keselamatan dalam agama, dunia, keluarga dan hartaku. Ya Allah, tutupilah auratku (aib dan sesuatu yang tidak layak dilihat orang) dan tenteramkanlah aku dari rasa takut. Ya Allah, peliharalah aku dari muka, belakang, kanan, kiri dan atasku. Aku berlindung dengan kebesaran-Mu, agar aku tidak disambar dari bawahku (oleh ular atau tenggelam dalam bumi dan lain-lain yang membuat aku jatuh).",
+    "title": "Doa Memohon Keselamatan di Dunia dan Akhirat",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_10_prayer-for-seeking-protection-from-the-whispers-of-satan",
+    "language": "id",
+    "text": "Ya Allah, Yang Maha Mengetahui yang ghaib dan yang nyata, wahai Rabb pencipta langit dan bumi, Rabb segala sesuatu dan yang merajainya. Aku bersaksi bahwa tidak ada ilah yang berhak disembah kecuali Engkau. Aku berlindung kepada-Mu dari kejahatan diriku, setan dan balatentaranya (godaan untuk berbuat syirik pada Allah), dan aku (berlindung kepada-Mu) dari berbuat kejelekan terhadap diriku atau menyeretnya kepada seorang muslim.",
+    "title": "Doa Memohon Perlindungan dari Bisikan Syaitan",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_11_remembrance-to-be-protected-from-all-dangers",
+    "language": "id",
+    "text": "Dengan nama Allah yang bila disebut, segala sesuatu di bumi dan langit tidak akan berbahaya, Dia-lah Yang Maha Mendengar lagi Maha Mengetahui.",
+    "title": "Dzikir Agar Terhindar dari Semua Bahaya",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_12_declaration-of-contentment-with-allah-islam-and-the-prophet-muhammad-sallal",
+    "language": "id",
+    "text": "Aku ridha Allah sebagai Rabb, Islam sebagai agama dan Muhammad shallallahu 'alaihi wa sallam sebagai nabi.",
+    "title": "Pernyataan Keridhaan dengan Allah, Islam, dan Nabi Muhammad Shallallaahu 'Alaihi Wa Sallam",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_13_asking-for-guidance-from-allah",
+    "language": "id",
+    "text": "Wahai Rabb Yang Maha Hidup, wahai Rabb Yang Berdiri Sendiri (tidak butuh segala sesuatu), dengan rahmat-Mu aku minta pertolongan, perbaikilah segala urusanku dan jangan diserahkan kepadaku sekali pun sekejap mata (tanpa mendapat pertolongan dari-Mu).",
+    "title": "Meminta Petunjuk Kepada Allah",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_14_entering-the-evening-on-the-natural-disposition-of-islam",
+    "language": "id",
+    "text": "Di waktu sore kami di atas fithrah agama Islam, kalimat ikhlas (kalimat syahadat), agama Nabi kami Muhammad shallallahu 'alaihi wa sallam, dan agama bapak kami Ibrahim, yang berdiri di atas jalan yang lurus, muslim dan tidak tergolong orang-orang musyrik.",
+    "title": "Memasuki Sore di atas Fitrah Islam",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_15_remembrance-of-the-oneness-of-allah",
+    "language": "id",
+    "text": "Tidak ada ilah yang berhak disembah selain Allah semata, tidak ada sekutu bagiNya. Bagi-Nya kerajaan dan segala pujian. Dia-lah yang berkuasa atas segala sesuatu",
+    "title": "Dzikir Tauhid",
+    "notes": "Dibaca 1x atau 10x di pagi hari, Dibaca 100x dalam sehari",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_16_reciting-praise-to-allah",
+    "language": "id",
+    "text": "Maha Suci Allah, sebanyak makhluk-Nya, Maha Suci Allah sejauh kerelaan-Nya, Maha Suci Allah seberat timbangan 'Arsy-Nya, dan sebanyak tinta tulisan kalimat-Nya.",
+    "title": "Membaca Tasbih kepada Allah",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_17_daily-praise-tasbih-and-alhamdulillah",
+    "language": "id",
+    "text": "Maha Suci Allah, aku memuji-Nya",
+    "title": "Tasbih dan Tahmid Harian",
+    "notes": "Dibaca 100x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_18_seeking-forgiveness-100-times-a-day",
+    "language": "id",
+    "text": "Aku memohon ampunan kepada Allah dan bertaubat kepada-Nya",
+    "title": "Istighfar 100x Sehari",
+    "notes": "Dibaca 100x sehari",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_evening-dhikr_19_prayer-for-protection-from-the-evil-of-allah-s-creation",
+    "language": "id",
+    "text": "Aku berlindung dengan kalimat-kalimat Allah yang sempurna, dari kejahatan sesuatu yang diciptakan-Nya.",
+    "title": "Doa Memohon Perlindungan dari Keburukan Ciptaan Allah",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_1_istighfar",
+    "language": "id",
+    "text": "Aku minta ampun kepada Allah.",
+    "title": "Istighfar",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_2_allah-the-giver-of-peace",
+    "language": "id",
+    "text": "Ya Allah, Engkau pemberi keselamatan, dan dari-Mu keselaatan, Maha Suci Engkau, wahai tuhan yang pemilik keagungan dan kemuliaan.",
+    "title": "Allah yang Memberi Keselamatan",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_3_allah-the-preventer-and-the-giver-of-all-things",
+    "language": "id",
+    "text": "Tiada Rabb yang berhak disembah selain Allah yang Maha Esa, tidak ada sekutu bagi-Nya. Bagi-Nya puji dan bagi-Nya kerajaan. Dia Maha Kuasa atas segala sesuatu. Ya Allah, tidak ada yang mencegah apa yang Engkau berikan dan tidak ada yang memberi apa yang Engkau cegah. Tidak berguna kekayaan dan kemuliaan itu bagi pemiliknya (selain iman dan amal shalihnya yang menyelamatkan dari siksaan). Hanya dari-Mu kekayaan dan kemuliaan.",
+    "title": "Allah yang Menghalangi dan yang Memberikan Segala Sesuatu",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_4_allah-the-possessor-of-all-and-the-only-one-worthy-of-worship",
+    "language": "id",
+    "text": "Tiada Rabb (yang berhak disembah) kecuali Allah, Yang Maha Esa, tidak ada sekutu bagi-Nya. Bagi-Nya kerajaan dan pujaan. Dia Mahakuasa atas segala sesuatu. Tidak ada daya dan kekuatan kecuali (dengan pertolongan) Allah. Tiada Rabb (yang hak disembah) kecuali Allah. Kami tidak menyembah kecuali kepada-Nya. Bagi-Nya nikmat, anugerah dan pujaan yang baik. Tiada Rabb (yang hak disembah) kecuali Allah, dengan memurnikan ibadah kepada-Nya, sekalipun orang-orang kafir sama benci.",
+    "title": "Allah yang Memiliki Segalanya dan yang Berhak Diibadahi",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_5_tasbih",
+    "language": "id",
+    "text": "Maha Suci Allah",
+    "title": "Tasbih",
+    "notes": "Dibaca 33x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_6_tahmid",
+    "language": "id",
+    "text": "Segala puji bagi Allah",
+    "title": "Tahmid",
+    "notes": "Dibaca 33x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_7_takbir",
+    "language": "id",
+    "text": "Allah Maha Besar",
+    "title": "Takbir",
+    "notes": "Dibaca 33x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_8_there-is-no-partner-for-allah-and-to-him-belongs-all-things",
+    "language": "id",
+    "text": "Tidak ada Rabb (yang berhak disembah) kecuali Allah Yang Maha Esa, tidak ada sekutu bagi-Nya. Bagi-Nya kerajaan. Bagi-Nya pujaan. Dia-lah Yang Mahakuasa atas segala sesuatu.",
+    "title": "Tidak Ada Sekutu Bagi Allah dan Baginyalah Segala Sesuatu",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_9_ayat-al-kursi",
+    "language": "id",
+    "text": "Allah, tidak ada Tuhan (yang berhak disembah) melainkan Dia Yang Hidup kekal lagi terus menerus mengurus (makhluk-Nya); tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang di langit dan di bumi. Tiada yang dapat memberi syafa'at di sisi Allah tanpa izin-Nya? Allah mengetahui apa-apa yang di hadapan mereka dan di belakang mereka, dan mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dan Allah tidak merasa berat memelihara keduanya, dan Allah Maha Tinggi lagi Maha Besar.",
+    "title": "Ayat al-Kursi",
+    "notes": "Dibaca 1x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_10_al-ikhlas",
+    "language": "id",
+    "text": "Katakanlah: \"Dialah Allah, Yang Maha Esa. Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu. Dia tiada beranak dan tidak pula diperanakkan, dan tidak ada seorangpun yang setara dengan Dia\".",
+    "title": "Al-Ikhlas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_11_al-falaq",
+    "language": "id",
+    "text": "Katakanlah: \"Aku berlindung kepada Tuhan Yang Menguasai subuh, dari kejahatan makhluk-Nya, dan dari kejahatan malam apabila telah gelap gulita, dan dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul, dan dari kejahatan pendengki bila ia dengki\".",
+    "title": "Al-Falaq",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_12_an-nas",
+    "language": "id",
+    "text": "Katakanlah: “Aku berlindung kepada Tuhan (yang memelihara dan menguasai) manusia. (1) Raja manusia. (2) Sembahan manusia. (3) Dari kejahatan (bisikan) syaitan yang biasa bersembunyi, (4) yang membisikkan (kejahatan) ke dalam dada manusia, (5) dari (golongan) jin dan manusia. (6)",
+    "title": "An-Naas",
+    "notes": "Dibaca 3x",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_dhikr-after-salah_13_supplication-for-beneficial-knowledge-good-provision-and-accepted-deeds",
+    "language": "id",
+    "text": "Ya Allah, sungguh aku memohon kepada-Mu ilmu yang bermanfaat (bagi diriku dan orang lain), rizki yang halal dan amal yang diterima (di sisi-Mu dan mendapatkan ganjaran yang baik).",
+    "title": "Doa Meminta Ilmu Yang Bermanfaat, Rezeki yang Baik, dan Amal yang Diterima",
+    "notes": "Dibaca 1x setelah salam dari shalat Shubuh",
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_1_dua-seeking-good-in-this-world-and-in-the-hereafter",
+    "language": "id",
+    "text": "Ya Allah, berikanlah kepada kami kebaikan di dunia, berikan pula kebaikan di akhirat dan lindungilah kami dari siksa neraka.",
+    "title": "Doa Sapu Jagat",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_2_dua-to-make-heart-firm-upon-deen-1",
+    "language": "id",
+    "text": "Wahai Dzat yang Maha membolak-balikkan hati, teguhkanlah hatiku di atas agama-Mu.",
+    "title": "Doa Memohon Ketetapan Hati #1",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_3_dua-to-make-heart-firm-upon-deen-2",
+    "language": "id",
+    "text": "Ya Allah, Dzat yang memalingkan hati, palingkanlah hati kami kepada ketaatan beribadah kepada-Mu.",
+    "title": "Doa Memohon Ketetapan Hati #2",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_4_dua-to-make-heart-firm-upon-deen-3",
+    "language": "id",
+    "text": "Ya Tuhan kami, janganlah Engkau jadikan hati kami condong kepada kesesatan sesudah Engkau beri petunjuk kepada kami.",
+    "title": "Doa Memohon Ketetapan Hati #3",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_5_dua-to-seek-refuge-against-the-loss-of-pleasure",
+    "language": "id",
+    "text": "Ya Allah, sesungguhnya aku berlindung kepada-Mu dari hilangnya kenikmatan yang telah Engkau berikan, dari berubahnya kesehatan yang telah Engkau anugerahkan, dari siksa-Mu yang datang secara tiba-tiba, dan dari segala kemurkaan-Mu.",
+    "title": "Doa Berlindung dari Hilangnya Kenikmatan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_6_dua-to-resist-affliction",
+    "language": "id",
+    "text": "Ya Allah, aku berlindung kepada-Mu dari bencana yang sangat berat, kesengsaraan, dan segala faktor penyebabnya, dari buruknya akibat apa yang telah ditakdirkan, serta bahagianya musuh atas musibah yang menimpa diriku.",
+    "title": "Doa Tolak Bala' (Cobaan yang Berat)",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_7_dua-to-be-released-from-debt-anxiety-weakness-laziness-fear-and-pressure-from",
+    "language": "id",
+    "text": "Ya Allah, aku berlindung kepada-Mu dari kebingungan dan kesedihan, aku berlindung kepada-Mu dari kelemahan dan kemalasan, aku berlindung kepada-Mu dari ketakutan dan kekikiran, aku berlindung kepada-Mu dari lilitan hutang dan tekanan orang-orang.",
+    "title": "Doa Agar Terlepas Dari Lilitan Hutang, Kegundahan, Kelemahan, Rasa Malas, Takut, dan Tekanan Orang Lain",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  },
+  {
+    "id": "dua_selected-dua_8_dua-when-getting-good-news",
+    "language": "id",
+    "text": "Segala puji bagi Allah, dimana dengan nikmatnya kebaikan menjadi sempurna.",
+    "title": "Doa Ketika Mendapatkan Sesuatu yang Menyenangkan",
+    "notes": null,
+    "benefits": null,
+    "verified": false,
+    "translationSource": "fitrahive/dua-dhikr id"
+  }
+]

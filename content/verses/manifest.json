@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-05-30T19:31:22.549Z",
+  "source": "Al Quran Cloud API",
+  "editions": {
+    "ar": "quran-uthmani",
+    "en": "en.sahih",
+    "tr": "tr.diyanet",
+    "fr": "fr.hamidullah",
+    "id": "id.indonesian"
+  },
+  "count": 500,
+  "selection": "Scored subset using featured keys, Noor-friendly topics, short/medium verse length, and well-known surahs.",
+  "note": "These are real Quran verses from the selected editions. Translation verification should be reviewed before marking verified=true."
+}

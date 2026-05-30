@@ -1,0 +1,26 @@
+import { Dua } from './types';
+
+export const duas: Dua[] = [
+  { id: 'd1', arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', translation: 'Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.', transliteration: 'Rabbana atina fid-dunya hasanah wa fil-akhirati hasanah wa qina adhaban-nar', occasion: 'General supplication' },
+  { id: 'd2', arabic: 'حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ ۖ عَلَيْهِ تَوَكَّلْتُ', translation: 'Allah is sufficient for me; there is no deity except Him. On Him I have relied.', transliteration: "Hasbiyallahu la ilaha illa huwa, alayhi tawakkaltu", occasion: 'Trust & reliance' },
+  { id: 'd3', arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ', translation: 'O Allah, I ask You for pardon and well-being.', transliteration: "Allahumma inni as'alukal-afwa wal-afiyah", occasion: 'Health & well-being' },
+  { id: 'd4', arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي', translation: 'My Lord, expand for me my breast and ease for me my task.', transliteration: 'Rabbish-rah li sadri wa yassir li amri', occasion: 'Before a difficult task' },
+  { id: 'd5', arabic: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ', translation: 'O Allah, help me to remember You, to thank You, and to worship You well.', transliteration: "Allahumma a'inni ala dhikrika wa shukrika wa husni ibadatik", occasion: 'After prayer' },
+  { id: 'd6', arabic: 'رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا', translation: 'Our Lord, let not our hearts deviate after You have guided us.', transliteration: 'Rabbana la tuzigh qulubana bada idh hadaytana', occasion: 'For steadfastness' },
+  { id: 'd7', arabic: 'اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي', translation: 'O Allah, You are Most Forgiving, You love forgiveness, so forgive me.', transliteration: "Allahumma innaka afuwwun tuhibbul-afwa fafu anni", occasion: 'Laylat al-Qadr' },
+  { id: 'd8', arabic: 'رَبِّ زِدْنِي عِلْمًا', translation: 'My Lord, increase me in knowledge.', transliteration: 'Rabbi zidni ilma', occasion: 'Seeking knowledge' },
+  { id: 'd9', arabic: 'لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ', translation: 'There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.', transliteration: 'La ilaha illa anta subhanaka inni kuntu minaz-zalimin', occasion: 'In distress' },
+  { id: 'd10', arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ', translation: 'O Allah, I seek refuge in You from anxiety and grief.', transliteration: "Allahumma inni a'udhu bika minal-hammi wal-hazan", occasion: 'Anxiety & grief' },
+  { id: 'd11', arabic: 'رَبَّنَا اغْفِرْ لَنَا ذُنُوبَنَا وَإِسْرَافَنَا فِي أَمْرِنَا', translation: 'Our Lord, forgive us our sins and the excess in our affairs.', transliteration: 'Rabbanaghfir lana dhunubana wa israfana fi amrina', occasion: 'Seeking forgiveness' },
+  { id: 'd12', arabic: 'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا', translation: 'O Allah, by You we enter the morning and by You we enter the evening.', transliteration: 'Allahumma bika asbahna wa bika amsayna', occasion: 'Morning & evening' },
+  { id: 'd13', arabic: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ', translation: 'Sufficient for us is Allah, and He is the best Disposer of affairs.', transliteration: 'Hasbunallahu wa nimal-wakil', occasion: 'When facing hardship' },
+  { id: 'd14', arabic: 'رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ وَمِن ذُرِّيَّتِي', translation: 'My Lord, make me an establisher of prayer, and from my descendants.', transliteration: "Rabbij'alni muqimas-salati wa min dhurriyyati", occasion: 'For the family' },
+  { id: 'd15', arabic: 'اللَّهُمَّ اهْدِنِي فِيمَن هَدَيْتَ', translation: 'O Allah, guide me among those You have guided.', transliteration: 'Allahummahdini fiman hadayt', occasion: 'Qunut supplication' },
+  { id: 'd16', arabic: 'رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ', translation: 'Our Lord, grant us from among our spouses and offspring comfort to our eyes.', transliteration: 'Rabbana hab lana min azwajina wa dhurriyyatina qurrata ayun', occasion: 'For family blessing' },
+  { id: 'd17', arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَىٰ وَالتُّقَىٰ وَالْعَفَافَ وَالْغِنَىٰ', translation: 'O Allah, I ask You for guidance, piety, chastity, and contentment.', transliteration: "Allahumma inni as'alukal-huda wat-tuqa wal-afafa wal-ghina", occasion: 'General supplication' },
+  { id: 'd18', arabic: 'رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ', translation: 'My Lord, indeed I am, for whatever good You would send down to me, in need.', transliteration: 'Rabbi inni lima anzalta ilayya min khayrin faqir', occasion: 'Seeking provision' },
+  { id: 'd19', arabic: 'اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا', translation: 'O Allah, place light in my heart.', transliteration: "Allahummaj'al fi qalbi nura", occasion: 'For inner light' },
+  { id: 'd20', arabic: 'رَبَّنَا تَقَبَّلْ مِنَّا ۖ إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ', translation: 'Our Lord, accept this from us. Indeed, You are the Hearing, the Knowing.', transliteration: "Rabbana taqabbal minna innaka antas-sami'ul-alim", occasion: 'After good deeds' },
+];
+
+export default duas;

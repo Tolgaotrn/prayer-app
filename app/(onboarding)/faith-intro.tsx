@@ -1,0 +1,55 @@
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { ScreenContainer } from '../../components/layout/ScreenContainer';
+import { GoldButton } from '../../components/ui/GoldButton';
+import { GlowArch } from '../../components/anim/GlowArch';
+import { colors, fonts, spacing } from '../../constants/theme';
+
+export default function FaithIntro() {
+  const router = useRouter();
+  return (
+    <ScreenContainer
+      backgroundImage={require('../../assets/themes/serene-arch.jpg')}
+      imageOpacity={0.32}
+    >
+      <View style={styles.center}>
+        <Animated.View entering={FadeIn.duration(700)}>
+          <GlowArch size={240} />
+        </Animated.View>
+        <Animated.Text entering={FadeInDown.delay(300)} style={styles.title}>
+          Let's talk about your faith journey
+        </Animated.Text>
+        <Animated.Text entering={FadeInDown.delay(420)} style={styles.subtitle}>
+          A few gentle questions help us shape a path that meets you where you are.
+        </Animated.Text>
+      </View>
+      <View style={styles.footer}>
+        <GoldButton label="Continue" onPress={() => router.push('/(onboarding)/intention')} />
+      </View>
+    </ScreenContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  title: {
+    fontFamily: fonts.serifBold,
+    fontSize: 30,
+    color: colors.text.heading,
+    textAlign: 'center',
+    marginTop: spacing.xl,
+    lineHeight: 38,
+  },
+  subtitle: {
+    fontFamily: fonts.sans,
+    fontSize: 15,
+    color: colors.text.muted,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    lineHeight: 22,
+    paddingHorizontal: spacing.md,
+  },
+  footer: { paddingBottom: spacing.sm },
+});

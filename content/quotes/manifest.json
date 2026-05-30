@@ -1,0 +1,7 @@
+{
+  "generatedAt": "2026-05-30T19:31:28.688Z",
+  "source": "Derived quote cards from imported Quran verses and hadith collections.",
+  "requestedLimit": 300,
+  "count": 300,
+  "note": "This avoids unsourced internet quote scraping. The author field stays compatible with data/quotes.ts."
+}

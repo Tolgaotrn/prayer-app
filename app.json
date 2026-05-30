@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Noor",
+    "slug": "noor",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "noor",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A1230",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0A1230"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.noor.app"
+    },
+    "android": {
+      "package": "com.noor.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0A1230"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "color": "#D4AF37"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

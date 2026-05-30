@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-05-30T19:15:49.069Z",
+  "source": "fitrahive/dua-dhikr",
+  "license": "MIT",
+  "requestedLimit": 1000,
+  "count": 97,
+  "languages": [
+    "en",
+    "id"
+  ],
+  "note": "The source currently provides English and Indonesian JSON files. Add reviewed TR/FR translations later instead of machine-filling religious text."
+}
