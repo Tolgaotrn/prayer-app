@@ -31,10 +31,10 @@ import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
-import { StreakWidget } from '../../components/ui/StreakWidget';
 import { ToggleSwitch } from '../../components/ui/ToggleSwitch';
 import { BackButton } from '../../components/ui/BackButton';
 import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { getTheme } from '../../data/themes';
 import { useThemeColors } from '../../lib/useThemeColors';
 import { useT } from '../../lib/i18n';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
@@ -42,11 +42,6 @@ import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
-
-const FONT_OPTIONS = [
-  { key: 'serif',     label: 'Playfair',   sample: 'Aً' },
-  { key: 'sans',      label: 'Jakarta',    sample: 'Aً' },
-];
 
 export default function Profile() {
   const router      = useRouter();
@@ -60,8 +55,8 @@ export default function Profile() {
   const darkMode    = useAppStore((s) => s.darkMode);
   const setDarkMode = useAppStore((s) => s.setDarkMode);
   const savedCount  = useAppStore((s) => s.savedVerseIds.length);
-
-  const [selectedFont, setSelectedFont] = React.useState('serif');
+  const themeId     = useOnboardingStore((s) => s.selectedTheme);
+  const currentThemeName = getTheme(themeId).name;
 
   const initials = name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
 
@@ -162,36 +157,14 @@ export default function Profile() {
           <SectionLabel label={t('profile.appearance')} tc={tc} />
           <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
 
-            {/* Font picker */}
-            <View style={styles.settingsRow}>
-              <View style={styles.rowLeft}>
-                <SettingsIcon icon="text-outline" tc={tc} />
-                <Text style={[styles.rowLabel, { color: tc.heading }]}>{t('profile.font')}</Text>
-              </View>
-              <View style={styles.fontPills}>
-                {FONT_OPTIONS.map((f) => (
-                  <Pressable
-                    key={f.key}
-                    onPress={() => { haptic.select(); setSelectedFont(f.key); }}
-                    style={[
-                      styles.fontPill,
-                      { borderColor: selectedFont === f.key ? tc.gold : tc.border,
-                        backgroundColor: selectedFont === f.key ? tc.gold + '18' : tc.raisedBg },
-                    ]}
-                    accessibilityRole="radio"
-                    accessibilityState={{ selected: selectedFont === f.key }}
-                  >
-                    <Text style={[
-                      styles.fontPillText,
-                      { color: selectedFont === f.key ? tc.gold : tc.muted,
-                        fontFamily: f.key === 'serif' ? fonts.serifBold : fonts.sansBold },
-                    ]}>
-                      {f.label}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
+            {/* Tema kısayolu */}
+            <NavRow
+              icon="color-palette-outline"
+              label="Theme"
+              value={currentThemeName}
+              tc={tc}
+              onPress={() => { haptic.select(); router.push('/(tabs)/themes'); }}
+            />
 
             <Divider tc={tc} />
 
@@ -243,7 +216,7 @@ export default function Profile() {
               onPress={() => {
                 haptic.select();
                 const url = Platform.OS === 'ios'
-                  ? 'itms-apps://itunes.apple.com/app/id0000000000?action=write-review'
+                  ? 'itms-apps://itunes.apple.com/app/id6746878697?action=write-review'
                   : 'market://details?id=com.noor.app';
                 Linking.openURL(url).catch(() => {});
               }}
@@ -413,7 +386,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginTop: spacing.sm, marginBottom: spacing.xs,
   },
-  pageTitle: { fontFamily: fonts.serifBold, fontSize: 22 },
+  pageTitle: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
 
   // Identity card
   identityCard: {
@@ -440,7 +413,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderRadius: radii.md,
     paddingHorizontal: spacing.sm, paddingVertical: 8, minWidth: 56,
   },
-  streakNum: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 26 },
+  streakNum: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
   streakLabel: { fontFamily: fonts.sans, fontSize: 10, marginTop: 1 },
 
   // Premium banner
@@ -490,14 +463,6 @@ const styles = StyleSheet.create({
   rowValue: { fontFamily: fonts.sans, fontSize: 14, maxWidth: 120 },
   divider: { height: 1, marginLeft: spacing.md + 32 + 12 },
 
-  // Font picker
-  fontPills: { flexDirection: 'row', gap: 6 },
-  fontPill: {
-    borderRadius: radii.sm, borderWidth: 1.5,
-    paddingHorizontal: 12, paddingVertical: 5,
-  },
-  fontPillText: { fontSize: 13 },
-
   // Footer
   footer: { alignItems: 'center', paddingVertical: spacing.lg, gap: 6, marginTop: spacing.md },
   logoMark: {
@@ -505,7 +470,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginBottom: 4,
   },
   logoText: { fontSize: 20 },
-  appName: { fontFamily: fonts.serifBold, fontSize: 18 },
+  appName: { fontFamily: fonts.serifBold, fontSize: 18, lineHeight: 30 },
   version: { fontFamily: fonts.sans, fontSize: 12 },
   tagline: { fontFamily: fonts.sans, fontSize: 12 },
 });

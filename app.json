@@ -19,8 +19,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.noor.app",
+      "buildNumber": "1",
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.noor.app"]
+        "com.apple.security.application-groups": [
+          "group.com.noor.app"
+        ]
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -59,7 +62,9 @@
         {
           "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID"
         }
-      ]
+      ],
+      "expo-video",
+      "./plugins/withPrivacyManifest"
     ],
     "experiments": {
       "typedRoutes": true

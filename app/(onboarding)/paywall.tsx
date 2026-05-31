@@ -17,6 +17,7 @@ import {
   restoreRevenueCatPurchases,
   type PurchasesPackage,
 } from '../../lib/revenueCat';
+import { analytics, getPaywallVariant, type PaywallVariant } from '../../lib/analytics';
 
 const FEATURES = [
   '5000+ verses, hadiths & duas',
@@ -43,6 +44,7 @@ export default function Paywall() {
   const [packages, setPackages] = React.useState<PurchasesPackage[]>([]);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
   const [countdown, setCountdown] = React.useState(5);
+  const [variant, setVariant] = React.useState<PaywallVariant>('control');
 
   React.useEffect(() => {
     if (countdown <= 0) return;
@@ -54,6 +56,15 @@ export default function Paywall() {
     getRevenueCatPackages()
       .then(setPackages)
       .catch((error) => console.warn('RevenueCat offerings failed', error));
+
+    // A/B test: fetch paywall variant from PostHog feature flag
+    getPaywallVariant().then((v) => {
+      setVariant(v);
+      // 'annual_first' variant → pre-select annual (already default)
+      // 'simple' variant → pre-select weekly (lower commitment)
+      if (v === 'simple') setPlan('weekly');
+      analytics.track('paywall_viewed', { source: 'onboarding', variant: v });
+    });
   }, []);
 
   const finish = (premium: boolean) => {
@@ -74,7 +85,11 @@ export default function Paywall() {
 
   const startTrial = async () => {
     haptic.medium();
-    if (!selectedPackage) { finish(true); return; }
+    analytics.track('paywall_cta_tapped', { plan, variant });
+    if (!selectedPackage) {
+      Alert.alert('Not available', 'Premium plans could not be loaded. Please try again later.');
+      return;
+    }
     try {
       setIsPurchasing(true);
       const ok = await purchaseRevenueCatPackage(selectedPackage);
@@ -143,7 +158,7 @@ export default function Paywall() {
                 data={p}
                 selected={plan === p.id}
                 tc={tc}
-                onPress={() => { haptic.select(); setPlan(p.id); }}
+                onPress={() => { haptic.select(); setPlan(p.id); analytics.track('paywall_plan_selected', { plan: p.id, variant }); }}
               />
             </Animated.View>
           ))}
@@ -223,7 +238,7 @@ const styles = StyleSheet.create({
   scroll: { paddingTop: spacing.md, paddingBottom: spacing.md },
   brandRow: { alignItems: 'center', marginBottom: spacing.md },
   brand: { width: 72, height: 72, borderRadius: 18 },
-  title: { fontFamily: fonts.serifBold, fontSize: 26, textAlign: 'center', lineHeight: 34 },
+  title: { fontFamily: fonts.serifBold, fontSize: 26, textAlign: 'center', lineHeight: 43 },
   features: { marginTop: spacing.lg, gap: spacing.sm, alignSelf: 'stretch', paddingHorizontal: spacing.xs },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   fCheck: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },

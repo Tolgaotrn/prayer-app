@@ -18,13 +18,22 @@ import {
   PlusJakartaSans_700Bold,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { Amiri_400Regular, Amiri_700Bold } from '@expo-google-fonts/amiri';
+import { AppState } from 'react-native';
 import { colors } from '../constants/theme';
 import { useConfigureRevenueCat } from '../lib/revenueCat';
+import { analytics } from '../lib/analytics';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   useConfigureRevenueCat();
+  // Flush PostHog events when app goes to background
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'background' || state === 'inactive') analytics.flush();
+    });
+    return () => sub.remove();
+  }, []);
 
   const [loaded, error] = useFonts({
     PlayfairDisplay_400Regular,
@@ -52,36 +61,36 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <View style={{ flex: 1 }} onLayout={onLayout}>
           <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.bg.midnight },
-              animation: 'slide_from_right',
-            }}
-          >
-            <Stack.Screen name="(onboarding)" />
-            <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-            <Stack.Screen name="verse/[id]" options={{ animation: 'slide_from_bottom' }} />
-            <Stack.Screen
-              name="categories"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'fade',
-                contentStyle: { backgroundColor: 'transparent' },
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.bg.midnight },
+                animation: 'slide_from_right',
               }}
-            />
-            <Stack.Screen name="widget-studio" />
-            <Stack.Screen name="saved-verses" />
-            <Stack.Screen name="reminders-settings" />
-            <Stack.Screen name="language-settings" />
-            <Stack.Screen name="widget-settings" />
-            <Stack.Screen name="qibla" />
-            <Stack.Screen name="dhikr" />
-            <Stack.Screen name="notifications-settings" />
-            <Stack.Screen name="prayer-times" />
-            <Stack.Screen name="explore-topics" options={{ animation: 'slide_from_bottom' }} />
-          </Stack>
-        </View>
-      </SafeAreaProvider>
+            >
+              <Stack.Screen name="(onboarding)" />
+              <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+              <Stack.Screen name="verse/[id]" options={{ animation: 'slide_from_bottom' }} />
+              <Stack.Screen
+                name="categories"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'fade',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+              <Stack.Screen name="widget-studio" />
+              <Stack.Screen name="saved-verses" />
+              <Stack.Screen name="reminders-settings" />
+              <Stack.Screen name="language-settings" />
+              <Stack.Screen name="widget-settings" />
+              <Stack.Screen name="qibla" />
+              <Stack.Screen name="dhikr" />
+              <Stack.Screen name="notifications-settings" />
+              <Stack.Screen name="prayer-times" />
+              <Stack.Screen name="explore-topics" options={{ animation: 'slide_from_bottom' }} />
+            </Stack>
+          </View>
+        </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
