@@ -140,6 +140,19 @@ export default function Feed() {
     likeItem(activeItem);
   };
 
+  // Hooks MUST be before any early returns
+  const videoPlayer = useVideoPlayer(theme.video?.uri ?? null, (p) => {
+    p.loop = true;
+    p.muted = true;
+    if (theme.video?.uri) p.play();
+  });
+
+  React.useEffect(() => {
+    if (theme.video?.uri) {
+      videoPlayer.play();
+    }
+  }, [theme.video?.uri]);
+
   if (loading) {
     return (
       <View style={[styles.root, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -170,19 +183,6 @@ export default function Feed() {
       </View>
     );
   }
-
-  // Video tema player'ı — sadece video theme seçiliyse aktif
-  const videoPlayer = useVideoPlayer(theme.video?.uri ?? null, (p) => {
-    p.loop = true;
-    p.muted = true;
-    if (theme.video) p.play();
-  });
-
-  // video değişince oynat/durdur
-  React.useEffect(() => {
-    if (!theme.video) return;
-    videoPlayer.play();
-  }, [theme.video?.uri]);
 
   return (
     <View style={styles.root}>
