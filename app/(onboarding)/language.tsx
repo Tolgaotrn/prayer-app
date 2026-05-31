@@ -4,7 +4,8 @@ import Animated, { FadeInDown, useAnimatedStyle, withTiming } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
-import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { haptic } from '../../lib/haptics';
 import { clearContentCache } from '../../lib/contentDb';
@@ -25,10 +26,9 @@ export default function Language() {
   return (
     <OnboardingShell
       step={5}
-      icon={<Ionicons name="language-outline" size={28} color={colors.gold.primary} />}
       title="Which language do you prefer?"
       ctaDisabled={!language}
-      onContinue={async () => { await clearContentCache(); router.push('/(onboarding)/reminders'); }}
+      onContinue={async () => { await clearContentCache(); router.push('/(onboarding)/preparing'); }}
     >
       <View>
         {LANGS.map((l, i) => (
@@ -63,22 +63,23 @@ function Row({
   selected: boolean;
   onPress: () => void;
 }) {
+  const tc = useThemeColors();
   const style = useAnimatedStyle(() => ({
-    borderColor: withTiming(selected ? colors.gold.primary : colors.hairline),
-    backgroundColor: withTiming(selected ? colors.bg.raised : colors.bg.card),
+    borderColor: withTiming(selected ? tc.gold : tc.border),
+    backgroundColor: withTiming(selected ? tc.raisedBg : tc.cardBg),
   }));
   return (
     <Pressable accessibilityRole="radio" accessibilityState={{ selected }} onPress={onPress}>
       <Animated.View style={[styles.row, style]}>
         <Text style={styles.flag}>{flag}</Text>
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.label, { color: tc.heading }]}>{label}</Text>
         {recommended ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>Recommended</Text>
+          <View style={[styles.badge, { backgroundColor: tc.gold + '22' }]}>
+            <Text style={[styles.badgeText, { color: tc.gold }]}>Recommended</Text>
           </View>
         ) : null}
         {selected ? (
-          <Ionicons name="checkmark-circle" size={22} color={colors.gold.primary} style={styles.check} />
+          <Ionicons name="checkmark-circle" size={22} color={tc.gold} style={styles.check} />
         ) : null}
       </Animated.View>
     </Pressable>
@@ -97,13 +98,12 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   flag: { fontSize: 22 },
-  label: { fontFamily: fonts.sansMedium, fontSize: 16, color: colors.text.heading, flex: 1 },
+  label: { fontFamily: fonts.sansMedium, fontSize: 16, flex: 1 },
   badge: {
-    backgroundColor: 'rgba(212,175,55,0.16)',
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  badgeText: { fontFamily: fonts.sansSemibold, fontSize: 11, color: colors.gold.bright },
+  badgeText: { fontFamily: fonts.sansSemibold, fontSize: 11 },
   check: { marginLeft: 4 },
 });

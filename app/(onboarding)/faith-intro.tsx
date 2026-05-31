@@ -5,10 +5,12 @@ import { useRouter } from 'expo-router';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { GoldButton } from '../../components/ui/GoldButton';
 import { GlowArch } from '../../components/anim/GlowArch';
-import { colors, fonts, spacing } from '../../constants/theme';
+import { fonts, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 
 export default function FaithIntro() {
   const router = useRouter();
+  const tc = useThemeColors();
   return (
     <ScreenContainer
       backgroundImage={require('../../assets/themes/serene-arch.jpg')}
@@ -18,10 +20,10 @@ export default function FaithIntro() {
         <Animated.View entering={FadeIn.duration(700)}>
           <GlowArch size={240} />
         </Animated.View>
-        <Animated.Text entering={FadeInDown.delay(300)} style={styles.title}>
+        <Animated.Text entering={FadeInDown.delay(300)} style={[styles.title, { color: tc.heading }]}>
           Let's talk about your faith journey
         </Animated.Text>
-        <Animated.Text entering={FadeInDown.delay(420)} style={styles.subtitle}>
+        <Animated.Text entering={FadeInDown.delay(420)} style={[styles.subtitle, { color: tc.muted }]}>
           A few gentle questions help us shape a path that meets you where you are.
         </Animated.Text>
       </View>
@@ -37,7 +39,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.serifBold,
     fontSize: 30,
-    color: colors.text.heading,
     textAlign: 'center',
     marginTop: spacing.xl,
     lineHeight: 38,
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: fonts.sans,
     fontSize: 15,
-    color: colors.text.muted,
     textAlign: 'center',
     marginTop: spacing.md,
     lineHeight: 22,

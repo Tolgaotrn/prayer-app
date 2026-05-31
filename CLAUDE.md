@@ -9,7 +9,7 @@ Tolga ile çalışırken şunları bil: kısa ve net konuşur, görmek istediği
 ## Projenin özü
 
 **Noor** — günlük İslami ayet, dua, hadis ve alıntı sunan bir mobil uygulama.
-Dark-first tasarım + warm/light modu var, altın aksanlar, gerçek cami fotoğrafları, world-class animasyonlar.
+**Krem/warm tema artık VARSAYILAN** (darkMode default `false`). Altın aksanlar, gerçek cami fotoğrafları, world-class animasyonlar. Dark mode hâlâ settings toggle ile açılabilir. Onboarding `welcome` ekranı hariç (o `forceDark` ile dark hero) tüm onboarding + ana app krem.
 
 **Çalıştırmak için:**
 ```bash
@@ -142,7 +142,8 @@ islam-app/
 │   ├── haptics.ts
 │   ├── useThemeColors.ts
 │   ├── supabase.ts               ← Supabase client (anon key)
-│   └── contentDb.ts              ← Offline-first veri katmanı (cache → Supabase → stale → seed)
+│   ├── contentDb.ts              ← Offline-first veri katmanı (cache → Supabase → stale → seed)
+│   └── prayerTimes.ts            ← usePrayerTimes() hook: expo-location + adhan + reverseGeocode
 │
 ├── content/                      ← Import araçlarının çıktısı (ham, filtrelenmeden önce)
 │   ├── hadiths/                  ← ham hadith (7 koleksiyon), base + translations/
@@ -289,7 +290,7 @@ const tc = useThemeColors();
 // tc.isDark → boolean
 ```
 
-### Dark palette (varsayılan, darkMode=true)
+### Dark palette (darkMode=true — artık varsayılan DEĞİL, toggle ile)
 ```typescript
 bg.midnight  '#0A1230' | bg.card '#161E3D' | bg.raised '#1E2A52'
 gold.primary '#D4AF37' | gold.bright '#E8C766' | gold.deep '#B8902E'
@@ -325,6 +326,9 @@ warm.text '#2C2418' | warm.body '#5C4F3D' | warm.muted '#9C8E7D'
 9. **Supabase key'leri** — anon key app'te, service_role sadece tools/'da. Asla app bundle'a service_role koyma.
 10. **RangeSlider** → store'da `reminderStart/End` string `"HH:MM"` formatında, slider dakika (number) çalışır — dönüşüm reminders-settings.tsx'te yapılır.
 11. **Dil değişimi** → `fetchFeedItems(..., forceFresh)` son parametresi cache'i atlar. Feed'de `prevLangRef` ile dil değişimi tespit edilip `forceFresh=true` geçilir; ayrıca lang değişince `setItems([])` + `setLoading(true)`. language-settings + onboarding/language Save'de `clearContentCache()` çağrılır. Bu olmadan dil değişince eski cache (İngilizce) gösterilirdi.
+12. **Special offer** → `router.push('/special-offer')` ile açılır (onboarding'i tamamlamaz). Sadece premium durumu ayarlar, geri döner. Onboarding paywallundan tamamen ayrı.
+13. **Namaz vakitleri** → `usePrayerTimes()` hook kullan. Hardcoded saat KULLANMA. Telefonda konum izni verince gerçek şehir + vakitleri gösterir.
+14. **Paywall güncel yapısı** → `paywall.tsx` = 3 plan (annual/monthly/weekly), krem premium. `special-offer.tsx` = tek sayfa "7 days free". İKİSİ FARKLI EKRAN.
 
 ---
 
@@ -332,8 +336,17 @@ warm.text '#2C2418' | warm.body '#5C4F3D' | warm.muted '#9C8E7D'
 
 ```
 app/index.tsx
-  ├─ isCompleted=false → onboarding (welcome → ... → paywall)
+  ├─ isCompleted=false → onboarding (YENİ SIRA, aşağıda)
   └─ isCompleted=true  → /(tabs)/feed
+
+ONBOARDING SIRASI (güncel — Vocabulary referansına göre):
+  welcome(dark hero) → attribution(how did you hear) → name → age → faith-intro
+  → intention → feeling → quran-relation → content-select → content-style
+  → usage → home-pref → language → preparing → streak-intro
+  → reminders(ZENGİN NOTIFICATION: app icon preview + how many + active hours + "Allow and Save",
+              bildirim izni ister) → theme-select → paywall
+  NOT: eski notifications.tsx (Crescent izin ekranı) artık akışta DEĞİL (orphan).
+       reminders.tsx hem reminder ayarı hem bildirim izni ekranı oldu.
 
 (tabs) — ALT BAR YOK (tabBar: () => null):
   feed = ANA/DEFAULT immersive sayfa:
@@ -346,13 +359,14 @@ app/index.tsx
 
 Alt ekranlar:
   /explore-topics      ← Browse topics
-  /saved-verses        ← Kayıtlı ayetler
+  /saved-verses        ← Kayıtlı ayetler (Supabase'den çekiyor, krem-aware)
   /reminders-settings  ← Stepper + RangeSlider (Active Hours)
-  /language-settings   ← Dil seçimi
+  /language-settings   ← Dil seçimi (krem-aware)
   /name-settings       ← İsim düzenleme (Profile → Name)
+  /special-offer       ← "7 days of premium" tekli teklif (onboarding değil, ara sıra çıkar)
 
 Modals:
-  /verse/[id]     slide_from_bottom
+  /verse/[id]     slide_from_bottom (krem-aware)
   /categories     transparentModal + BottomSheet
   /widget-studio  slide_from_right
   /explore-topics slide_from_bottom
@@ -408,37 +422,58 @@ toggleFollowTopic(topic) | isFollowed(topic)
 
 ---
 
-## Home Card
+## Home Card = İşlevsel "Apps" hub (YENİDEN TASARLANDI)
 
-**Bölümler:** BackButton + header → namaz vakitleri → günün ayeti hero (Supabase) → streak
-- Günün ayeti: `fetchDailyVerse(lang)` — gün sayısı % 500 offset ile her gün farklı
-- Namaz vakitleri: placeholder (statik İstanbul), gerçek için `lib/prayerTimes.ts` yazılacak
+Eski "Good morning + streak + günün ayeti" yapısı KALDIRILDI. Yeni yapı:
+**Bölümler (sırayla):** Header (greeting YOK, sadece "Today" + tarih + şehir chip) →
+**Prayer card** (next prayer + countdown + 6 slot, "All" → /prayer-times) →
+**Apps grid** (2 kolon, gradient ikon rozetli premium kartlar).
+
+**Grid tile'ları → route:**
+- Prayer Times → `/prayer-times` (tam günlük takvim, gradient hero + liste)
+- Qibla → `/qibla` (SVG dönen pusula, kaabe işareti, hizalama haptic)
+- Tasbih → `/dhikr` (SVG progress ring, tap sayaç, 5 zikir, tur sayısı)
+- Reminders → `/notifications-settings` (namaz başına toggle + günlük ayet/hadis)
+- Home Widgets → `/widget-settings`
+- Lock Screen → `/widget-settings`
+- Quran → `/(tabs)/feed`
+- Duas → `/explore-topics`
+
+**Yeni ekranlar:** `app/qibla.tsx`, `app/dhikr.tsx`, `app/prayer-times.tsx`,
+`app/notifications-settings.tsx`. Hepsi `useThemeColors` (krem-aware), `react-native-svg` ile çizim.
+Qibla/Dhikr cihaz pusulası + heading `expo-location watchHeadingAsync` (web'de no-op, "compass not available").
+
+**`lib/notifications.ts`:** namaz + içerik bildirimleri. `applyAllNotifPrefs(slots, prefs)`,
+`schedulePrayerNotifications` (DAILY trigger her vakit), `scheduleDailyVerse` (08:00),
+`scheduleDailyHadith` (20:00). Prefs AsyncStorage `noor_notif_prefs`. Web'de no-op, izin ister.
 
 ---
 
-## Profile
+## Profile (SADELEŞTİRİLDİ)
 
 ```
 ← (back) Profile + avatar
 ├── Premium banner → paywall
-├── StreakWidget (her açılışta görünür)
-├── Quick Actions 2×2: Saved Verses · Reminders · Themes · Widget
+├── StreakWidget (streak SADECE burada — home'dan kaldırıldı)
+├── Quick Actions: Saved Verses · Reminders  (Themes + Widget KALDIRILDI)
 └── Settings card:
     ├── Name → /name-settings (LOCAL state input, store'a kaydet butonunda)
     ├── Language → /language-settings
     ├── Notifications → /reminders-settings
     └── Dark Mode toggle
 ```
+ActionCard `halfWidth` prop: 1 kart tam genişlik, 2+ kart yan yana (%47.8).
 
 ---
 
 ## StreakWidget
 
-- Flame ikonu YOK — sadece gün sayısı + "day streak" + "Keep it up! 🌙"
+- Flame ikonu YOK — sadece gün sayısı + "day streak" + caption
 - Tüm içerik ortalanmış
-- Dark modda altın kenarlık (`rgba(212,175,55,0.35)`) — lacivert zemine karışmıyor
-- Dolu günler: yeşil dot + checkmark | Boş günler: yarı saydam
-- Aktif gün etiketleri: altın + bold
+- **Beyaz çerçeveli kart** (krem zeminde görünür için) — `border 2px`, beyaz `backgroundColor`
+- Gün etiketleri ÜSTTE (Su Mo Tu...), altında dolu günler **altın daire + beyaz tik**
+- Boş günler: yarı saydam daire, krem-uyumlu
+- `banner` prop kaldırıldı (artık yok)
 
 ---
 
@@ -465,6 +500,30 @@ toggleFollowTopic(topic) | isFollowed(topic)
 | Hadis hep Nawawi/aynı 12 geliyordu | `buildFeed` her türü `shuffle` ediyor, `source_priority` order kaldırıldı |
 | Favorites yanlış içerik (rastgele ayet) | 4 tablo (verse/hadith/dua/quote) savedIds ile sorgulanır; boşsa seed yerine boş ekran |
 | Feed 12 karttan sonra kaymıyordu | `snapToInterval` kaldırıldı (pagingEnabled ile çakışıyordu) + limit 30→100 |
+| Ana renk krem'e geçiş (tam) | `darkMode` default `false`. Paylaşılan bileşenler (`OnboardingShell`, `OptionRow`, `ProgressDots`, `Stepper`, `name` input) `useThemeColors`'a bağlandı → krem zeminde koyu kahve metin. Özel hero ekranlar (faith-intro, preparing, streak-intro) metin renkleri krem-aware. `welcome` `forceDark` ile dark hero kaldı. `app.json` userInterfaceStyle/backgroundColor krem. |
+| App icon | `assets/themes/icon.jpg` → app.json icon + splash + adaptiveIcon. NotifPreview bu icon'u gösterir. |
+| Onboarding sırası (Vocabulary ref) | welcome→attribution→name→...→preparing→streak-intro→reminders(zengin notif)→theme-select→paywall. notifications.tsx orphan oldu. |
+| Seçilince satır/kart taşıyordu | `OptionRow` + `IconGridCard`'tan `scale` transform kaldırıldı (full-width satırı ekran kenarından taşırıp sağdaki tik'i kırpıyordu → "tik yok" sanılıyordu). |
+| Soru ekranlarında dekoratif ikon (kalp vb.) | Tüm SelectScreen/grid ekranlarından `icon` prop kaldırıldı (dini sade görünüm). |
+| IconGridCard krem zeminde lacivertti | `useThemeColors`'a bağlandı (krem kart + altın ikon). |
+| age 'center' variant tutarsız tik | `radio` variant'a çevrildi (dolu altın daire + beyaz tik, diğer ekranlarla tutarlı). |
+| Paywall dark + karmaşık | Krem "Welcome offer" özel teklif ekranı: hediye ikonu + 63% discount başlık + altın tikli 3 madde + üstü çizili fiyat + Continue. RevenueCat mantığı korundu. |
+| GoldButton disabled lacivertti | Krem-uyumlu açık taupe (`#DAD0BE`) + warm muted metin. |
+| Language ekranı satırları lacivertti | language.tsx kendi `Row`'u `useThemeColors`'a bağlandı (krem kart + altın seçim). |
+| RangeSlider Start/End yazısı görünmüyordu | `useThemeColors` (koyu metin) + handle border krem + track kontrastı. |
+| StreakWidget krem zeminde görünmüyordu | Beyaz çerçeveli kart (border 2px), gün etiketleri ÜSTTE, dolu günler altın daire + beyaz tik, "Build a streak" caption. `banner` prop kaldırıldı. |
+| NotifPreview "Salubrious" (eski app artığı) | İngilizce hadis + arkada ikinci bildirim "peek" efekti + kalın border. App icon `assets/icons/icon.png`. |
+| GoldButton stadium köşe boşlukları | `radii.full`→`radii.xl` yuvarlak-dikdörtgen + gold glow yerine yumuşak nötr gölge. |
+| Paywall jenerik hediye ikonu | App'in altın hilal icon'u (`assets/icons/icon.png`) — özgün/İslami marka. (Sadece special-offer'da; onboarding paywall'u orijinal weekly/yearly.) |
+| İki paywall ekranı | `app/(onboarding)/paywall.tsx` = 3 kademeli plan (Annual -65% OFF/Monthly/Weekly), 5 özellik (5000+ verses/hadiths/duas, premium themes, reading mode, lock-screen widgets, ad-free), "Start my free trial", krem premium — onboarding sonu. `app/special-offer.tsx` = "We offer 7 days of premium" krem ekran, ara sıra `router.push('/special-offer')` ile (premium yapıp geri döner). İkisi de app icon (`assets/icons/icon.png`) kullanır. |
+| Feed çift-tık & swipe animasyon | Slide'a `Gesture.Tap().numberOfTaps(2)` → kaydet + büyük altın kalp burst animasyonu (`heartBurst`). "Swipe up for next" chevron'u `withRepeat` ile zıplıyor (`SwipeHint`). |
+| Notification hadis emoji hatası | ﷺ ligature kaldırıldı → "(peace be upon him)" düz metin. |
+| App icon yeşildi (krem'e uymuyordu) | `assets/icons/icon.png` altın hilal+yıldız (app.json icon/splash/adaptiveIcon). |
+| Namaz vakitleri statik İstanbul'du | `lib/prayerTimes.ts` yazıldı: `usePrayerTimes()` hook → `expo-location` izni ister → `adhan` (MuslimWorldLeague) hesaplar → `reverseGeocode` şehir adı → her dakika countdown günceller → fallback: İstanbul. |
+| Home sırası yanlıştı (streak en sonda) | Prayer → **Streak** → **Daily Reflection** sırası. |
+| saved-verses seed data kullanıyordu | Supabase'den `fetchFeedItems(['Favorites'])` ile çekiyor + krem-aware + boş durum "Double-tap to save" mesajı. |
+| verse/[id] hardcoded koyu renk | `useThemeColors`'a bağlandı (meta chip, aksiyon butonları, similar cards). |
+| language-settings hardcoded koyu renk | `useThemeColors`'a bağlandı. |
 
 ---
 
@@ -490,14 +549,90 @@ Eşikleri değiştirirsen HER İKİ dosyada da güncelle.
 
 ---
 
+## i18n — Tam uygulama dil sistemi (`lib/i18n.ts`)
+
+Artık dil değişince SADECE içerik değil **tüm arayüz** değişir (EN/TR/FR/ID/AR).
+
+```typescript
+const t = useT();                    // t('home.today') → 'Bugün'
+<Text>{t('profile.savedCount', { n: 3 })}</Text>   // değişken interpolasyonu {n}
+const locale = useLocaleTag();       // toLocaleDateString için 'tr-TR' vb. (tarihler de yerelleşir)
+```
+
+- `resolveUILang(stored)`: 'Turkish'→'tr', 'French'→'fr', 'Indonesian'→'id', 'Arabic'→'ar', diğer→'en'
+- Eksik anahtar → İngilizce'ye düşer. Anahtarlar düz, nokta notasyonlu (`home.*`, `tile.*`, `prayer.*`, `qibla.*`, `tasbih.*`, `rem.*`, `profile.*`, `feed.*`).
+- **Namaz adları da çevrilir** (`prayer.fajr` → TR 'Sabah', 'Öğle', 'İkindi', 'Akşam', 'Yatsı'). UI'da `t(\`prayer.${slot.key}\`)` ile render edilir — `slot.name` (İngilizce) DEĞİL.
+- Bağlı ekranlar: home-card, feed, profile, qibla, dhikr, prayer-times, notifications-settings.
+- Yeni string eklerken 5 dilin de `Dict`'ine ekle (eksikse en'e düşer ama tutarlılık için ekle).
+- Dil değişimi `useT` store aboneliğiyle anında tüm ekranları yeniden render eder. İçerik (ayet/hadis) ayrıca `clearContentCache()` + feed refetch ile gelir (mevcut sistem).
+
+## Bespoke ikonlar (`components/icons/AppGlyphs.tsx`)
+
+Home grid Ionicons YERİNE özel SVG duotone glyph kullanır (premium görünüm):
+`mosque, compass, beads, bell, widget, lockscreen, quran, dua`. Hepsi 24×24, 1.7px stroke,
+`color` (ana çizgi) + `tint` (yumuşak dolgu). `<AppGlyph name="mosque" color={tc.gold} tint={tc.gold+'2E'} />`.
+Yumuşak altın-tint rounded kare içinde tek renk altın → tutarlı tasarım dili.
+
+## Bildirim merkezi (feed sağ üst)
+
+Feed top-bar sağ üstte crown (premium) YANINA bildirim zili eklendi → `/notifications-settings`.
+"Tüm bildirimler tek yerde" mantığı: ileride çok bildirim eklenecek, hepsi bu ekranda toplanır.
+Profile'daki Notifications satırı + Reminders quick action da `/notifications-settings`'e gider.
+
+---
+
+## iOS Widget & Kilit Ekranı (WidgetKit)
+
+**Sadece iOS.** Expo Go'da ÇALIŞMAZ → EAS dev/preview build şart.
+
+**Mimari:**
+```
+RN app (lib/widgetSync.ts)
+  → ExtensionStorage(@bacons/apple-targets) → App Group UserDefaults "noorWidgetData" (JSON)
+  → ExtensionStorage.reloadWidget()
+Widget extension (targets/widget/*.swift)
+  → UserDefaults(suiteName: "group.com.noor.app") okur → SwiftUI render
+```
+
+**App Group:** `group.com.noor.app` (hem app.json `ios.entitlements` hem expo-target.config.js'de).
+
+**Dosyalar:**
+- `targets/widget/expo-target.config.js` — widget target tanımı (apple-targets plugin compile eder)
+- `targets/widget/NoorWidgetData.swift` — Codable model + App Group okuyucu + nextPrayer/timeline yardımcıları
+- `targets/widget/AppIntent.swift` — `WidgetContent` enum (auto/prayer/verse/streak) + config intent → kullanıcı "Edit Widget" ile içeriği seçer
+- `targets/widget/Provider.swift` — AppIntentTimelineProvider (namaz vakitlerinde + saatlik entry → geri sayım app açılmadan döner)
+- `targets/widget/Views.swift` — SwiftUI: systemSmall/Medium + accessoryInline/Circular/Rectangular (kilit ekranı)
+- `targets/widget/NoorWidgetBundle.swift` — `@main` bundle
+- `lib/widgetSync.ts` — `syncWidget({language, streakDays, force})`. iOS dışı no-op. `@bacons/apple-targets` LAZY require (web'de global `expo` yok → top-level import patlar). 60sn debounce.
+- `app/widget-settings.tsx` — in-app ekran: içerik tipleri + "nasıl eklenir" adımları + "Refresh widgets now". Profile → Quick Actions "Widgets" buradan açılır.
+
+**Senkron noktaları:** `home-card.tsx` açılışta + dil/streak/şehir değişince `syncWidget` çağırır.
+
+**Veri sözleşmesi (noorWidgetData JSON):** verseArabic/Translation/Reference, city, prayers[{name,time,epoch}], tomorrowFajr, streakDays, updatedAt.
+
+⚠️ **BUILD ÖNCESİ ZORUNLU:** `app.json` içindeki `@bacons/apple-targets` → `appleTeamId` şu an `REPLACE_WITH_APPLE_TEAM_ID`. Apple Developer Team ID ile değiştir, yoksa imzalama başarısız olur. App Group `group.com.noor.app` Apple Developer portalında + provisioning profile'da tanımlı olmalı.
+
+**Build:** `eas build --profile development --platform ios` (Windows'ta sorun yok, build EAS bulutta/macOS'ta). Sonra dev client'ta widget eklenir.
+
+## Konum bazlı namaz vakitleri (sağlamlaştırıldı)
+
+`lib/prayerTimes.ts` — `usePrayerTimes()` + export `resolveLocation/computeSlots/nextPrayerInfo/countdownStr`.
+- Konum AsyncStorage'a cache'lenir (`noor_last_location`) → açılışta izin beklemeden son şehir gösterilir.
+- `getCurrentPositionAsync` 8sn timeout + `getLastKnownPositionAsync` fallback (asılı kalma fix'i).
+- Fallback sırası: cache → İstanbul. Sunrise vakti de eklendi (6 slot, home-card space-between sığar).
+- `computeSlots/resolveLocation` widget senkronu tarafından da kullanılır (tek kaynak).
+
+---
+
 ## Sonraki adımlar
 
-- **Gerçek namaz vakitleri**: `lib/prayerTimes.ts` + `adhan` + `expo-location` (kurulu, yazılmadı)
 - **Push notifications**: `expo-notifications` kurulu, scheduling yazılmadı
 - **Supabase Auth**: Kullanıcı hesabı, streak sync, premium durum
 - **Duas TR/FR**: Güvenilir kaynak yok, şimdilik EN+ID
 - **`translation.tsx`**: Akışta yok, silinebilir
+- **`settings.tsx` (tabs)**: Hiçbir yere bağlı değil (orphan), silinebilir
 - **Tema galerisi → Supabase**: `fetchThemes()` var, `themes.tsx` hâlâ lokal `data/themes.ts` kullanıyor
+- **special-offer tetikleyici**: `router.push('/special-offer')` hazır, hangi senaryoda çıkacağına karar verilmeli (X gün sonra, crown butonu vb.)
 
 ---
 

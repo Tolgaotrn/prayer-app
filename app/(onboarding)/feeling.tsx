@@ -10,7 +10,6 @@ export default function Feeling() {
       multi={false}
       variant="radio"
       storeKey="feeling"
-      icon={<Ionicons name="heart-outline" size={28} color={colors.gold.primary} />}
       title="What is most present in your heart right now?"
       next="/(onboarding)/quran-relation"
       options={[

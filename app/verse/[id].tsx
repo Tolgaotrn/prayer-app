@@ -5,7 +5,8 @@ import Animated, { FadeIn, FadeInDown, FadeInRight } from 'react-native-reanimat
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { ArabicText } from '../../components/arabic/ArabicText';
-import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { verses } from '../../data/verses';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
@@ -14,6 +15,7 @@ import { Share } from 'react-native';
 export default function VerseDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const tc = useThemeColors();
   const verse = verses.find((v) => v.id === id) ?? verses[0];
   const saved = useAppStore((s) => s.savedVerseIds.includes(verse.id));
   const toggleSave = useAppStore((s) => s.toggleSave);
@@ -64,26 +66,26 @@ export default function VerseDetail() {
     <ScreenContainer>
       <View style={styles.topBar}>
         <Pressable onPress={() => router.back()} hitSlop={10} accessibilityLabel="Back" accessibilityRole="button">
-          <Ionicons name="chevron-back" size={26} color={colors.text.heading} />
+          <Ionicons name="chevron-back" size={26} color={tc.heading} />
         </Pressable>
-        <Text style={styles.surahName}>{verse.surah}</Text>
+        <Text style={[styles.surahName, { color: tc.heading }]}>{verse.surah}</Text>
         <View style={{ width: 26 }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing.xl }}>
         <Animated.View entering={FadeIn.duration(700)} style={styles.arabicWrap}>
-          <ArabicText size={38}>{verse.arabic}</ArabicText>
+          <ArabicText size={38} color={tc.heading}>{verse.arabic}</ArabicText>
         </Animated.View>
 
-        <Animated.Text entering={FadeInDown.delay(250)} style={styles.translation}>
+        <Animated.Text entering={FadeInDown.delay(250)} style={[styles.translation, { color: tc.body }]}>
           "{verse.translation}"
         </Animated.Text>
 
         <View style={styles.metaRow}>
           {meta.map((m, i) => (
-            <Animated.View key={m.label} entering={FadeInDown.delay(350 + i * 80)} style={styles.metaChip}>
-              <Text style={styles.metaLabel}>{m.label}</Text>
-              <Text style={styles.metaValue}>{m.value}</Text>
+            <Animated.View key={m.label} entering={FadeInDown.delay(350 + i * 80)} style={[styles.metaChip, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+              <Text style={[styles.metaLabel, { color: tc.muted }]}>{m.label}</Text>
+              <Text style={[styles.metaValue, { color: tc.heading }]}>{m.value}</Text>
             </Animated.View>
           ))}
         </View>
@@ -91,26 +93,26 @@ export default function VerseDetail() {
         <Animated.View entering={FadeInDown.delay(620)} style={styles.actions}>
           {actions.map((a) => (
             <Pressable key={a.label} style={styles.action} onPress={a.onPress} accessibilityLabel={a.label} accessibilityRole="button">
-              <View style={[styles.actionIcon, a.active && styles.actionActive]}>
-                <Ionicons name={a.icon} size={22} color={a.active ? colors.text.onGold : colors.gold.bright} />
+              <View style={[styles.actionIcon, { backgroundColor: tc.cardBg, borderColor: tc.border }, a.active && { backgroundColor: tc.gold, borderColor: tc.gold }]}>
+                <Ionicons name={a.icon} size={22} color={a.active ? tc.onGold : tc.gold} />
               </View>
-              <Text style={styles.actionLabel}>{a.label}</Text>
+              <Text style={[styles.actionLabel, { color: tc.muted }]}>{a.label}</Text>
             </Pressable>
           ))}
         </Animated.View>
 
         {similar.length > 0 ? (
           <>
-            <Text style={styles.sectionTitle}>Similar Verses</Text>
+            <Text style={[styles.sectionTitle, { color: tc.heading }]}>Similar Verses</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>
               {similar.map((v, i) => (
                 <Animated.View key={v.id} entering={FadeInRight.delay(i * 80)}>
-                  <Pressable style={styles.similarCard} onPress={() => router.push(`/verse/${v.id}`)}>
-                    <ArabicText size={20}>{v.arabic}</ArabicText>
-                    <Text style={styles.similarText} numberOfLines={2}>
+                  <Pressable style={[styles.similarCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]} onPress={() => router.push(`/verse/${v.id}`)}>
+                    <ArabicText size={20} color={tc.heading}>{v.arabic}</ArabicText>
+                    <Text style={[styles.similarText, { color: tc.body }]} numberOfLines={2}>
                       {v.translation}
                     </Text>
-                    <Text style={styles.similarRef}>
+                    <Text style={[styles.similarRef, { color: tc.muted }]}>
                       {v.surah} {v.ayah}
                     </Text>
                   </Pressable>
@@ -126,52 +128,44 @@ export default function VerseDetail() {
 
 const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  surahName: { fontFamily: fonts.serifSemibold, fontSize: 18, color: colors.text.heading },
+  surahName: { fontFamily: fonts.serifSemibold, fontSize: 18 },
   arabicWrap: { marginTop: spacing.xl, paddingHorizontal: spacing.xs },
   translation: {
     fontFamily: fonts.serif,
     fontSize: 18,
-    color: colors.text.body,
     textAlign: 'center',
     marginTop: spacing.lg,
     lineHeight: 27,
   },
   metaRow: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xl },
   metaChip: {
-    backgroundColor: colors.bg.card,
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: colors.hairline,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     minWidth: 72,
     alignItems: 'center',
   },
-  metaLabel: { fontFamily: fonts.sans, fontSize: 11, color: colors.text.muted },
-  metaValue: { fontFamily: fonts.sansSemibold, fontSize: 14, color: colors.text.heading, marginTop: 2 },
+  metaLabel: { fontFamily: fonts.sans, fontSize: 11 },
+  metaValue: { fontFamily: fonts.sansSemibold, fontSize: 14, marginTop: 2 },
   actions: { flexDirection: 'row', justifyContent: 'space-around', marginTop: spacing.xl },
   action: { alignItems: 'center', gap: 6 },
   actionIcon: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: colors.bg.card,
     borderWidth: 1,
-    borderColor: colors.hairline,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  actionActive: { backgroundColor: colors.gold.primary, borderColor: colors.gold.primary },
-  actionLabel: { fontFamily: fonts.sans, fontSize: 12, color: colors.text.muted },
-  sectionTitle: { fontFamily: fonts.sansBold, fontSize: 18, color: colors.text.heading, marginTop: spacing.xl, marginBottom: spacing.md },
+  actionLabel: { fontFamily: fonts.sans, fontSize: 12 },
+  sectionTitle: { fontFamily: fonts.sansBold, fontSize: 18, marginTop: spacing.xl, marginBottom: spacing.md },
   similarCard: {
     width: 220,
     borderRadius: radii.md,
-    backgroundColor: colors.bg.card,
     borderWidth: 1,
-    borderColor: colors.hairline,
     padding: spacing.md,
   },
-  similarText: { fontFamily: fonts.serif, fontSize: 13, color: colors.text.body, marginTop: spacing.sm, lineHeight: 19 },
-  similarRef: { fontFamily: fonts.sans, fontSize: 11, color: colors.text.muted, marginTop: spacing.sm },
+  similarText: { fontFamily: fonts.serif, fontSize: 13, marginTop: spacing.sm, lineHeight: 19 },
+  similarRef: { fontFamily: fonts.sans, fontSize: 11, marginTop: spacing.sm },
 });

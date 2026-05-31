@@ -11,7 +11,6 @@ export default function Intention() {
       step={2}
       multi
       storeKey="intentions"
-      icon={<Ionicons name="sparkles-outline" size={28} color={colors.gold.primary} />}
       title="What is your intention?"
       subtitle="Select all that resonate with you"
       onSkip={() => router.push('/(onboarding)/feeling')}

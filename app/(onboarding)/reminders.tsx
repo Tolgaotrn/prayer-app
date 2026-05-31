@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { NotifPreview } from '../../components/ui/NotifPreview';
 import { Stepper } from '../../components/ui/Stepper';
 import { RangeSlider } from '../../components/ui/RangeSlider';
-import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 
 function toMin(hhmm: string): number {
@@ -21,22 +23,28 @@ function toHHMM(min: number): string {
 
 export default function Reminders() {
   const router = useRouter();
+  const tc = useThemeColors();
   const { reminderCount, reminderStart, reminderEnd, set } = useOnboardingStore();
+
+  const allowAndSave = async () => {
+    try { await Notifications.requestPermissionsAsync(); } catch { /* devam et */ }
+    router.push('/(onboarding)/theme-select');
+  };
 
   return (
     <OnboardingShell
       step={5}
-      title="Set up your daily reminders"
-      subtitle="Gentle nudges to pause and reflect"
+      title="Get words throughout the day"
+      subtitle="Allow notifications to get daily verses"
       ctaLabel="Allow and Save"
-      onContinue={() => router.push('/(onboarding)/notifications')}
+      onContinue={allowAndSave}
     >
       <Animated.View entering={FadeInDown.duration(450)}>
         <NotifPreview time={reminderStart >= '12:00' ? 'now' : '8:00 AM'} />
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.delay(120)} style={styles.card}>
-        <Text style={styles.label}>How many times a day?</Text>
+      <Animated.View entering={FadeInDown.delay(120)} style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+        <Text style={[styles.label, { color: tc.heading }]}>How many times a day?</Text>
         <Stepper
           value={reminderCount}
           min={1}
@@ -45,8 +53,8 @@ export default function Reminders() {
         />
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.delay(200)} style={styles.card}>
-        <Text style={styles.label}>Active hours</Text>
+      <Animated.View entering={FadeInDown.delay(200)} style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+        <Text style={[styles.label, { color: tc.heading }]}>Active hours</Text>
         <RangeSlider
           startMin={toMin(reminderStart)}
           endMin={toMin(reminderEnd)}
@@ -62,13 +70,11 @@ export default function Reminders() {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.bg.card,
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: colors.hairline,
     padding: spacing.md,
     marginTop: spacing.md,
     gap: spacing.md,
   },
-  label: { fontFamily: fonts.sansSemibold, fontSize: 15, color: colors.text.heading },
+  label: { fontFamily: fonts.sansSemibold, fontSize: 15 },
 });

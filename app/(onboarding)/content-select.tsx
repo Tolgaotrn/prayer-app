@@ -25,7 +25,6 @@ export default function ContentSelect() {
   return (
     <OnboardingShell
       step={5}
-      icon={<Ionicons name="grid-outline" size={28} color={colors.gold.primary} />}
       title="What would you like to see every day?"
       subtitle="Pick everything you'd love in your feed"
       ctaDisabled={selected.length === 0}

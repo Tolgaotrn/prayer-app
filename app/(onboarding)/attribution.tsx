@@ -12,10 +12,9 @@ export default function Attribution() {
       multi={false}
       variant="radio"
       storeKey="attribution"
-      icon={<Ionicons name="megaphone-outline" size={28} color={colors.gold.primary} />}
       title="How did you hear about us?"
-      onSkip={() => router.push('/(onboarding)/paywall')}
-      next="/(onboarding)/paywall"
+      onSkip={() => router.push('/(onboarding)/name')}
+      next="/(onboarding)/name"
       options={[
         'App Store',
         'Instagram',

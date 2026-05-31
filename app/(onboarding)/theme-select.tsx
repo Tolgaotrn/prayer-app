@@ -18,7 +18,7 @@ export default function ThemeSelect() {
       step={5}
       title="Select a theme to begin"
       subtitle="You can change this anytime in settings"
-      onContinue={() => router.push('/(onboarding)/attribution')}
+      onContinue={() => router.push('/(onboarding)/paywall')}
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 8 }}>
         <View style={styles.grid}>

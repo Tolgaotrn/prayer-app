@@ -14,7 +14,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeIn, FadeInDown, SlideInUp, SlideOutUp } from 'react-native-reanimated';
+import Animated, {
+  FadeIn, FadeInDown, SlideInUp, SlideOutUp,
+  Easing, useSharedValue, useAnimatedStyle, withTiming, withRepeat, withSequence, withDelay, runOnJS,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -26,11 +30,13 @@ import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
 import { fetchFeedItems, FeedItem, resolveLang } from '../../lib/contentDb';
+import { useT } from '../../lib/i18n';
 
 const { height: SCREEN_H, width: SCREEN_W } = Dimensions.get('window');
 
 export default function Feed() {
   const router  = useRouter();
+  const t       = useT();
   const insets  = useSafeAreaInsets();
   const themeId       = useOnboardingStore((s) => s.selectedTheme);
   const rawLang       = useOnboardingStore((s) => s.language);
@@ -74,7 +80,6 @@ export default function Feed() {
 
   const activeItem = items[activeIndex] ?? items[0];
   const isSaved    = activeItem ? savedIds.includes(activeItem.id) : false;
-  const likedToday = Math.min(savedIds.length, 5);
 
   const onViewable = React.useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const first = viewableItems[0];
@@ -84,6 +89,27 @@ export default function Feed() {
     }
   }).current;
 
+  // Belirli bir item'ı kaydet/kaldır (hem Like butonu hem çift-tık kullanır)
+  const likeItem = React.useCallback((it: FeedItem) => {
+    toggleSave({
+      id: it.id,
+      arabic: it.arabic,
+      translation: it.translation,
+      surah: it.reference.split(' · ')[0],
+      ayah: parseInt(it.reference.split(' ')[it.reference.split(' ').length - 1]) || 0,
+      juz: 0,
+      origin: 'Makkah',
+      category: 'peace',
+      tags: it.topics,
+    });
+  }, [toggleSave]);
+
+  // Çift tık → her zaman KAYDET (kaldırma değil) + kalp animasyonu
+  const onDoubleLike = React.useCallback((it: FeedItem) => {
+    haptic.medium();
+    if (!savedIds.includes(it.id)) likeItem(it);
+  }, [savedIds, likeItem]);
+
   const renderItem = React.useCallback(
     ({ item, index }: { item: FeedItem; index: number }) => (
       <FeedSlide
@@ -92,9 +118,10 @@ export default function Feed() {
         image={theme.image}
         gradient={theme.gradient}
         showArabic={showArabic}
+        onDoubleLike={onDoubleLike}
       />
     ),
-    [activeIndex, theme.image, theme.gradient, showArabic],
+    [activeIndex, theme.image, theme.gradient, showArabic, onDoubleLike],
   );
 
   const onShare = () => {
@@ -108,18 +135,7 @@ export default function Feed() {
   const onLike = () => {
     if (!activeItem) return;
     haptic.medium();
-    // FeedItem'ı Verse formatına çevirerek store'a kaydet
-    toggleSave({
-      id: activeItem.id,
-      arabic: activeItem.arabic,
-      translation: activeItem.translation,
-      surah: activeItem.reference.split(' · ')[0],
-      ayah: parseInt(activeItem.reference.split(' ')[activeItem.reference.split(' ').length - 1]) || 0,
-      juz: 0,
-      origin: 'Makkah',
-      category: 'peace',
-      tags: activeItem.topics,
-    });
+    likeItem(activeItem);
   };
 
   if (loading) {
@@ -136,18 +152,18 @@ export default function Feed() {
       <View style={[styles.root, { justifyContent: 'center', alignItems: 'center', padding: spacing.xl }]}>
         <StatusBar style="light" />
         <Ionicons name="heart-outline" size={56} color={colors.gold.primary} />
-        <Text style={styles.emptyTitle}>No saved verses yet</Text>
+        <Text style={styles.emptyTitle}>{t('feed.noSavedTitle')}</Text>
         <Text style={styles.emptyBody}>
-          Tap the heart on any verse to save it here. Or browse other topics to fill your feed.
+          {t('feed.noSavedBody')}
         </Text>
         <Pressable
           style={styles.emptyBtn}
           onPress={() => { haptic.light(); router.push('/explore-topics'); }}
           accessibilityRole="button"
-          accessibilityLabel="Browse topics"
+          accessibilityLabel={t('feed.browseTopics')}
         >
           <Ionicons name="grid-outline" size={18} color={colors.bg.midnight} />
-          <Text style={styles.emptyBtnText}>Browse topics</Text>
+          <Text style={styles.emptyBtnText}>{t('feed.browseTopics')}</Text>
         </Pressable>
       </View>
     );
@@ -170,31 +186,27 @@ export default function Feed() {
 
       {/* ── TOP BAR ── */}
       <View style={[styles.topBar, { top: insets.top + 6 }]} pointerEvents="box-none">
-        <CircleButton icon="home" onPress={() => { haptic.light(); router.push('/(tabs)/home-card'); }} label="Home" />
-        <View style={styles.likePill}>
-          <Ionicons name="heart" size={15} color={colors.gold.bright} />
-          <Text style={styles.likePillText}>{likedToday}/5</Text>
+        <CircleButton icon="home" onPress={() => { haptic.light(); router.push('/(tabs)/home-card'); }} label={t('feed.home')} />
+        <View style={styles.topRight}>
+          <CircleButton icon="notifications-outline" onPress={() => { haptic.light(); router.push('/notifications-settings'); }} label={t('feed.notifications')} />
+          <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }} label={t('feed.premium')} gold />
         </View>
-        <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }} label="Premium" gold />
       </View>
 
       {/* ── ACTION ROW ── */}
       <View style={[styles.actionsWrap, { bottom: insets.bottom + 96 }]} pointerEvents="box-none">
-        <View style={styles.swipeHint}>
-          <Ionicons name="chevron-up" size={20} color="rgba(245,240,225,0.85)" />
-          <Text style={styles.swipeText}>Swipe up for next</Text>
-        </View>
+        <SwipeHint label={t('feed.swipeUp')} />
         <View style={styles.actions}>
-          <ActionButton icon="arrow-redo-outline" label="Share" onPress={onShare} />
+          <ActionButton icon="arrow-redo-outline" label={t('feed.share')} onPress={onShare} />
           <ActionButton
             icon={isSaved ? 'heart' : 'heart-outline'}
-            label="Like"
+            label={t('feed.like')}
             active={isSaved}
             onPress={onLike}
           />
           <ActionButton
             icon="color-palette-outline"
-            label="Themes"
+            label={t('feed.themes')}
             onPress={() => { haptic.light(); router.push('/(tabs)/themes'); }}
           />
         </View>
@@ -215,7 +227,7 @@ export default function Feed() {
           exiting={SlideOutUp.duration(400)}
           style={[styles.banner, { top: insets.top + 54 }]}
         >
-          <StreakWidget streakDays={streakDays} banner title="New streak started" />
+          <StreakWidget streakDays={streakDays} title="New streak started" />
         </Animated.View>
       )}
     </View>
@@ -232,21 +244,73 @@ function arabicFontSize(text: string): number {
   return 17;
 }
 
+/* ── Zıplayan "Swipe up" ipucu ── */
+function SwipeHint({ label }: { label: string }) {
+  const ty = useSharedValue(0);
+  React.useEffect(() => {
+    ty.value = withRepeat(
+      withSequence(
+        withTiming(-8, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
+      false,
+    );
+  }, [ty]);
+  const style = useAnimatedStyle(() => ({ transform: [{ translateY: ty.value }] }));
+  return (
+    <View style={styles.swipeHint}>
+      <Animated.View style={style}>
+        <Ionicons name="chevron-up" size={20} color="rgba(245,240,225,0.9)" />
+      </Animated.View>
+      <Text style={styles.swipeText}>{label}</Text>
+    </View>
+  );
+}
+
 /* ── Feed slide ─────────────────────────────────────────────── */
 function FeedSlide({
-  item, active, image, gradient, showArabic,
+  item, active, image, gradient, showArabic, onDoubleLike,
 }: {
   item: FeedItem;
   active: boolean;
   image: { uri: string };
   gradient: readonly [string, string, ...string[]];
   showArabic: boolean;
+  onDoubleLike: (item: FeedItem) => void;
 }) {
   const arSize = arabicFontSize(item.arabic);
   // Arapça modu: SADECE Arapça göster (quote'larda Arapça yoksa çeviriye düş)
   const renderArabic = showArabic && item.arabic.trim().length > 0;
 
+  // Çift tık kalp animasyonu
+  const heartScale = useSharedValue(0);
+  const heartOpacity = useSharedValue(0);
+  const burst = () => {
+    heartOpacity.value = withSequence(
+      withTiming(1, { duration: 120 }),
+      withDelay(350, withTiming(0, { duration: 350 })),
+    );
+    heartScale.value = withSequence(
+      withTiming(1.15, { duration: 200, easing: Easing.out(Easing.back(2)) }),
+      withDelay(250, withTiming(0.9, { duration: 350 })),
+    );
+  };
+  const heartStyle = useAnimatedStyle(() => ({
+    opacity: heartOpacity.value,
+    transform: [{ scale: heartScale.value }],
+  }));
+
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .maxDuration(280)
+    .onEnd(() => {
+      runOnJS(onDoubleLike)(item);
+      runOnJS(burst)();
+    });
+
   return (
+    <GestureDetector gesture={doubleTap}>
     <View style={styles.slide}>
       <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />
       <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
@@ -255,6 +319,12 @@ function FeedSlide({
         locations={[0, 0.35, 0.62, 1]}
         style={StyleSheet.absoluteFill}
       />
+
+      {/* Çift tık kalbi */}
+      <Animated.View pointerEvents="none" style={[styles.heartBurst, heartStyle]}>
+        <Ionicons name="heart" size={130} color="rgba(232,199,102,0.95)" />
+      </Animated.View>
+
       <View style={styles.slideContent}>
 
         {/* Arapça modu → sadece Arapça */}
@@ -304,6 +374,7 @@ function FeedSlide({
         </View>
       </View>
     </View>
+    </GestureDetector>
   );
 }
 
@@ -380,6 +451,13 @@ const styles = StyleSheet.create({
   },
   refLine: { width: 28, height: 1, backgroundColor: 'rgba(212,175,55,0.5)' },
 
+  heartBurst: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '38%',
+    zIndex: 5,
+  },
+
   emptyTitle: {
     fontFamily: fonts.serifBold, fontSize: 22, color: colors.text.heading,
     textAlign: 'center', marginTop: spacing.lg,
@@ -400,12 +478,7 @@ const styles = StyleSheet.create({
     position: 'absolute', left: spacing.lg, right: spacing.lg,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-  likePill: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(255,255,255,0.14)',
-    borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 7,
-  },
-  likePillText: { fontFamily: fonts.sansSemibold, fontSize: 13, color: colors.white },
+  topRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
 
   actionsWrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center', gap: spacing.md },
   swipeHint:   { alignItems: 'center' },

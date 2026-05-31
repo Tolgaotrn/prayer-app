@@ -46,7 +46,10 @@
       "Bash(node tools/supabase-import.mjs --only=verses,hadiths,duas,quotes)",
       "Bash(node tools/import-hadith.mjs --limit=500)",
       "Bash(node -e \"console.log\\('ok'\\)\")",
-      "Bash(grep -n \"verses 451\\\\|verts 451\\\\|hadiths 177\\\\|MAX_ARABIC=500\\\\|filtreli:\" CLAUDE.md)"
+      "Bash(grep -n \"verses 451\\\\|verts 451\\\\|hadiths 177\\\\|MAX_ARABIC=500\\\\|filtreli:\" CLAUDE.md)",
+      "Bash(node -e \"console.log\\('adhan:', require\\('./package.json'\\).dependencies.adhan\\); console.log\\('expo-location:', require\\('./package.json'\\).dependencies['expo-location']\\);\")",
+      "Bash(node -e \"const p=require\\('@bacons/apple-targets/package.json'\\);console.log\\(p.version\\);console.log\\(Object.keys\\(require\\('@bacons/apple-targets'\\)\\)\\)\")",
+      "Bash(node -e \"setTimeout\\(\\(\\)=>console.log\\('waited'\\),35000\\)\")"
     ]
   }
 }

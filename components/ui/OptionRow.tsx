@@ -6,7 +6,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { haptic } from '../../lib/haptics';
 
 interface OptionRowProps {
@@ -20,10 +21,10 @@ interface OptionRowProps {
 
 /** Multi/single-select option row with gold border + spring on selection. */
 export function OptionRow({ label, sublabel, selected, onPress, variant = 'check' }: OptionRowProps) {
+  const tc = useThemeColors();
   const animStyle = useAnimatedStyle(() => ({
-    borderColor: withTiming(selected ? colors.gold.primary : colors.hairline),
-    backgroundColor: withTiming(selected ? colors.bg.raised : colors.bg.card),
-    transform: [{ scale: withSpring(selected ? 1.015 : 1, { damping: 16, stiffness: 200 }) }],
+    borderColor: withTiming(selected ? tc.gold : tc.border),
+    backgroundColor: withTiming(selected ? tc.raisedBg : tc.cardBg),
   }));
 
   return (
@@ -40,19 +41,19 @@ export function OptionRow({ label, sublabel, selected, onPress, variant = 'check
         style={[styles.row, variant === 'center' && styles.center, animStyle]}
       >
         <View style={variant === 'center' ? styles.centerText : styles.textWrap}>
-          <Text style={[styles.label, variant === 'center' && { textAlign: 'center' }]}>
+          <Text style={[styles.label, { color: tc.heading }, variant === 'center' && { textAlign: 'center' }]}>
             {label}
           </Text>
-          {sublabel ? <Text style={styles.sublabel}>{sublabel}</Text> : null}
+          {sublabel ? <Text style={[styles.sublabel, { color: tc.muted }]}>{sublabel}</Text> : null}
         </View>
 
         {variant !== 'center' ? (
-          <Indicator selected={selected} radio={variant === 'radio'} />
+          <Indicator selected={selected} radio={variant === 'radio'} tc={tc} />
         ) : selected ? (
           <Ionicons
             name="checkmark"
             size={18}
-            color={colors.gold.primary}
+            color={tc.gold}
             style={styles.centerCheck}
           />
         ) : null}
@@ -61,16 +62,16 @@ export function OptionRow({ label, sublabel, selected, onPress, variant = 'check
   );
 }
 
-function Indicator({ selected, radio }: { selected: boolean; radio: boolean }) {
+function Indicator({ selected, radio, tc }: { selected: boolean; radio: boolean; tc: ReturnType<typeof useThemeColors> }) {
   const style = useAnimatedStyle(() => ({
-    borderColor: withTiming(selected ? colors.gold.primary : colors.text.muted),
-    backgroundColor: withTiming(selected ? colors.gold.primary : 'transparent'),
+    borderColor: withTiming(selected ? tc.gold : tc.muted),
+    backgroundColor: withTiming(selected ? tc.gold : 'transparent'),
     transform: [{ scale: withSpring(selected ? 1 : 0.85) }],
   }));
   return (
     <Animated.View style={[styles.box, radio && styles.radio, style]}>
       {selected && (
-        <Ionicons name="checkmark" size={15} color={colors.text.onGold} />
+        <Ionicons name="checkmark" size={15} color={tc.onGold} />
       )}
     </Animated.View>
   );
@@ -95,12 +96,10 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: fonts.sansMedium,
     fontSize: 16,
-    color: colors.text.heading,
   },
   sublabel: {
     fontFamily: fonts.sans,
     fontSize: 13,
-    color: colors.text.muted,
     marginTop: 3,
   },
   box: {

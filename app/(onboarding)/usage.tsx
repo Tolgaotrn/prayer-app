@@ -9,7 +9,6 @@ export default function Usage() {
       step={5}
       multi
       storeKey="usage"
-      icon={<Ionicons name="time-outline" size={28} color={colors.gold.primary} />}
       title="How do you plan to use this app?"
       next="/(onboarding)/home-pref"
       options={[

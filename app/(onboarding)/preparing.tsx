@@ -5,7 +5,8 @@ import { useRouter } from 'expo-router';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Crescent } from '../../components/anim/Crescent';
 import { SparkleField } from '../../components/anim/Sparkles';
-import { colors, fonts, spacing } from '../../constants/theme';
+import { fonts, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,6 +18,7 @@ const STAGES = [
 
 export default function Preparing() {
   const router = useRouter();
+  const tc = useThemeColors();
   const [stage, setStage] = React.useState(0);
 
   React.useEffect(() => {
@@ -40,10 +42,10 @@ export default function Preparing() {
         <Animated.View entering={FadeIn.duration(600)}>
           <Crescent size={130} />
         </Animated.View>
-        <Animated.Text entering={FadeInDown.delay(300)} style={styles.title}>
+        <Animated.Text entering={FadeInDown.delay(300)} style={[styles.title, { color: tc.heading }]}>
           Let us prepare a spiritual flow just for you
         </Animated.Text>
-        <Animated.Text key={stage} entering={FadeIn} style={styles.stage}>
+        <Animated.Text key={stage} entering={FadeIn} style={[styles.stage, { color: tc.gold }]}>
           {STAGES[stage]}
         </Animated.Text>
       </View>
@@ -56,7 +58,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.serifBold,
     fontSize: 28,
-    color: colors.text.heading,
     textAlign: 'center',
     marginTop: spacing.xl,
     lineHeight: 36,
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
   stage: {
     fontFamily: fonts.sans,
     fontSize: 14,
-    color: colors.gold.bright,
     textAlign: 'center',
     marginTop: spacing.lg,
   },

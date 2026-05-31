@@ -73,6 +73,11 @@ export default function RootLayout() {
             <Stack.Screen name="saved-verses" />
             <Stack.Screen name="reminders-settings" />
             <Stack.Screen name="language-settings" />
+            <Stack.Screen name="widget-settings" />
+            <Stack.Screen name="qibla" />
+            <Stack.Screen name="dhikr" />
+            <Stack.Screen name="notifications-settings" />
+            <Stack.Screen name="prayer-times" />
             <Stack.Screen name="explore-topics" options={{ animation: 'slide_from_bottom' }} />
           </Stack>
         </View>

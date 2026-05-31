@@ -35,7 +35,7 @@ export const useAppStore = create<AppState & AppActions>()(
       streakDays: 1,
       lastOpenDate: null,
       isPremium: false,
-      darkMode: true,
+      darkMode: false,
       currentVerseIndex: 0,
       followedTopics: ['General'],
 

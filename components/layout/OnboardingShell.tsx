@@ -5,7 +5,8 @@ import { useRouter } from 'expo-router';
 import { ScreenContainer } from './ScreenContainer';
 import { ProgressDots } from '../ui/ProgressDots';
 import { GoldButton } from '../ui/GoldButton';
-import { colors, fonts, spacing } from '../../constants/theme';
+import { fonts, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { haptic } from '../../lib/haptics';
 
 interface OnboardingShellProps {
@@ -40,6 +41,7 @@ export function OnboardingShell({
   icon,
 }: OnboardingShellProps) {
   const router = useRouter();
+  const tc = useThemeColors();
 
   return (
     <ScreenContainer>
@@ -58,7 +60,7 @@ export function OnboardingShell({
             accessibilityLabel="Skip"
             style={styles.skip}
           >
-            <Text style={styles.skipText}>Skip</Text>
+            <Text style={[styles.skipText, { color: tc.muted }]}>Skip</Text>
           </Pressable>
         ) : null}
       </View>
@@ -70,12 +72,12 @@ export function OnboardingShell({
           </Animated.View>
         ) : null}
         {title ? (
-          <Animated.Text entering={FadeInDown.delay(80).duration(500)} style={styles.title}>
+          <Animated.Text entering={FadeInDown.delay(80).duration(500)} style={[styles.title, { color: tc.heading }]}>
             {title}
           </Animated.Text>
         ) : null}
         {subtitle ? (
-          <Animated.Text entering={FadeInDown.delay(160).duration(500)} style={styles.subtitle}>
+          <Animated.Text entering={FadeInDown.delay(160).duration(500)} style={[styles.subtitle, { color: tc.muted }]}>
             {subtitle}
           </Animated.Text>
         ) : null}
@@ -108,20 +110,18 @@ const styles = StyleSheet.create({
   },
   headerSide: { flex: 1, alignItems: 'center' },
   skip: { position: 'absolute', right: 0, padding: 8 },
-  skipText: { color: colors.text.muted, fontFamily: fonts.sansMedium, fontSize: 15 },
+  skipText: { fontFamily: fonts.sansMedium, fontSize: 15 },
   body: { flex: 1, marginTop: spacing.xl },
   icon: { alignItems: 'center', marginBottom: spacing.lg },
   title: {
     fontFamily: fonts.serifBold,
     fontSize: 30,
-    color: colors.text.heading,
     textAlign: 'center',
     lineHeight: 38,
   },
   subtitle: {
     fontFamily: fonts.sans,
     fontSize: 15,
-    color: colors.text.muted,
     textAlign: 'center',
     marginTop: spacing.sm,
     lineHeight: 22,

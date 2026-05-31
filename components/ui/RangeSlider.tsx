@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import { colors, fonts, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { haptic } from '../../lib/haptics';
 
 interface RangeSliderProps {
@@ -29,6 +30,7 @@ function fmt(min: number): string {
 
 /** Dual-handle time-range slider with spring handles and snapping. */
 export function RangeSlider({ startMin, endMin, onChange }: RangeSliderProps) {
+  const tc = useThemeColors();
   const [width, setWidth] = React.useState(0);
   const track = Math.max(0, width - HANDLE);
 
@@ -81,23 +83,23 @@ export function RangeSlider({ startMin, endMin, onChange }: RangeSliderProps) {
     <View>
       <View style={styles.labels}>
         <View>
-          <Text style={styles.cap}>Start at</Text>
-          <Text style={styles.time}>{fmt(startMin)}</Text>
+          <Text style={[styles.cap, { color: tc.muted }]}>Start at</Text>
+          <Text style={[styles.time, { color: tc.heading }]}>{fmt(startMin)}</Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <Text style={styles.cap}>End at</Text>
-          <Text style={styles.time}>{fmt(endMin)}</Text>
+          <Text style={[styles.cap, { color: tc.muted }]}>End at</Text>
+          <Text style={[styles.time, { color: tc.heading }]}>{fmt(endMin)}</Text>
         </View>
       </View>
 
       <View style={styles.trackWrap} onLayout={onLayout}>
-        <View style={styles.trackBg} />
-        <Animated.View style={[styles.fill, fillStyle]} />
+        <View style={[styles.trackBg, { backgroundColor: tc.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(120,100,70,0.18)' }]} />
+        <Animated.View style={[styles.fill, { backgroundColor: tc.gold }, fillStyle]} />
         <GestureDetector gesture={startGesture}>
-          <Animated.View style={[styles.handle, startStyle]} />
+          <Animated.View style={[styles.handle, { backgroundColor: tc.gold, borderColor: tc.screenBg }, startStyle]} />
         </GestureDetector>
         <GestureDetector gesture={endGesture}>
-          <Animated.View style={[styles.handle, endStyle]} />
+          <Animated.View style={[styles.handle, { backgroundColor: tc.gold, borderColor: tc.screenBg }, endStyle]} />
         </GestureDetector>
       </View>
     </View>
@@ -110,28 +112,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: spacing.md,
   },
-  cap: { fontFamily: fonts.sans, fontSize: 12, color: colors.text.muted },
-  time: { fontFamily: fonts.sansSemibold, fontSize: 16, color: colors.text.heading, marginTop: 2 },
+  cap: { fontFamily: fonts.sans, fontSize: 12 },
+  time: { fontFamily: fonts.sansSemibold, fontSize: 16, marginTop: 2 },
   trackWrap: { height: HANDLE, justifyContent: 'center' },
   trackBg: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   fill: {
     position: 'absolute',
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.gold.primary,
   },
   handle: {
     position: 'absolute',
     width: HANDLE,
     height: HANDLE,
     borderRadius: HANDLE / 2,
-    backgroundColor: colors.gold.bright,
     borderWidth: 3,
-    borderColor: colors.bg.midnight,
   },
 });
 

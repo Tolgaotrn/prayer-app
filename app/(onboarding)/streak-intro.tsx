@@ -8,11 +8,13 @@ import { StreakWidget } from '../../components/ui/StreakWidget';
 import { Crescent } from '../../components/anim/Crescent';
 import { SparkleField } from '../../components/anim/Sparkles';
 import { colors, fonts, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 
 const { width } = Dimensions.get('window');
 
 export default function StreakIntro() {
   const router = useRouter();
+  const tc = useThemeColors();
   return (
     <ScreenContainer
       backgroundImage={require('../../assets/themes/midnight.jpg')}
@@ -27,7 +29,7 @@ export default function StreakIntro() {
           </View>
         </Animated.View>
 
-        <Animated.Text entering={FadeInDown.delay(300)} style={styles.title}>
+        <Animated.Text entering={FadeInDown.delay(300)} style={[styles.title, { color: tc.heading }]}>
           Remain close to Allah with a consistent routine
         </Animated.Text>
 
@@ -35,13 +37,13 @@ export default function StreakIntro() {
           <StreakWidget streakDays={1} title="Day 1 complete" />
         </Animated.View>
 
-        <Animated.Text entering={FadeIn.delay(560)} style={styles.caption}>
+        <Animated.Text entering={FadeIn.delay(560)} style={[styles.caption, { color: tc.muted }]}>
           Every streak starts with Day 1
         </Animated.Text>
       </View>
 
       <View style={styles.footer}>
-        <GoldButton label="Continue" onPress={() => router.push('/(onboarding)/theme-select')} />
+        <GoldButton label="Continue" onPress={() => router.push('/(onboarding)/reminders')} />
       </View>
     </ScreenContainer>
   );
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.serifBold,
     fontSize: 26,
-    color: colors.text.heading,
     textAlign: 'center',
     marginTop: spacing.xl,
     lineHeight: 34,
@@ -77,7 +78,6 @@ const styles = StyleSheet.create({
   caption: {
     fontFamily: fonts.sans,
     fontSize: 14,
-    color: colors.text.muted,
     marginTop: spacing.lg,
   },
   footer: { paddingBottom: spacing.sm },

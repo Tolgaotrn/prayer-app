@@ -10,7 +10,6 @@ export default function QuranRelation() {
       multi={false}
       variant="radio"
       storeKey="quranRelation"
-      icon={<Ionicons name="book-outline" size={28} color={colors.gold.primary} />}
       title="What is your relationship with the Quran right now?"
       next="/(onboarding)/content-select"
       options={[

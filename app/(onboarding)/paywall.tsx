@@ -1,19 +1,13 @@
 import React, { useEffect } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  FadeInDown,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import { Image } from 'expo-image';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { GoldButton } from '../../components/ui/GoldButton';
-import { Star } from '../../components/anim/Sparkles';
-import { colors, fonts, radii, shadow, spacing } from '../../constants/theme';
+import { fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
@@ -25,35 +19,35 @@ import {
 } from '../../lib/revenueCat';
 
 const FEATURES = [
-  'All widget themes & sizes',
-  'Bilingual Arabic + English',
-  'Unlimited daily reminders',
-  'All content categories',
-  'Live Islamic wallpapers',
-  'Premium calligraphy themes',
+  '5000+ verses, hadiths & duas',
+  'Every premium theme & background',
+  'Choose your reading mode',
+  'Fresh lock-screen widgets weekly',
+  'A completely ad-free experience',
+];
+
+type Plan = 'annual' | 'monthly' | 'weekly';
+
+const PLANS: { id: Plan; title: string; sub: string; price: string; note: string; badge?: string; old?: string; trial?: string }[] = [
+  { id: 'annual',  title: 'Annual Premium',  sub: '12 months', price: '$2.50/mo', note: 'Billed annually', badge: '-65% OFF', old: '$83.88', trial: '7 days free trial' },
+  { id: 'monthly', title: 'Monthly Premium', sub: '30 days',   price: '$6.99/mo', note: '' },
+  { id: 'weekly',  title: 'Weekly Premium',  sub: '7 days',    price: '$3.99/wk', note: '' },
 ];
 
 export default function Paywall() {
   const router = useRouter();
+  const tc = useThemeColors();
   const complete = useOnboardingStore((s) => s.complete);
   const setPremium = useAppStore((s) => s.setPremium);
-  const [plan, setPlan] = React.useState<'weekly' | 'yearly'>('yearly');
+  const [plan, setPlan] = React.useState<Plan>('annual');
   const [packages, setPackages] = React.useState<PurchasesPackage[]>([]);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
-
-  const pulse = useSharedValue(0);
-  useEffect(() => {
-    pulse.value = withRepeat(withTiming(1, { duration: 1600, easing: Easing.inOut(Easing.ease) }), -1, true);
-  }, [pulse]);
 
   useEffect(() => {
     getRevenueCatPackages()
       .then(setPackages)
       .catch((error) => console.warn('RevenueCat offerings failed', error));
   }, []);
-  const yearlyPulse = useAnimatedStyle(() => ({
-    transform: [{ scale: 1 + pulse.value * 0.02 }],
-  }));
 
   const finish = (premium: boolean) => {
     setPremium(premium);
@@ -62,32 +56,24 @@ export default function Paywall() {
   };
 
   const selectedPackage = React.useMemo(() => {
-    const preferredType = plan === 'yearly' ? 'ANNUAL' : 'WEEKLY';
+    const map: Record<Plan, string> = { annual: 'ANNUAL', monthly: 'MONTHLY', weekly: 'WEEKLY' };
+    const t = map[plan];
     return (
-      packages.find((pack) => pack.packageType === preferredType) ??
-      packages.find((pack) => pack.identifier.toLowerCase().includes(plan)) ??
-      packages[plan === 'yearly' ? 1 : 0] ??
+      packages.find((p) => p.packageType === t) ??
+      packages.find((p) => p.identifier.toLowerCase().includes(plan)) ??
       packages[0]
     );
   }, [packages, plan]);
 
   const startTrial = async () => {
     haptic.medium();
-
-    if (!selectedPackage) {
-      finish(true);
-      return;
-    }
-
+    if (!selectedPackage) { finish(true); return; }
     try {
       setIsPurchasing(true);
-      const isPremium = await purchaseRevenueCatPackage(selectedPackage);
-      finish(isPremium);
+      const ok = await purchaseRevenueCatPackage(selectedPackage);
+      finish(ok);
     } catch (error: any) {
-      if (!error?.userCancelled) {
-        Alert.alert('Purchase failed', 'Please try again in a moment.');
-        console.warn('RevenueCat purchase failed', error);
-      }
+      if (!error?.userCancelled) Alert.alert('Purchase failed', 'Please try again in a moment.');
     } finally {
       setIsPurchasing(false);
     }
@@ -95,83 +81,56 @@ export default function Paywall() {
 
   const restorePurchase = async () => {
     haptic.medium();
-
     try {
-      setIsPurchasing(true);
-      const isPremium = await restoreRevenueCatPurchases();
-      setPremium(isPremium);
-      Alert.alert(isPremium ? 'Restored' : 'No purchase found');
-    } catch (error) {
+      const ok = await restoreRevenueCatPurchases();
+      setPremium(ok);
+      Alert.alert(ok ? 'Restored' : 'No purchase found');
+    } catch {
       Alert.alert('Restore failed', 'Please try again in a moment.');
-      console.warn('RevenueCat restore failed', error);
-    } finally {
-      setIsPurchasing(false);
     }
   };
 
   return (
-    <ScreenContainer
-      gradient={[colors.bg.premium, colors.bg.deep, colors.bg.premium]}
-      backgroundImage={require('../../assets/themes/midnight.jpg')}
-      imageOpacity={0.4}
-    >
+    <ScreenContainer>
       <Pressable
         accessibilityLabel="Close"
         accessibilityRole="button"
         hitSlop={12}
         style={styles.close}
-        onPress={() => {
-          haptic.light();
-          finish(false);
-        }}
+        onPress={() => { haptic.light(); finish(false); }}
       >
-        <Ionicons name="close" size={24} color={colors.text.muted} />
+        <Ionicons name="close" size={24} color={tc.muted} />
       </Pressable>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <Animated.View entering={FadeInDown.duration(500)} style={styles.sparkle}>
-          <Star size={30} color={colors.gold.bright} />
-        </Animated.View>
-        <Animated.Text entering={FadeInDown.delay(80)} style={styles.title}>
-          Unlock Your Full{'\n'}Spiritual Journey
-        </Animated.Text>
-        <Animated.View entering={FadeInDown.delay(160)} style={styles.trialBadge}>
-          <Text style={styles.trialText}>3-Day Free Trial — No Charge Today ✦</Text>
-        </Animated.View>
-
-        <View style={styles.plans}>
-          <Animated.View entering={FadeInDown.delay(220)} style={styles.planWrap}>
-            <PlanCard
-              title="Weekly"
-              price="$4.99"
-              period="/week"
-              selected={plan === 'weekly'}
-              onPress={() => {
-                haptic.select();
-                setPlan('weekly');
-              }}
-            />
-          </Animated.View>
-          <Animated.View entering={FadeInDown.delay(280)} style={[styles.planWrap, yearlyPulse]}>
-            <PlanCard
-              title="Yearly"
-              price="$29.99"
-              period="/year · Save 88%"
-              best
-              selected={plan === 'yearly'}
-              onPress={() => {
-                haptic.select();
-                setPlan('yearly');
-              }}
-            />
-          </Animated.View>
+        <View style={styles.brandRow}>
+          <Image source={require('../../assets/icons/icon.png')} style={styles.brand} contentFit="cover" />
         </View>
+
+        <Animated.Text entering={FadeInDown.delay(80)} style={[styles.title, { color: tc.heading }]}>
+          Unlock the complete{'\n'}Noor experience
+        </Animated.Text>
 
         <View style={styles.features}>
           {FEATURES.map((f, i) => (
-            <Animated.View key={f} entering={FadeInDown.delay(340 + i * 70)} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.gold.primary} />
-              <Text style={styles.featureText}>{f}</Text>
+            <Animated.View key={f} entering={FadeInDown.delay(140 + i * 60)} style={styles.featureRow}>
+              <View style={[styles.fCheck, { backgroundColor: tc.gold }]}>
+                <Ionicons name="checkmark" size={14} color={tc.onGold} />
+              </View>
+              <Text style={[styles.featureText, { color: tc.body }]}>{f}</Text>
+            </Animated.View>
+          ))}
+        </View>
+
+        <View style={styles.plans}>
+          {PLANS.map((p, i) => (
+            <Animated.View key={p.id} entering={FadeInDown.delay(420 + i * 70)}>
+              <PlanCard
+                data={p}
+                selected={plan === p.id}
+                tc={tc}
+                onPress={() => { haptic.select(); setPlan(p.id); }}
+              />
             </Animated.View>
           ))}
         </View>
@@ -179,17 +138,17 @@ export default function Paywall() {
 
       <View style={styles.footer}>
         <GoldButton
-          label={isPurchasing ? 'Please wait...' : 'Start Free Trial — 3 Days Free'}
+          label={isPurchasing ? 'Please wait…' : 'Start my free trial'}
           onPress={startTrial}
         />
-        <Text style={styles.fine}>
-          {plan === 'yearly' ? 'Then $29.99/year' : 'Then $4.99/week'} · Cancel anytime
-        </Text>
+        <View style={styles.assure}>
+          <Ionicons name="checkmark" size={15} color={tc.gold} />
+          <Text style={[styles.assureText, { color: tc.gold }]}>You will not be charged today</Text>
+        </View>
         <View style={styles.legalRow}>
-          <Text style={styles.legalLink} onPress={restorePurchase}>
-            Restore Purchase
-          </Text>
-          <Text style={styles.legalLink}>Terms & Privacy</Text>
+          <Text style={[styles.legalLink, { color: tc.muted }]} onPress={restorePurchase}>Restore</Text>
+          <Text style={[styles.legalLink, { color: tc.muted }]}>Terms of Use</Text>
+          <Text style={[styles.legalLink, { color: tc.muted }]}>Privacy Policy</Text>
         </View>
       </View>
     </ScreenContainer>
@@ -197,18 +156,11 @@ export default function Paywall() {
 }
 
 function PlanCard({
-  title,
-  price,
-  period,
-  best,
-  selected,
-  onPress,
+  data, selected, tc, onPress,
 }: {
-  title: string;
-  price: string;
-  period: string;
-  best?: boolean;
+  data: typeof PLANS[number];
   selected: boolean;
+  tc: ReturnType<typeof useThemeColors>;
   onPress: () => void;
 }) {
   return (
@@ -216,64 +168,74 @@ function PlanCard({
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ selected }}
-      style={[styles.plan, selected && styles.planSelected, selected && best && shadow.goldGlow]}
+      style={[
+        styles.plan,
+        { backgroundColor: tc.isDark ? tc.cardBg : '#FFFFFF', borderColor: selected ? tc.gold : tc.border },
+        selected && { borderWidth: 2 },
+      ]}
     >
-      {best ? (
-        <View style={styles.bestBadge}>
-          <Text style={styles.bestText}>BEST VALUE</Text>
+      {data.badge ? (
+        <View style={[styles.badge, { backgroundColor: tc.gold }]}>
+          <Text style={[styles.badgeText, { color: tc.onGold }]}>{data.badge}</Text>
         </View>
       ) : null}
-      <Text style={styles.planTitle}>{title}</Text>
-      <Text style={styles.planPrice}>{price}</Text>
-      <Text style={styles.planPeriod}>{period}</Text>
+
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.planTitle, { color: tc.heading }]}>{data.title}</Text>
+        <Text style={[styles.planSub, { color: tc.muted }]}>{data.sub}</Text>
+        {data.trial ? <Text style={[styles.planTrial, { color: tc.gold }]}>{data.trial}</Text> : null}
+      </View>
+
+      <View style={styles.priceCol}>
+        {data.old ? <Text style={[styles.oldPrice, { color: tc.muted }]}>{data.old}</Text> : null}
+        <Text style={[styles.planPrice, { color: tc.heading }]}>{data.price}</Text>
+        {data.note ? <Text style={[styles.planNote, { color: tc.muted }]}>{data.note}</Text> : null}
+      </View>
+
+      <View style={[styles.radio, { borderColor: selected ? tc.gold : tc.muted }]}>
+        {selected ? <View style={[styles.radioDot, { backgroundColor: tc.gold }]} /> : null}
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  close: { position: 'absolute', top: 54, right: 20, zIndex: 10, padding: 6 },
-  scroll: { paddingTop: spacing.xl, paddingBottom: spacing.md },
-  sparkle: { alignItems: 'center', marginBottom: spacing.sm },
-  title: {
-    fontFamily: fonts.serifBold,
-    fontSize: 30,
-    color: colors.text.heading,
-    textAlign: 'center',
-    lineHeight: 38,
-  },
-  trialBadge: { alignSelf: 'center', marginTop: spacing.sm },
-  trialText: { fontFamily: fonts.sansSemibold, fontSize: 13, color: colors.gold.bright },
-  plans: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xl },
-  planWrap: { flex: 1 },
+  close: { position: 'absolute', top: 8, left: 4, zIndex: 10, padding: 6 },
+  scroll: { paddingTop: spacing.md, paddingBottom: spacing.md },
+  brandRow: { alignItems: 'center', marginBottom: spacing.md },
+  brand: { width: 72, height: 72, borderRadius: 18 },
+  title: { fontFamily: fonts.serifBold, fontSize: 26, textAlign: 'center', lineHeight: 34 },
+  features: { marginTop: spacing.lg, gap: spacing.sm, alignSelf: 'stretch', paddingHorizontal: spacing.xs },
+  featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  fCheck: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  featureText: { fontFamily: fonts.sansMedium, fontSize: 15, flexShrink: 1 },
+  plans: { marginTop: spacing.xl, gap: spacing.sm },
   plan: {
-    backgroundColor: colors.bg.card,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
     borderRadius: radii.lg,
     borderWidth: 1.5,
-    borderColor: colors.hairline,
     padding: spacing.md,
-    minHeight: 110,
-    justifyContent: 'center',
+    minHeight: 78,
   },
-  planSelected: { borderColor: colors.gold.primary, backgroundColor: colors.bg.raised },
-  bestBadge: {
-    position: 'absolute',
-    top: -1,
-    right: -1,
-    backgroundColor: colors.gold.primary,
-    borderTopRightRadius: radii.lg,
-    borderBottomLeftRadius: radii.md,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+  badge: {
+    position: 'absolute', top: -10, right: spacing.md,
+    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3,
   },
-  bestText: { fontFamily: fonts.sansBold, fontSize: 9, color: colors.text.onGold, letterSpacing: 0.5 },
-  planTitle: { fontFamily: fonts.sansSemibold, fontSize: 14, color: colors.text.body },
-  planPrice: { fontFamily: fonts.sansBold, fontSize: 24, color: colors.text.heading, marginTop: 4 },
-  planPeriod: { fontFamily: fonts.sans, fontSize: 12, color: colors.text.muted, marginTop: 2 },
-  features: { marginTop: spacing.xl, flexDirection: 'row', flexWrap: 'wrap', rowGap: spacing.sm },
-  featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, width: '50%', paddingRight: spacing.xs },
-  featureText: { fontFamily: fonts.sans, fontSize: 13, color: colors.text.body, flexShrink: 1 },
+  badgeText: { fontFamily: fonts.sansBold, fontSize: 10, letterSpacing: 0.5 },
+  planTitle: { fontFamily: fonts.sansBold, fontSize: 16 },
+  planSub: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1 },
+  planTrial: { fontFamily: fonts.sansSemibold, fontSize: 12, marginTop: 3 },
+  priceCol: { alignItems: 'flex-end' },
+  oldPrice: { fontFamily: fonts.sans, fontSize: 12, textDecorationLine: 'line-through' },
+  planPrice: { fontFamily: fonts.sansBold, fontSize: 17 },
+  planNote: { fontFamily: fonts.sans, fontSize: 11, marginTop: 1 },
+  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  radioDot: { width: 12, height: 12, borderRadius: 6 },
   footer: { paddingBottom: spacing.sm },
-  fine: { fontFamily: fonts.sans, fontSize: 12, color: colors.text.muted, textAlign: 'center', marginTop: spacing.sm },
+  assure: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: spacing.sm },
+  assureText: { fontFamily: fonts.sansSemibold, fontSize: 13 },
   legalRow: { flexDirection: 'row', justifyContent: 'center', gap: spacing.lg, marginTop: spacing.sm },
-  legalLink: { fontFamily: fonts.sans, fontSize: 12, color: colors.text.muted, textDecorationLine: 'underline' },
+  legalLink: { fontFamily: fonts.sans, fontSize: 12, textDecorationLine: 'underline' },
 });

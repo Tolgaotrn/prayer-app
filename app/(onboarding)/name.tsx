@@ -12,11 +12,13 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { Star } from '../../components/anim/Sparkles';
-import { colors, fonts, radii } from '../../constants/theme';
+import { fonts, radii } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 
 export default function NameScreen() {
   const router = useRouter();
+  const tc = useThemeColors();
   // Read the persisted value once; keep typing in local state so the whole
   // shell does NOT re-render on every keystroke (that was stealing focus).
   const initialName = React.useRef(useOnboardingStore.getState().name).current;
@@ -25,7 +27,7 @@ export default function NameScreen() {
   const inputRef = React.useRef<TextInput>(null);
 
   const inputStyle = useAnimatedStyle(() => ({
-    borderColor: withTiming(focused ? colors.gold.primary : colors.hairline),
+    borderColor: withTiming(focused ? tc.gold : tc.border),
     shadowOpacity: withTiming(focused ? 0.4 : 0),
   }));
 
@@ -49,7 +51,7 @@ export default function NameScreen() {
         onContinue={onContinue}
       >
         <Pressable onPress={() => inputRef.current?.focus()}>
-          <Animated.View style={[styles.inputWrap, inputStyle]}>
+          <Animated.View style={[styles.inputWrap, { backgroundColor: tc.cardBg, shadowColor: tc.gold }, inputStyle]}>
             <TextInput
               ref={inputRef}
               value={name}
@@ -57,9 +59,9 @@ export default function NameScreen() {
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               placeholder="Your name"
-              placeholderTextColor={colors.text.muted}
-              selectionColor={colors.gold.primary}
-              style={styles.input}
+              placeholderTextColor={tc.muted}
+              selectionColor={tc.gold}
+              style={[styles.input, { color: tc.heading }]}
               returnKeyType="done"
               onSubmitEditing={() => {
                 if (name.trim().length > 0) onContinue();
@@ -78,8 +80,6 @@ const styles = StyleSheet.create({
   inputWrap: {
     borderWidth: 1.5,
     borderRadius: radii.md,
-    backgroundColor: colors.bg.card,
-    shadowColor: colors.gold.primary,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 0 },
   },
@@ -88,6 +88,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     fontFamily: fonts.sansMedium,
     fontSize: 18,
-    color: colors.text.heading,
   },
 });

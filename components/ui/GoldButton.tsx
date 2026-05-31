@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import { colors, fonts, radii, shadow, spacing } from '../../constants/theme';
+import { colors, fonts, radii, spacing } from '../../constants/theme';
 import { haptic } from '../../lib/haptics';
 
 interface GoldButtonProps {
@@ -46,7 +46,7 @@ export function GoldButton({ label, onPress, disabled, style, shimmer = true }: 
   const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   return (
-    <Animated.View style={[pressStyle, !disabled && shadow.goldGlow, style]}>
+    <Animated.View style={[pressStyle, !disabled && styles.softShadow, style]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
@@ -67,7 +67,7 @@ export function GoldButton({ label, onPress, disabled, style, shimmer = true }: 
         <LinearGradient
           colors={
             disabled
-              ? ['#3A3A48', '#33333F']
+              ? ['#DAD0BE', '#CFC4AF']
               : [colors.gold.bright, colors.gold.primary, colors.gold.deep]
           }
           start={{ x: 0, y: 0 }}
@@ -84,7 +84,7 @@ export function GoldButton({ label, onPress, disabled, style, shimmer = true }: 
               />
             </View>
           )}
-          <Text style={[styles.label, disabled && { color: colors.text.muted }]}>{label}</Text>
+          <Text style={[styles.label, disabled && { color: '#9C8E7D' }]}>{label}</Text>
         </LinearGradient>
       </Pressable>
     </Animated.View>
@@ -92,9 +92,16 @@ export function GoldButton({ label, onPress, disabled, style, shimmer = true }: 
 }
 
 const styles = StyleSheet.create({
+  softShadow: {
+    shadowColor: '#7A5A1E',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 5,
+  },
   btn: {
     height: 60,
-    borderRadius: radii.full,
+    borderRadius: radii.xl,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,

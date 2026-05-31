@@ -9,7 +9,6 @@ export default function ContentStyle() {
       step={5}
       multi
       storeKey="contentStyle"
-      icon={<Ionicons name="color-palette-outline" size={28} color={colors.gold.primary} />}
       title="What type of content speaks to you most?"
       next="/(onboarding)/usage"
       options={[

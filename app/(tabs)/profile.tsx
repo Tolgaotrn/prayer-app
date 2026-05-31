@@ -1,31 +1,59 @@
+/**
+ * profile — Professional settings hub
+ *
+ * Sections:
+ *  • Identity card  (avatar + name + plan badge + streak)
+ *  • Premium banner (free users only)
+ *  • Quick actions  (Saved Verses, Reminders)
+ *  • Appearance     (Font, Dark Mode)
+ *  • Account        (Name, Language)
+ *  • Support        (Rate App, Contact Us, About)
+ *  • Legal          (Privacy Policy, Terms of Use, Restore Purchase)
+ *  • Version footer
+ */
 import React from 'react';
 import {
+  Linking,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
+
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { StreakWidget } from '../../components/ui/StreakWidget';
 import { ToggleSwitch } from '../../components/ui/ToggleSwitch';
 import { BackButton } from '../../components/ui/BackButton';
 import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { useThemeColors } from '../../lib/useThemeColors';
+import { useT } from '../../lib/i18n';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
 
+const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
+
+const FONT_OPTIONS = [
+  { key: 'serif',     label: 'Playfair',   sample: 'Aً' },
+  { key: 'sans',      label: 'Jakarta',    sample: 'Aً' },
+];
+
 export default function Profile() {
   const router      = useRouter();
+  const tc          = useThemeColors();
+  const t           = useT();
   const name        = useOnboardingStore((s) => s.name) || 'Friend';
-  const language    = useOnboardingStore((s) => s.language) || 'Arabic + English';
+  const language    = useOnboardingStore((s) => s.language) || 'English';
   const reminderCount = useOnboardingStore((s) => s.reminderCount);
   const streakDays  = useAppStore((s) => s.streakDays);
   const isPremium   = useAppStore((s) => s.isPremium);
@@ -33,39 +61,9 @@ export default function Profile() {
   const setDarkMode = useAppStore((s) => s.setDarkMode);
   const savedCount  = useAppStore((s) => s.savedVerseIds.length);
 
-  // dark mode geçişi için metin rengi
-  const isLight = !darkMode;
-  const textColor = isLight ? colors.warm.text : colors.text.heading;
-  const mutedColor = isLight ? colors.warm.muted : colors.text.muted;
-  const cardBg = isLight ? colors.warm.surface : colors.bg.card;
-  const dividerColor = isLight ? colors.warm.border : colors.hairline;
+  const [selectedFont, setSelectedFont] = React.useState('serif');
 
-  const ACTIONS: { icon: keyof typeof Ionicons.glyphMap; label: string; sub: string; onPress: () => void }[] = [
-    {
-      icon: 'heart-outline',
-      label: 'Saved Verses',
-      sub: `${savedCount} saved`,
-      onPress: () => router.push('/saved-verses'),
-    },
-    {
-      icon: 'notifications-outline',
-      label: 'Reminders',
-      sub: `${reminderCount}× daily`,
-      onPress: () => router.push('/reminders-settings'),
-    },
-    {
-      icon: 'color-palette-outline',
-      label: 'Themes',
-      sub: '9 themes',
-      onPress: () => router.push('/(tabs)/themes'),
-    },
-    {
-      icon: 'grid-outline',
-      label: 'Widget',
-      sub: 'Customize',
-      onPress: () => router.push('/widget-studio'),
-    },
-  ];
+  const initials = name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
 
   return (
     <ScreenContainer padded={false}>
@@ -73,271 +71,441 @@ export default function Profile() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
       >
-        {/* HEADER */}
-        <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
-          <View style={styles.headerLeft}>
-            <BackButton style={{ marginRight: spacing.sm }} />
-            <View>
-              <Text style={[styles.screenTitle, { color: textColor }]}>Profile</Text>
-              <Text style={[styles.nameText, { color: mutedColor }]}>
-                {name}
-              </Text>
+
+        {/* ── HEADER ── */}
+        <Animated.View entering={FadeInDown.duration(350)} style={styles.header}>
+          <BackButton />
+          <Text style={[styles.pageTitle, { color: tc.heading }]}>{t('profile.title')}</Text>
+          <View style={{ width: 40 }} />
+        </Animated.View>
+
+        {/* ── IDENTITY CARD ── */}
+        <Animated.View
+          entering={FadeInDown.delay(60).duration(400)}
+          style={[styles.identityCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}
+        >
+          {/* Avatar */}
+          <View style={[styles.avatarWrap, { backgroundColor: tc.gold + '22', borderColor: tc.gold + '55' }]}>
+            <Text style={[styles.avatarInitials, { color: tc.gold }]}>{initials}</Text>
+          </View>
+
+          <View style={styles.identityMeta}>
+            <Text style={[styles.identityName, { color: tc.heading }]} numberOfLines={1}>{name}</Text>
+            <View style={styles.identityRow}>
+              <View style={[
+                styles.planBadge,
+                { backgroundColor: isPremium ? tc.gold + '22' : tc.raisedBg },
+              ]}>
+                {isPremium && <Ionicons name="star" size={9} color={tc.gold} />}
+                <Text style={[styles.planText, { color: isPremium ? tc.gold : tc.muted }]}>
+                  {isPremium ? t('profile.premium') : t('profile.free')}
+                </Text>
+              </View>
+              <Text style={[styles.identityDot, { color: tc.muted }]}>·</Text>
+              <Text style={[styles.identityLang, { color: tc.muted }]}>{language}</Text>
             </View>
           </View>
-          <View style={[styles.avatarCircle, { backgroundColor: cardBg }]}>
-            <Ionicons name="person" size={24} color={colors.gold.primary} />
+
+          {/* Streak pill */}
+          <View style={[styles.streakPill, { backgroundColor: tc.raisedBg }]}>
+            <Text style={[styles.streakNum, { color: tc.gold }]}>{streakDays}</Text>
+            <Text style={[styles.streakLabel, { color: tc.muted }]}>{t('profile.dayStreak')}</Text>
           </View>
         </Animated.View>
 
-        {/* PREMIUM BANNER */}
+        {/* ── PREMIUM BANNER ── */}
         {!isPremium && (
-          <Animated.View entering={FadeInDown.delay(60).duration(400)}>
+          <Animated.View entering={FadeInDown.delay(110).duration(400)}>
             <Pressable
               style={styles.premiumBanner}
-              onPress={() => router.push('/(onboarding)/paywall')}
+              onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }}
               accessibilityRole="button"
-              accessibilityLabel="Unlock premium"
+              accessibilityLabel={t('profile.unlockTitle')}
             >
-              <View style={{ flex: 1 }}>
-                <Text style={styles.premiumTitle}>Unlock everything ✦</Text>
-                <Text style={styles.premiumSub}>All quotes, themes, categories & no ads</Text>
+              <View style={styles.premiumLeft}>
+                <View style={styles.premiumIconWrap}>
+                  <Ionicons name="star" size={18} color={colors.gold.primary} />
+                </View>
+                <View>
+                  <Text style={styles.premiumTitle}>{t('profile.unlockTitle')}</Text>
+                  <Text style={styles.premiumSub}>{t('profile.unlockSub')}</Text>
+                </View>
               </View>
-              <View style={styles.premiumIcon}>
-                <Ionicons name="book-outline" size={28} color="rgba(255,255,255,0.9)" />
-              </View>
+              <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" />
             </Pressable>
           </Animated.View>
         )}
 
-        {/* STREAK */}
-        <Animated.View entering={FadeInDown.delay(120).duration(400)}>
-          <StreakWidget streakDays={streakDays} />
-        </Animated.View>
-
-        {/* QUICK ACTIONS */}
-        <Animated.View entering={FadeInDown.delay(180).duration(400)}>
-          <Text style={[styles.sectionTitle, { color: textColor }]}>Quick actions</Text>
-          <View style={styles.actionsGrid}>
-            {ACTIONS.map((a) => (
-              <ActionCard
-                key={a.label}
-                icon={a.icon}
-                label={a.label}
-                sub={a.sub}
-                cardBg={cardBg}
-                borderColor={dividerColor}
-                textColor={textColor}
-                mutedColor={mutedColor}
-                gold={isLight ? colors.warm.gold : colors.gold.primary}
-                onPress={() => { haptic.select(); a.onPress(); }}
-              />
-            ))}
+        {/* ── QUICK ACTIONS ── */}
+        <Animated.View entering={FadeInDown.delay(160).duration(400)}>
+          <SectionLabel label={t('profile.quickActions')} tc={tc} />
+          <View style={styles.actionsRow}>
+            <ActionCard
+              icon="heart-outline"
+              label={t('profile.savedVerses')}
+              sub={t('profile.savedCount', { n: savedCount })}
+              tc={tc}
+              onPress={() => { haptic.select(); router.push('/saved-verses'); }}
+            />
+            <ActionCard
+              icon="notifications-outline"
+              label={t('profile.reminders')}
+              sub={t('profile.dailyCount', { n: reminderCount })}
+              tc={tc}
+              onPress={() => { haptic.select(); router.push('/notifications-settings'); }}
+            />
           </View>
         </Animated.View>
 
-        {/* SETTINGS */}
-        <Animated.View entering={FadeInDown.delay(240).duration(400)}>
-          <Text style={[styles.sectionTitle, { color: textColor }]}>Settings</Text>
-          <View style={[styles.settingsCard, { backgroundColor: cardBg, borderColor: dividerColor }]}>
+        {/* ── APPEARANCE ── */}
+        <Animated.View entering={FadeInDown.delay(210).duration(400)}>
+          <SectionLabel label={t('profile.appearance')} tc={tc} />
+          <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
 
-            <SettingsRow
-              icon="person-outline"
-              label="Name"
-              value={name}
-              textColor={textColor}
-              mutedColor={mutedColor}
-              isLight={isLight}
-              onPress={() => router.push('/name-settings')}
-            />
-            <View style={[styles.divider, { backgroundColor: dividerColor }]} />
-
-            <SettingsRow
-              icon="language-outline"
-              label="Language"
-              value={language}
-              textColor={textColor}
-              mutedColor={mutedColor}
-              isLight={isLight}
-              onPress={() => router.push('/language-settings')}
-            />
-            <View style={[styles.divider, { backgroundColor: dividerColor }]} />
-
-            <SettingsRow
-              icon="notifications-outline"
-              label="Notifications"
-              value={`${reminderCount}× daily`}
-              textColor={textColor}
-              mutedColor={mutedColor}
-              isLight={isLight}
-              onPress={() => router.push('/reminders-settings')}
-            />
-            <View style={[styles.divider, { backgroundColor: dividerColor }]} />
-
-            {/* Dark mode toggle — gerçekten çalışıyor */}
-            <View style={styles.toggleRow}>
+            {/* Font picker */}
+            <View style={styles.settingsRow}>
               <View style={styles.rowLeft}>
-                <Ionicons
-                  name="moon-outline"
-                  size={18}
-                  color={colors.gold.primary}
-                  style={styles.rowIcon}
-                />
-                <Text style={[styles.rowLabel, { color: textColor }]}>Dark Mode</Text>
+                <SettingsIcon icon="text-outline" tc={tc} />
+                <Text style={[styles.rowLabel, { color: tc.heading }]}>{t('profile.font')}</Text>
+              </View>
+              <View style={styles.fontPills}>
+                {FONT_OPTIONS.map((f) => (
+                  <Pressable
+                    key={f.key}
+                    onPress={() => { haptic.select(); setSelectedFont(f.key); }}
+                    style={[
+                      styles.fontPill,
+                      { borderColor: selectedFont === f.key ? tc.gold : tc.border,
+                        backgroundColor: selectedFont === f.key ? tc.gold + '18' : tc.raisedBg },
+                    ]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: selectedFont === f.key }}
+                  >
+                    <Text style={[
+                      styles.fontPillText,
+                      { color: selectedFont === f.key ? tc.gold : tc.muted,
+                        fontFamily: f.key === 'serif' ? fonts.serifBold : fonts.sansBold },
+                    ]}>
+                      {f.label}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            <Divider tc={tc} />
+
+            {/* Dark mode */}
+            <View style={styles.settingsRow}>
+              <View style={styles.rowLeft}>
+                <SettingsIcon icon="moon-outline" tc={tc} />
+                <Text style={[styles.rowLabel, { color: tc.heading }]}>{t('profile.darkMode')}</Text>
               </View>
               <ToggleSwitch
                 value={darkMode}
-                onChange={(v) => {
-                  haptic.select();
-                  setDarkMode(v);
-                }}
-                label="Dark Mode"
+                onChange={(v) => { haptic.select(); setDarkMode(v); }}
+                label={t('profile.darkMode')}
               />
             </View>
           </View>
         </Animated.View>
 
-        {/* FOOTER */}
-        <Animated.View entering={FadeInDown.delay(300).duration(400)} style={styles.footer}>
-          <Pressable hitSlop={8} onPress={() => {}}>
-            <Text style={[styles.footerLink, { color: mutedColor }]}>Restore Purchase</Text>
-          </Pressable>
-          <Text style={[styles.footerDot, { color: mutedColor }]}>·</Text>
-          <Pressable hitSlop={8} onPress={() => {}}>
-            <Text style={[styles.footerLink, { color: mutedColor }]}>Privacy Policy</Text>
-          </Pressable>
-          <Text style={[styles.footerDot, { color: mutedColor }]}>·</Text>
-          <Pressable hitSlop={8} onPress={() => {}}>
-            <Text style={[styles.footerLink, { color: mutedColor }]}>Terms</Text>
-          </Pressable>
+        {/* ── ACCOUNT ── */}
+        <Animated.View entering={FadeInDown.delay(255).duration(400)}>
+          <SectionLabel label={t('profile.account')} tc={tc} />
+          <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+            <NavRow
+              icon="person-outline"
+              label={t('profile.name')}
+              value={name}
+              tc={tc}
+              onPress={() => router.push('/name-settings')}
+            />
+            <Divider tc={tc} />
+            <NavRow
+              icon="language-outline"
+              label={t('profile.language')}
+              value={language}
+              tc={tc}
+              onPress={() => router.push('/language-settings')}
+            />
+          </View>
         </Animated.View>
+
+        {/* ── SUPPORT ── */}
+        <Animated.View entering={FadeInDown.delay(300).duration(400)}>
+          <SectionLabel label={t('profile.support')} tc={tc} />
+          <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+            <NavRow
+              icon="star-outline"
+              label={t('profile.rateApp')}
+              tc={tc}
+              onPress={() => {
+                haptic.select();
+                const url = Platform.OS === 'ios'
+                  ? 'itms-apps://itunes.apple.com/app/id0000000000?action=write-review'
+                  : 'market://details?id=com.noor.app';
+                Linking.openURL(url).catch(() => {});
+              }}
+            />
+            <Divider tc={tc} />
+            <NavRow
+              icon="mail-outline"
+              label={t('profile.contactUs')}
+              tc={tc}
+              onPress={() => {
+                haptic.select();
+                Linking.openURL('mailto:support@noorapp.co?subject=Noor App Feedback').catch(() => {});
+              }}
+            />
+            <Divider tc={tc} />
+            <NavRow
+              icon="information-circle-outline"
+              label={t('profile.about')}
+              tc={tc}
+              onPress={() => { haptic.select(); }}
+            />
+          </View>
+        </Animated.View>
+
+        {/* ── LEGAL ── */}
+        <Animated.View entering={FadeInDown.delay(345).duration(400)}>
+          <SectionLabel label={t('profile.legal')} tc={tc} />
+          <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+            <NavRow
+              icon="shield-outline"
+              label={t('profile.privacy')}
+              tc={tc}
+              onPress={() => {
+                haptic.select();
+                Linking.openURL('https://noorapp.co/privacy').catch(() => {});
+              }}
+            />
+            <Divider tc={tc} />
+            <NavRow
+              icon="document-text-outline"
+              label={t('profile.terms')}
+              tc={tc}
+              onPress={() => {
+                haptic.select();
+                Linking.openURL('https://noorapp.co/terms').catch(() => {});
+              }}
+            />
+            <Divider tc={tc} />
+            <NavRow
+              icon="refresh-outline"
+              label={t('profile.restore')}
+              tc={tc}
+              onPress={() => { haptic.select(); }}
+            />
+          </View>
+        </Animated.View>
+
+        {/* ── VERSION FOOTER ── */}
+        <Animated.View entering={FadeInDown.delay(390).duration(400)} style={styles.footer}>
+          <View style={[styles.logoMark, { borderColor: tc.border }]}>
+            <Text style={[styles.logoText, { color: tc.gold }]}>✦</Text>
+          </View>
+          <Text style={[styles.appName, { color: tc.heading }]}>Noor</Text>
+          <Text style={[styles.version, { color: tc.muted }]}>
+            {t('profile.version')} {APP_VERSION}
+          </Text>
+          <Text style={[styles.tagline, { color: tc.muted }]}>
+            Daily Islamic reflection
+          </Text>
+        </Animated.View>
+
       </ScrollView>
     </ScreenContainer>
   );
 }
 
-/* ── Sub-components ── */
+/* ─────────────────────────────────────────────────────────────
+   Sub-components
+───────────────────────────────────────────────────────────── */
 
-function ActionCard({ icon, label, sub, cardBg, borderColor, textColor, mutedColor, gold, onPress }: {
+function SectionLabel({ label, tc }: { label: string; tc: ReturnType<typeof useThemeColors> }) {
+  return (
+    <Text style={[styles.sectionLabel, { color: tc.muted }]}>{label.toUpperCase()}</Text>
+  );
+}
+
+function Divider({ tc }: { tc: ReturnType<typeof useThemeColors> }) {
+  return <View style={[styles.divider, { backgroundColor: tc.border }]} />;
+}
+
+function SettingsIcon({ icon, tc }: { icon: keyof typeof Ionicons.glyphMap; tc: ReturnType<typeof useThemeColors> }) {
+  return (
+    <View style={[styles.settingsIconWrap, { backgroundColor: tc.raisedBg }]}>
+      <Ionicons name={icon} size={16} color={tc.gold} />
+    </View>
+  );
+}
+
+function NavRow({
+  icon, label, value, tc, onPress,
+}: {
   icon: keyof typeof Ionicons.glyphMap;
-  label: string; sub: string; cardBg: string; borderColor: string;
-  textColor: string; mutedColor: string; gold: string; onPress: () => void;
+  label: string;
+  value?: string;
+  tc: ReturnType<typeof useThemeColors>;
+  onPress: () => void;
 }) {
-  const pressStyle = useAnimatedStyle(() => ({
-    backgroundColor: withTiming(cardBg, { duration: 200 }),
-  }));
   return (
     <Pressable
+      style={({ pressed }) => [styles.settingsRow, pressed && { opacity: 0.7 }]}
+      onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      onPress={onPress}
-      style={{ width: '47.5%' }}
     >
-      <Animated.View style={[styles.actionCard, pressStyle, { borderColor }]}>
-        <Text style={[styles.actionLabel, { color: textColor }]}>{label}</Text>
-        <Text style={[styles.actionSub, { color: mutedColor }]}>{sub}</Text>
-        <Ionicons name={icon} size={24} color={gold} style={{ marginTop: 'auto' }} />
+      <View style={styles.rowLeft}>
+        <SettingsIcon icon={icon} tc={tc} />
+        <Text style={[styles.rowLabel, { color: tc.heading }]}>{label}</Text>
+      </View>
+      <View style={styles.rowRight}>
+        {value ? (
+          <Text style={[styles.rowValue, { color: tc.muted }]} numberOfLines={1}>{value}</Text>
+        ) : null}
+        <Ionicons name="chevron-forward" size={16} color={tc.muted} />
+      </View>
+    </Pressable>
+  );
+}
+
+function ActionCard({
+  icon, label, sub, tc, onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  sub: string;
+  tc: ReturnType<typeof useThemeColors>;
+  onPress: () => void;
+}) {
+  const animStyle = useAnimatedStyle(() => ({
+    backgroundColor: withTiming(tc.cardBg, { duration: 200 }),
+  }));
+
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={{ flex: 1 }}
+    >
+      <Animated.View style={[styles.actionCard, animStyle, { borderColor: tc.border }]}>
+        <View style={[styles.actionIconWrap, { backgroundColor: tc.gold + '18' }]}>
+          <Ionicons name={icon} size={20} color={tc.gold} />
+        </View>
+        <Text style={[styles.actionLabel, { color: tc.heading }]}>{label}</Text>
+        <Text style={[styles.actionSub, { color: tc.muted }]}>{sub}</Text>
       </Animated.View>
     </Pressable>
   );
 }
 
-function SettingsRow({ icon, label, value, textColor, mutedColor, isLight, onPress }: {
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string; value: string;
-  textColor: string; mutedColor: string; isLight: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable style={styles.settingsRow} onPress={onPress} accessibilityRole="button">
-      <View style={styles.rowLeft}>
-        <Ionicons name={icon} size={18} color={colors.gold.primary} style={styles.rowIcon} />
-        <Text style={[styles.rowLabel, { color: textColor }]}>{label}</Text>
-      </View>
-      <View style={styles.rowRight}>
-        <Text style={[styles.rowValue, { color: mutedColor }]} numberOfLines={1}>{value}</Text>
-        <Ionicons name="chevron-forward" size={15} color={isLight ? colors.warm.muted : colors.text.muted} />
-      </View>
-    </Pressable>
-  );
-}
-
+/* ─────────────────────────────────────────────────────────────
+   Styles
+───────────────────────────────────────────────────────────── */
 const styles = StyleSheet.create({
-  scroll: { paddingHorizontal: spacing.lg, paddingBottom: 120, gap: spacing.lg },
+  scroll: { paddingHorizontal: spacing.lg, paddingBottom: 60, gap: spacing.md },
 
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: spacing.sm,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginTop: spacing.sm, marginBottom: spacing.xs,
   },
-  headerLeft: { flexDirection: 'row', alignItems: 'center' },
-  screenTitle: { fontFamily: fonts.serifBold, fontSize: 28 },
-  nameText: { fontFamily: fonts.sans, fontSize: 14, marginTop: 2 },
-  avatarCircle: {
-    width: 46, height: 46, borderRadius: 23,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  pageTitle: { fontFamily: fonts.serifBold, fontSize: 22 },
 
-  premiumBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.gold.deep,
-    borderRadius: radii.xl,
-    padding: spacing.md,
-    gap: spacing.md,
+  // Identity card
+  identityCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    borderRadius: radii.xl, borderWidth: 1, padding: spacing.md,
   },
-  premiumTitle: { fontFamily: fonts.sansBold, fontSize: 16, color: colors.white },
-  premiumSub: { fontFamily: fonts.sans, fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 3 },
-  premiumIcon: {
-    width: 52, height: 52, borderRadius: 26,
+  avatarWrap: {
+    width: 52, height: 52, borderRadius: 26, borderWidth: 1.5,
+    alignItems: 'center', justifyContent: 'center',
+    flexShrink: 0,
+  },
+  avatarInitials: { fontFamily: fonts.sansBold, fontSize: 18 },
+  identityMeta: { flex: 1 },
+  identityName: { fontFamily: fonts.sansBold, fontSize: 17 },
+  identityRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 },
+  planBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3,
+  },
+  planText: { fontFamily: fonts.sansSemibold, fontSize: 11 },
+  identityDot: { fontSize: 11 },
+  identityLang: { fontFamily: fonts.sans, fontSize: 12 },
+  streakPill: {
+    alignItems: 'center', borderRadius: radii.md,
+    paddingHorizontal: spacing.sm, paddingVertical: 8, minWidth: 56,
+  },
+  streakNum: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 26 },
+  streakLabel: { fontFamily: fonts.sans, fontSize: 10, marginTop: 1 },
+
+  // Premium banner
+  premiumBanner: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    borderRadius: radii.xl, padding: spacing.md,
+    backgroundColor: colors.gold.deep,
+  },
+  premiumLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
+  premiumIconWrap: {
+    width: 40, height: 40, borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center', justifyContent: 'center',
   },
+  premiumTitle: { fontFamily: fonts.sansBold, fontSize: 15, color: '#FFFFFF' },
+  premiumSub: { fontFamily: fonts.sans, fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
 
-  sectionTitle: { fontFamily: fonts.sansBold, fontSize: 17, marginBottom: spacing.sm },
-
-  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  // Quick actions
+  actionsRow: { flexDirection: 'row', gap: spacing.sm },
   actionCard: {
-    minHeight: 96,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.md,
+    borderRadius: radii.lg, borderWidth: 1, padding: spacing.md,
+    minHeight: 100, justifyContent: 'flex-start', gap: 4,
+  },
+  actionIconWrap: {
+    width: 36, height: 36, borderRadius: 12,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 4,
   },
   actionLabel: { fontFamily: fonts.sansSemibold, fontSize: 14 },
-  actionSub: { fontFamily: fonts.sans, fontSize: 12, marginTop: 2 },
+  actionSub: { fontFamily: fonts.sans, fontSize: 12 },
 
-  settingsCard: {
-    borderRadius: radii.xl,
-    borderWidth: 1,
-    overflow: 'hidden',
+  // Section label
+  sectionLabel: {
+    fontFamily: fonts.sansSemibold, fontSize: 11, letterSpacing: 0.8,
+    marginBottom: 6, marginTop: spacing.xs, paddingLeft: 4,
   },
+
+  // Settings card
+  settingsCard: { borderRadius: radii.xl, borderWidth: 1, overflow: 'hidden' },
   settingsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: 15,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: spacing.md, paddingVertical: 13,
   },
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: 15,
-  },
-  rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  rowIcon: {},
+  rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
+  rowRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  settingsIconWrap: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { fontFamily: fonts.sansMedium, fontSize: 15 },
-  rowRight: { flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: '55%' },
-  rowValue: { fontFamily: fonts.sans, fontSize: 14 },
-  divider: { height: 1, marginHorizontal: spacing.md },
+  rowValue: { fontFamily: fonts.sans, fontSize: 14, maxWidth: 120 },
+  divider: { height: 1, marginLeft: spacing.md + 32 + 12 },
 
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
+  // Font picker
+  fontPills: { flexDirection: 'row', gap: 6 },
+  fontPill: {
+    borderRadius: radii.sm, borderWidth: 1.5,
+    paddingHorizontal: 12, paddingVertical: 5,
   },
-  footerLink: { fontFamily: fonts.sans, fontSize: 12 },
-  footerDot: { fontSize: 12 },
+  fontPillText: { fontSize: 13 },
+
+  // Footer
+  footer: { alignItems: 'center', paddingVertical: spacing.lg, gap: 6, marginTop: spacing.md },
+  logoMark: {
+    width: 40, height: 40, borderRadius: 20, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+  },
+  logoText: { fontSize: 20 },
+  appName: { fontFamily: fonts.serifBold, fontSize: 18 },
+  version: { fontFamily: fonts.sans, fontSize: 12 },
+  tagline: { fontFamily: fonts.sans, fontSize: 12 },
 });

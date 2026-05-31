@@ -5,21 +5,34 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "noor",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#0A1230",
+    "icon": "./assets/icons/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F2EDE4",
     "splash": {
+      "image": "./assets/icons/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0A1230"
+      "backgroundColor": "#F2EDE4"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.noor.app"
+      "bundleIdentifier": "com.noor.app",
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.noor.app"]
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Noor uses your location to show accurate daily prayer times for your city.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Noor uses your location to keep prayer-time widgets accurate for your city."
+      }
     },
     "android": {
       "package": "com.noor.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0A1230"
+        "foregroundImage": "./assets/icons/icon.png",
+        "backgroundColor": "#F2EDE4"
       }
     },
     "web": {
@@ -34,10 +47,28 @@
         {
           "color": "#D4AF37"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Noor uses your location to show accurate daily prayer times for your city."
+        }
+      ],
+      [
+        "@bacons/apple-targets",
+        {
+          "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID"
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5fa3ab12-3a40-4fe4-a5a1-808d1ba3d1ec"
+      }
     }
   }
 }

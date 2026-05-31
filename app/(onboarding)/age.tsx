@@ -18,7 +18,6 @@ export default function AgeScreen() {
   return (
     <OnboardingShell
       step={1}
-      icon={<Ionicons name="diamond-outline" size={30} color={colors.gold.primary} />}
       title="How old are you?"
       subtitle="We'll adapt content tone and depth for your age group"
       ctaDisabled={!age}
@@ -29,7 +28,7 @@ export default function AgeScreen() {
           <Animated.View key={opt} entering={FadeInDown.delay(i * 70).duration(420)}>
             <OptionRow
               label={opt}
-              variant="center"
+              variant="radio"
               selected={age === opt}
               onPress={() => set('age', opt)}
             />
