@@ -171,9 +171,33 @@ export default function Feed() {
     );
   }
 
+  // Video tema player'ı — sadece video theme seçiliyse aktif
+  const videoPlayer = useVideoPlayer(theme.video?.uri ?? null, (p) => {
+    p.loop = true;
+    p.muted = true;
+    if (theme.video) p.play();
+  });
+
+  // video değişince oynat/durdur
+  React.useEffect(() => {
+    if (!theme.video) return;
+    videoPlayer.play();
+  }, [theme.video?.uri]);
+
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
+      {/* Video tema arka planı — FlatList'in arkasında */}
+      {theme.video && (
+        <VideoView
+          player={videoPlayer}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          nativeControls={false}
+          allowsFullscreen={false}
+          allowsPictureInPicture={false}
+        />
+      )}
       <FlatList
         data={items}
         keyExtractor={(v) => v.id}
@@ -271,24 +295,6 @@ function SwipeHint({ label }: { label: string }) {
 }
 
 /* ── Feed slide ─────────────────────────────────────────────── */
-function VideoBackground({ uri }: { uri: string }) {
-  const player = useVideoPlayer(uri, (p) => {
-    p.loop = true;
-    p.muted = true;
-    p.play();
-  });
-  return (
-    <VideoView
-      player={player}
-      style={StyleSheet.absoluteFill}
-      contentFit="cover"
-      nativeControls={false}
-      allowsFullscreen={false}
-      allowsPictureInPicture={false}
-    />
-  );
-}
-
 function FeedSlide({
   item, active, image, gradient, video, showArabic, onDoubleLike,
 }: {
@@ -334,9 +340,8 @@ function FeedSlide({
     <GestureDetector gesture={doubleTap}>
     <View style={styles.slide}>
       <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />
-      {video ? (
-        <VideoBackground uri={video.uri} />
-      ) : (
+      {/* Image sadece video tema değilse gösterilir */}
+      {!video && (
         <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
       )}
       <LinearGradient

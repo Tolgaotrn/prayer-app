@@ -100,13 +100,17 @@ export default function NotificationsSettings() {
         )}
 
         {/* PRAYER */}
-        <View style={styles.sectionHead}>
-          <Text style={[styles.sectionTitle, { color: tc.heading }]}>{t('rem.prayerTimes')}</Text>
-          <Pressable onPress={toggleAll} hitSlop={8} accessibilityRole="button">
-            <Text style={[styles.allToggle, { color: tc.gold }]}>{allOn ? t('rem.turnAllOff') : t('rem.turnAllOn')}</Text>
-          </Pressable>
-        </View>
-        <View style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+        <View style={[styles.prayerBlock, { backgroundColor: tc.gold + '10', borderColor: tc.gold + '40' }]}>
+          <View style={styles.sectionHead}>
+            <View style={styles.prayerHeadLeft}>
+              <Ionicons name="partly-sunny-outline" size={16} color={tc.gold} />
+              <Text style={[styles.sectionTitle, { color: tc.heading }]}>{t('rem.prayerTimes')}</Text>
+            </View>
+            <Pressable onPress={toggleAll} hitSlop={8} accessibilityRole="button">
+              <Text style={[styles.allToggle, { color: tc.gold }]}>{allOn ? t('rem.turnAllOff') : t('rem.turnAllOn')}</Text>
+            </Pressable>
+          </View>
+        <View style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.gold + '30' }]}>
           {slotsUI.map((p, i) => {
             const isNext = p.key === prayer.nextKey;
             const enabled = prefs?.prayerEnabled[p.key] ?? false;
@@ -133,6 +137,7 @@ export default function NotificationsSettings() {
               </Animated.View>
             );
           })}
+        </View>
         </View>
 
         {/* CONTENT */}
@@ -191,6 +196,11 @@ const styles = StyleSheet.create({
   },
   permText: { fontFamily: fonts.sansMedium, fontSize: 13, flex: 1 },
 
+  prayerBlock: {
+    borderRadius: radii.xl, borderWidth: 1.5, padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  prayerHeadLeft: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   sectionTitle: { fontFamily: fonts.sansBold, fontSize: 16 },
   allToggle: { fontFamily: fonts.sansSemibold, fontSize: 13 },

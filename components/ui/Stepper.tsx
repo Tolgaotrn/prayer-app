@@ -27,14 +27,14 @@ export function Stepper({ value, onChange, min = 1, max = 9, suffix = '× Daily'
 
   return (
     <View style={[styles.row, { backgroundColor: tc.raisedBg, borderColor: tc.border }]}>
-      <Btn icon="remove" onPress={() => step(-1)} disabled={value <= min} tc={tc} />
+      <Btn icon="chevron-down" onPress={() => step(-1)} disabled={value <= min} tc={tc} />
       <View style={styles.valueWrap}>
         <Animated.Text key={value} entering={FadeIn} exiting={FadeOut} style={[styles.value, { color: tc.heading }]}>
           {value}
           {suffix}
         </Animated.Text>
       </View>
-      <Btn icon="add" onPress={() => step(1)} disabled={value >= max} tc={tc} />
+      <Btn icon="chevron-up" onPress={() => step(1)} disabled={value >= max} tc={tc} />
     </View>
   );
 }
@@ -45,7 +45,7 @@ function Btn({
   disabled,
   tc,
 }: {
-  icon: 'add' | 'remove';
+  icon: 'chevron-up' | 'chevron-down';
   onPress: () => void;
   disabled?: boolean;
   tc: ReturnType<typeof useThemeColors>;

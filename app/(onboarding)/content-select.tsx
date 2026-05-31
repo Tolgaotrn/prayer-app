@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -30,7 +30,7 @@ export default function ContentSelect() {
       ctaDisabled={selected.length === 0}
       onContinue={() => router.push('/(onboarding)/content-style')}
     >
-      <View style={styles.grid}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.grid}>
         {ITEMS.map((item, i) => (
           <Animated.View
             key={item.title}
@@ -46,7 +46,7 @@ export default function ContentSelect() {
             />
           </Animated.View>
         ))}
-      </View>
+      </ScrollView>
     </OnboardingShell>
   );
 }
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+    paddingBottom: spacing.md,
   },
-  cell: { width: '47.5%', flexGrow: 1 },
+  cell: { width: '47.5%' },
 });

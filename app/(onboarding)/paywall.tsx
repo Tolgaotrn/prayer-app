@@ -42,6 +42,13 @@ export default function Paywall() {
   const [plan, setPlan] = React.useState<Plan>('annual');
   const [packages, setPackages] = React.useState<PurchasesPackage[]>([]);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
+  const [countdown, setCountdown] = React.useState(5);
+
+  React.useEffect(() => {
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
 
   useEffect(() => {
     getRevenueCatPackages()
@@ -93,13 +100,20 @@ export default function Paywall() {
   return (
     <ScreenContainer>
       <Pressable
-        accessibilityLabel="Close"
+        accessibilityLabel={countdown > 0 ? `Close in ${countdown}` : 'Close'}
         accessibilityRole="button"
         hitSlop={12}
         style={styles.close}
-        onPress={() => { haptic.light(); finish(false); }}
+        onPress={() => { if (countdown > 0) return; haptic.light(); finish(false); }}
+        disabled={countdown > 0}
       >
-        <Ionicons name="close" size={24} color={tc.muted} />
+        {countdown > 0 ? (
+          <View style={[styles.countdownCircle, { borderColor: tc.border }]}>
+            <Text style={[styles.countdownText, { color: tc.muted }]}>{countdown}</Text>
+          </View>
+        ) : (
+          <Ionicons name="close" size={24} color={tc.muted} />
+        )}
       </Pressable>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
@@ -201,6 +215,11 @@ function PlanCard({
 
 const styles = StyleSheet.create({
   close: { position: 'absolute', top: 8, left: 4, zIndex: 10, padding: 6 },
+  countdownCircle: {
+    width: 30, height: 30, borderRadius: 15, borderWidth: 1.5,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  countdownText: { fontFamily: fonts.sansBold, fontSize: 13 },
   scroll: { paddingTop: spacing.md, paddingBottom: spacing.md },
   brandRow: { alignItems: 'center', marginBottom: spacing.md },
   brand: { width: 72, height: 72, borderRadius: 18 },
