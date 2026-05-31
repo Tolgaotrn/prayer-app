@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
@@ -117,11 +118,12 @@ export default function Feed() {
         active={index === activeIndex}
         image={theme.image}
         gradient={theme.gradient}
+        video={theme.video}
         showArabic={showArabic}
         onDoubleLike={onDoubleLike}
       />
     ),
-    [activeIndex, theme.image, theme.gradient, showArabic, onDoubleLike],
+    [activeIndex, theme.image, theme.gradient, theme.video, showArabic, onDoubleLike],
   );
 
   const onShare = () => {
@@ -269,13 +271,32 @@ function SwipeHint({ label }: { label: string }) {
 }
 
 /* ── Feed slide ─────────────────────────────────────────────── */
+function VideoBackground({ uri }: { uri: string }) {
+  const player = useVideoPlayer(uri, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+  return (
+    <VideoView
+      player={player}
+      style={StyleSheet.absoluteFill}
+      contentFit="cover"
+      nativeControls={false}
+      allowsFullscreen={false}
+      allowsPictureInPicture={false}
+    />
+  );
+}
+
 function FeedSlide({
-  item, active, image, gradient, showArabic, onDoubleLike,
+  item, active, image, gradient, video, showArabic, onDoubleLike,
 }: {
   item: FeedItem;
   active: boolean;
   image: { uri: string };
   gradient: readonly [string, string, ...string[]];
+  video?: { uri: string };
   showArabic: boolean;
   onDoubleLike: (item: FeedItem) => void;
 }) {
@@ -313,7 +334,11 @@ function FeedSlide({
     <GestureDetector gesture={doubleTap}>
     <View style={styles.slide}>
       <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />
-      <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
+      {video ? (
+        <VideoBackground uri={video.uri} />
+      ) : (
+        <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
+      )}
       <LinearGradient
         colors={['rgba(7,10,20,0.5)', 'rgba(7,10,20,0.15)', 'rgba(7,10,20,0.55)', 'rgba(7,10,20,0.92)']}
         locations={[0, 0.35, 0.62, 1]}

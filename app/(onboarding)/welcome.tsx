@@ -6,11 +6,22 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, spacing } from '../../constants/theme';
 
+const WELCOME_VIDEO_URL =
+  'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0532.mp4';
+
 const { width, height } = Dimensions.get('window');
 
 export default function Welcome() {
   const router = useRouter();
-  const player = useVideoPlayer(require('../../widget-resim/0531.mp4'), (p) => {
+  const [btnVisible, setBtnVisible] = React.useState(false);
+
+  // Show button after 2.5 seconds
+  React.useEffect(() => {
+    const t = setTimeout(() => setBtnVisible(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
+
+  const player = useVideoPlayer(WELCOME_VIDEO_URL, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();
@@ -28,41 +39,43 @@ export default function Welcome() {
         allowsPictureInPicture={false}
       />
 
-      {/* Gradient overlay — bottom fade to dark for text legibility */}
+      {/* Gradient overlay — bottom fade for text legibility */}
       <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.72)', 'rgba(0,0,0,0.88)']}
+        colors={['transparent', 'rgba(0,0,0,0.25)', 'rgba(0,0,0,0.68)', 'rgba(0,0,0,0.86)']}
         locations={[0.3, 0.55, 0.78, 1]}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Bottom content */}
-      <Animated.View entering={FadeInDown.delay(400).duration(700)} style={styles.bottom}>
-        <Text style={styles.headline}>Your Daily{'\n'}Islamic Guide</Text>
-        <Text style={styles.subtitle}>
-          Verses, duas, and hadith to inspire every day.
-        </Text>
+      {/* Bottom content — fades in after video plays for 2.5s */}
+      {btnVisible && (
+        <Animated.View entering={FadeInDown.duration(600)} style={styles.bottom}>
+          <Text style={styles.headline}>Your Daily{'\n'}Islamic Guide</Text>
+          <Text style={styles.subtitle}>
+            Verses, duas, and hadith to inspire every day.
+          </Text>
 
-        <Animated.View entering={FadeIn.delay(700).duration(600)} style={styles.ctaWrap}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Begin Your Journey"
-            onPress={() => router.push('/(onboarding)/attribution')}
-            style={({ pressed }) => [styles.btn, pressed && { opacity: 0.88 }]}
-          >
-            <Text style={styles.btnText}>Begin Your Journey</Text>
-          </Pressable>
+          <Animated.View entering={FadeIn.delay(150).duration(500)} style={styles.ctaWrap}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Begin Your Journey"
+              onPress={() => router.push('/(onboarding)/attribution')}
+              style={({ pressed }) => [styles.btn, pressed && { opacity: 0.88 }]}
+            >
+              <Text style={styles.btnText}>Begin Your Journey</Text>
+            </Pressable>
+          </Animated.View>
+
+          <View style={styles.legal}>
+            <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
+              <Text style={styles.legalLink}>Terms of Service</Text>
+            </Pressable>
+            <Text style={styles.legalSep}>&nbsp;and&nbsp;</Text>
+            <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
+              <Text style={styles.legalLink}>Privacy Policy</Text>
+            </Pressable>
+          </View>
         </Animated.View>
-
-        <View style={styles.legal}>
-          <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
-            <Text style={styles.legalLink}>Terms of Service</Text>
-          </Pressable>
-          <Text style={styles.legalSep}>&nbsp;and&nbsp;</Text>
-          <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
-            <Text style={styles.legalLink}>Privacy Policy</Text>
-          </Pressable>
-        </View>
-      </Animated.View>
+      )}
     </View>
   );
 }

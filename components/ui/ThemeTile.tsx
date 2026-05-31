@@ -30,6 +30,8 @@ export function ThemeTile({
     transform: [{ scale: withSpring(selected ? 1.0 : 1, { damping: 16 }) }],
   }));
 
+  const isLive = theme.badge === 'Live';
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -54,9 +56,24 @@ export function ThemeTile({
           style={StyleSheet.absoluteFill}
         />
 
+        {/* Live video indicator overlay */}
+        {isLive && (
+          <View style={StyleSheet.absoluteFill}>
+            <LinearGradient
+              colors={['rgba(212,175,55,0.12)', 'transparent', 'rgba(212,175,55,0.08)']}
+              style={StyleSheet.absoluteFill}
+            />
+          </View>
+        )}
+
         {theme.badge ? (
-          <View style={[styles.badge, theme.badge === 'New' && styles.badgeNew]}>
-            <Text style={styles.badgeText}>{theme.badge}</Text>
+          <View style={[
+            styles.badge,
+            theme.badge === 'New' && styles.badgeNew,
+            isLive && styles.badgeLive,
+          ]}>
+            {isLive && <View style={styles.liveDot} />}
+            <Text style={styles.badgeText}>{isLive ? 'LIVE' : theme.badge}</Text>
           </View>
         ) : null}
 
@@ -100,8 +117,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 7,
     paddingVertical: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   badgeNew: { backgroundColor: colors.gold.deep },
+  badgeLive: { backgroundColor: 'rgba(212,175,55,0.85)' },
+  liveDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+  },
   badgeText: { fontFamily: fonts.sansSemibold, fontSize: 10, color: colors.white },
   check: {
     position: 'absolute',

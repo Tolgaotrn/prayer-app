@@ -10,7 +10,9 @@ export interface BackgroundTheme {
   name: string;
   image: { uri: string };
   gradient: readonly [string, string, ...string[]];
-  badge?: 'Free' | 'New';
+  badge?: 'Free' | 'New' | 'Live';
+  /** Optional looping video background (overrides image in feed) */
+  video?: { uri: string };
 }
 
 export const backgroundThemes: BackgroundTheme[] = [
@@ -71,6 +73,22 @@ export const backgroundThemes: BackgroundTheme[] = [
     name: 'Holy Kaaba',
     image: { uri: `${BASE}/kaaba.png` },
     gradient: ['#1A1A1A', '#4A4A4A', '#0A0A0A'],
+  },
+  {
+    id: 9,
+    name: 'Living Light I',
+    image: { uri: `${BASE}/midnight.jpg` },
+    gradient: ['#0A1230', '#0D1A3A', '#070C18'],
+    badge: 'Live',
+    video: { uri: 'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0531.mp4' },
+  },
+  {
+    id: 10,
+    name: 'Living Light II',
+    image: { uri: `${BASE}/midnight.jpg` },
+    gradient: ['#1A0A08', '#3A1A12', '#0A0404'],
+    badge: 'Live',
+    video: { uri: 'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0532.mp4' },
   },
 ];
 
