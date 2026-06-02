@@ -70,6 +70,10 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
     {
       name: 'huda-onboarding',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      // Eski kayıtları koru — isCompleted dahil mevcut alanlar silinmez,
+      // yeni alanlar initial defaults'tan gelir.
+      migrate: (persisted) => persisted as OnboardingState & OnboardingActions,
     },
   ),
 );

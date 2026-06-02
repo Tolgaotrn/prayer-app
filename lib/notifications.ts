@@ -183,3 +183,18 @@ export async function applyAllNotifPrefs(
   await schedulePrayerNotifications(slots, prefs);
   await scheduleHourlyInspiration(prefs.dailyInspirationEnabled);
 }
+
+/**
+ * Açılışta / namaz vakitleri değişince bildirimleri SESSİZCE yeniden planlar.
+ * İzin DAHA ÖNCE verilmemişse hiçbir şey yapmaz (yeni izin dialog'u açmaz) —
+ * böylece DAILY trigger'ların sabit saate kilitlenip kayması önlenir.
+ */
+export async function refreshScheduledNotifications(slots: PrayerSlot[]): Promise<void> {
+  if (Platform.OS === 'web' || slots.length === 0) return;
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return;
+    const prefs = await loadNotifPrefs();
+    await applyAllNotifPrefs(slots, prefs);
+  } catch { /* sessiz geç */ }
+}

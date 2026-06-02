@@ -51,7 +51,8 @@ async function loadPurchases(): Promise<PurchasesModule | null> {
 }
 
 export function useConfigureRevenueCat() {
-  const setPremium = useAppStore((s) => s.setPremium);
+  // applyRevenueCatPremium: RC durumu premium'u belirler ama promo tabanını ezmez.
+  const applyRevenueCatPremium = useAppStore((s) => s.applyRevenueCatPremium);
 
   useEffect(() => {
     let mounted = true;
@@ -62,10 +63,10 @@ export function useConfigureRevenueCat() {
         if (!Purchases || !mounted) return;
 
         const customerInfo = await Purchases.getCustomerInfo();
-        if (mounted) setPremium(hasPremiumEntitlement(customerInfo));
+        if (mounted) applyRevenueCatPremium(hasPremiumEntitlement(customerInfo));
 
         const listener = (updatedInfo: CustomerInfo) => {
-          setPremium(hasPremiumEntitlement(updatedInfo));
+          applyRevenueCatPremium(hasPremiumEntitlement(updatedInfo));
         };
 
         Purchases.addCustomerInfoUpdateListener(listener);
@@ -84,7 +85,7 @@ export function useConfigureRevenueCat() {
       mounted = false;
       removeListener?.();
     };
-  }, [setPremium]);
+  }, [applyRevenueCatPremium]);
 }
 
 export async function getRevenueCatPackages() {

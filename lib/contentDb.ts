@@ -119,8 +119,12 @@ export async function fetchFeedItems(
   const onlyFavorites = effectiveTopics.length === 1 && effectiveTopics[0] === 'Favorites';
 
   try {
-    const items = await buildFeed(lang, limit, effectiveTopics, savedIds);
-    if (items.length > 0 || onlyFavorites) { await writeCache(cacheId, items); return items; }
+    const { items, ok } = await buildFeed(lang, limit, effectiveTopics, savedIds);
+    if (items.length > 0 || onlyFavorites) {
+      // Sadece TÜM sorgular başarılıysa cache'le — kısmi/eksik feed'i kalıcılaştırma
+      if (ok) await writeCache(cacheId, items);
+      return items;
+    }
   } catch {}
 
   const stale = await staleCache<FeedItem[]>(cacheId);
@@ -139,7 +143,10 @@ async function buildFeed(
   limit: number,
   topics: string[],
   savedIds: string[],
-): Promise<FeedItem[]> {
+): Promise<{ items: FeedItem[]; ok: boolean }> {
+  // ok=false → en az bir sorgu hata döndü; çağıran kısmi sonucu CACHE'LEMEZ
+  // (bozuk/eksik feed'in 24 saat servis edilmesini önler).
+  let ok = true;
   const hasGeneral   = topics.includes('General') || topics.length === 0;
   const hasVerses    = topics.includes('Quran Verses');   // artık sadece premium
   const hasFavorites = topics.includes('Favorites') || hasGeneral;
@@ -166,7 +173,8 @@ async function buildFeed(
         .eq('verse_translations.language', lang)
         .eq('display_safe', true)
         .limit(verseLimit)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, verseSlice).forEach((v: any) => results.push({
             id: v.id, kind: 'verse',
             arabic: v.arabic,
@@ -189,7 +197,8 @@ async function buildFeed(
         .eq('display_safe', true)
         .in('grade', ['sahih', 'hasan', 'mixed_canonical'])
         .limit(367)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, hadithSlice).forEach((h: any) => results.push({
             id: h.id, kind: 'hadith',
             arabic: h.arabic,
@@ -212,7 +221,8 @@ async function buildFeed(
         .eq('dua_translations.language', duaLang)
         .eq('display_safe', true)
         .limit(89)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, Math.ceil(limit * 0.3)).forEach((d: any) => results.push({
             id: d.id, kind: 'dua',
             arabic: d.arabic,
@@ -233,7 +243,8 @@ async function buildFeed(
         .select('id, author, topics, quote_translations!inner(text)')
         .eq('quote_translations.language', lang)
         .limit(300)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, quoteSlice).forEach((q: any) => results.push({
             id: q.id, kind: 'quote',
             arabic: '',
@@ -252,7 +263,8 @@ async function buildFeed(
         .from('asmaul_husna')
         .select('id, number, arabic, transliteration, asmaul_husna_translations!inner(meaning, description)')
         .eq('asmaul_husna_translations.language', lang)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           (data ?? []).forEach((n: any) => results.push({
             id: n.id,
             kind: 'quote',
@@ -276,7 +288,8 @@ async function buildFeed(
         .eq('display_safe', true)
         .overlaps('topics', dbTags)
         .limit(200)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, Math.ceil(limit * 0.6)).forEach((v: any) => {
             if (!results.find(r => r.id === v.id)) results.push({
               id: v.id, kind: 'verse',
@@ -299,7 +312,8 @@ async function buildFeed(
         .in('grade', ['sahih', 'hasan', 'mixed_canonical'])
         .overlaps('topics', dbTags)
         .limit(200)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           shuffle(data ?? []).slice(0, Math.ceil(limit * 0.4)).forEach((h: any) => {
             if (!results.find(r => r.id === h.id)) results.push({
               id: h.id, kind: 'hadith',
@@ -323,7 +337,8 @@ async function buildFeed(
           .eq('display_safe', true)
           .in('category', ['morning-dhikr', 'evening-dhikr', 'dhikr-after-salah'])
           .limit(89)
-          .then(({ data }) => {
+          .then(({ data, error }) => {
+          if (error) ok = false;
             shuffle(data ?? []).slice(0, Math.ceil(limit * 0.3)).forEach((d: any) => {
               if (!results.find(r => r.id === d.id)) results.push({
                 id: d.id, kind: 'dua',
@@ -341,7 +356,7 @@ async function buildFeed(
   // ── Favorites — kaydedilen içerik HER TÜRDEN olabilir (verse/hadith/dua/quote) ──
   // Bu yüzden tüm tablolarda ID ile ara. ID'ler UUID, her ID tek bir tabloya ait.
   if (savedIds.length > 0 && hasFavorites) {
-    const ids = savedIds.slice(0, 50);
+    const ids = savedIds.slice(0, 200);
     const dl = (lang === 'id') ? 'id' : 'en'; // duas TR/FR yok
 
     promises.push(
@@ -350,7 +365,8 @@ async function buildFeed(
         .select('id, arabic, surah_name, ayah, topics, verse_translations!inner(text)')
         .eq('verse_translations.language', lang)
         .in('id', ids)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           (data ?? []).forEach((v: any) => {
             if (!results.find(r => r.id === v.id)) results.push({
               id: v.id, kind: 'verse', arabic: v.arabic,
@@ -368,7 +384,8 @@ async function buildFeed(
         .select('id, arabic, collection_name, reference, topics, hadith_translations!inner(text)')
         .eq('hadith_translations.language', lang)
         .in('id', ids)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           (data ?? []).forEach((h: any) => {
             if (!results.find(r => r.id === h.id)) results.push({
               id: h.id, kind: 'hadith', arabic: h.arabic,
@@ -386,7 +403,8 @@ async function buildFeed(
         .select('id, arabic, occasion, category, dua_translations!inner(text)')
         .eq('dua_translations.language', dl)
         .in('id', ids)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           (data ?? []).forEach((d: any) => {
             if (!results.find(r => r.id === d.id)) results.push({
               id: d.id, kind: 'dua', arabic: d.arabic,
@@ -404,7 +422,8 @@ async function buildFeed(
         .select('id, author, topics, quote_translations!inner(text)')
         .eq('quote_translations.language', lang)
         .in('id', ids)
-        .then(({ data }) => {
+        .then(({ data, error }) => {
+          if (error) ok = false;
           (data ?? []).forEach((q: any) => {
             if (!results.find(r => r.id === q.id)) results.push({
               id: q.id, kind: 'quote', arabic: '',
@@ -420,7 +439,7 @@ async function buildFeed(
   await Promise.all(promises);
 
   // Karıştır ve limit uygula
-  return shuffle(results).slice(0, limit);
+  return { items: shuffle(results).slice(0, limit), ok };
 }
 
 function shuffle<T>(arr: T[]): T[] {

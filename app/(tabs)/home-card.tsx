@@ -26,6 +26,7 @@ import { useT, useLocaleTag } from '../../lib/i18n';
 import { haptic } from '../../lib/haptics';
 import { usePrayerTimes } from '../../lib/prayerTimes';
 import { syncWidget } from '../../lib/widgetSync';
+import { refreshScheduledNotifications } from '../../lib/notifications';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { resolveWidgetBgURL } from '../../data/themes';
@@ -61,6 +62,13 @@ export default function HomeHub() {
   React.useEffect(() => {
     syncWidget({ language: rawLang, streakDays, isPremium, followedTopics, savedVerseIds, themeImageURL });
   }, [rawLang, streakDays, prayer.city, isPremium, widgetThemeId]);
+
+  // Namaz vakitleri hazır olunca / değişince bildirimleri sessizce yeniden
+  // planla — DAILY trigger'ların eski saate kilitlenip kaymasını önler.
+  const slotsKey = prayer.slots.map((s) => s.time).join(',');
+  React.useEffect(() => {
+    if (!prayer.loading) refreshScheduledNotifications(prayer.slots);
+  }, [slotsKey, prayer.loading]);
 
   const dateStr = new Date().toLocaleDateString(locale, {
     weekday: 'long', day: 'numeric', month: 'long',

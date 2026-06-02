@@ -40,7 +40,7 @@ type State = 'idle' | 'success' | 'error';
 export default function PromoCodeScreen() {
   const router = useRouter();
   const tc = useThemeColors();
-  const setPremium = useAppStore((s) => s.setPremium);
+  const redeemPromo = useAppStore((s) => s.redeemPromo);
   const isPremium = useAppStore((s) => s.isPremium);
 
   const [code, setCode] = React.useState('');
@@ -67,7 +67,7 @@ export default function PromoCodeScreen() {
     }
 
     if (PROMO_CODES.has(trimmed)) {
-      setPremium(true);
+      redeemPromo();
       setStatus('success');
       iconScale.value = withSequence(
         withSpring(1.4, { damping: 8 }),

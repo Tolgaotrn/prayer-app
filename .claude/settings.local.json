@@ -112,7 +112,8 @@
       "WebFetch(domain:spark.mwm.ai)",
       "WebFetch(domain:www.fiverr.com)",
       "Bash(git checkout *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)"
     ]
   }
 }

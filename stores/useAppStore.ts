@@ -19,6 +19,7 @@ interface AppState {
   dhikrToday: number;            // bugünkü tesbih sayısı
   dhikrTodayDate: string | null; // bugünün tarihi (gün dönüşü için)
   widgetThemeId: number | null;  // widget arka planı: null=app teması, 0=minimal, diğer=tema id
+  promoUnlocked: boolean;        // promo kod ile açılan premium "taban"ı — RC bunu ezemez
 }
 
 interface AppActions {
@@ -26,6 +27,8 @@ interface AppActions {
   isSaved: (id: string) => boolean;
   registerOpen: () => void;
   setPremium: (v: boolean) => void;
+  redeemPromo: () => void;                          // promo kod → kalıcı premium taban
+  applyRevenueCatPremium: (active: boolean) => void; // RC entitlement → premium (promo tabanını korur)
   setDarkMode: (v: boolean) => void;
   setCurrentVerseIndex: (i: number) => void;
   toggleFollowTopic: (topic: string) => void;
@@ -37,8 +40,17 @@ interface AppActions {
   setWidgetThemeId: (id: number | null) => void;
 }
 
+/** YEREL tarih anahtarı (YYYY-MM-DD). toISOString() UTC verir ve gece yarısı
+ *  yerel günle kaymaz → streak çift artar / atlar. Bu yüzden yerel bileşenler. */
+function localDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function todayKey(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey(new Date());
 }
 
 export const useAppStore = create<AppState & AppActions>()(
@@ -57,6 +69,7 @@ export const useAppStore = create<AppState & AppActions>()(
       dhikrToday: 0,
       dhikrTodayDate: null,
       widgetThemeId: null,
+      promoUnlocked: false,
 
       toggleSave: (verse) =>
         set((state) => ({
@@ -71,12 +84,22 @@ export const useAppStore = create<AppState & AppActions>()(
         set((state) => {
           const today = todayKey();
           if (state.lastOpenDate === today) return state;
-          const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+          const yd = new Date();
+          yd.setDate(yd.getDate() - 1); // setDate DST-güvenli; yerel "dün"
+          const yesterday = localDateKey(yd);
           const streakDays = state.lastOpenDate === yesterday ? state.streakDays + 1 : 1;
           return { ...state, streakDays, lastOpenDate: today };
         }),
 
       setPremium: (v) => set({ isPremium: v }),
+
+      // Promo kod → kalıcı premium tabanı. RevenueCat bunu artık ezemez.
+      redeemPromo: () => set({ promoUnlocked: true, isPremium: true }),
+
+      // RevenueCat entitlement durumu → premium. Promo tabanı korunur:
+      // RC pasif dönse bile promo kullanıcısı premium kalır.
+      applyRevenueCatPremium: (active) =>
+        set((state) => ({ isPremium: active || state.promoUnlocked })),
       setDarkMode: (v) => set({ darkMode: v }),
       setCurrentVerseIndex: (i) => set({ currentVerseIndex: i }),
 
@@ -121,6 +144,10 @@ export const useAppStore = create<AppState & AppActions>()(
     {
       name: 'huda-app',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      // Eski (versiyonsuz) kayıtları koru — yeni alanlar shallow-merge ile
+      // initial defaults'tan gelir, mevcut veri (streak, saves, premium) silinmez.
+      migrate: (persisted) => persisted as AppState & AppActions,
     },
   ),
 );

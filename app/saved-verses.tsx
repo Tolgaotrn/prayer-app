@@ -37,9 +37,13 @@ export default function SavedVerses() {
     if (savedIds.length === 0) { setItems([]); setLoading(false); return; }
     setLoading(true);
     // Favorites → tüm türlerden kaydedilenleri çek (forceFresh: her zaman taze)
-    fetchFeedItems(lang, 50, ['Favorites'], isPremium, savedIds, true).then((data) => {
-      if (!cancelled) { setItems(data); setLoading(false); }
-    });
+    fetchFeedItems(lang, 200, ['Favorites'], isPremium, savedIds, true)
+      .then((data) => {
+        if (!cancelled) { setItems(data); setLoading(false); }
+      })
+      .catch(() => {
+        if (!cancelled) { setItems([]); setLoading(false); }
+      });
     return () => { cancelled = true; };
   }, [lang, isPremium, savedIds.join(',')]);
 

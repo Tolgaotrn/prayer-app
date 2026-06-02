@@ -76,13 +76,21 @@ export default function Feed() {
     registerOpen();
     const t = setTimeout(() => setShowBanner(false), 3200);
 
-    fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged).then(data => {
-      setItems(data);
-      setLoading(false);
-    });
+    let cancelled = false;
+    fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged)
+      .then(data => {
+        if (cancelled) return; // eski dil/istek sonucu yeni isteği ezmesin
+        setItems(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setItems([]);       // beklenmeyen hata → boş durum + retry yolu (sonsuz spinner yok)
+        setLoading(false);
+      });
 
-    return () => clearTimeout(t);
-  }, [lang, followedTopics.join(',')]);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [lang, followedTopics.join(','), isPremium]);
 
   // Widget verisini her açılışta senkronize et (home-card'a girmese bile)
   React.useEffect(() => {
