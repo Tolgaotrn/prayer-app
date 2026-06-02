@@ -31,7 +31,8 @@ async function readJson(relPath) {
 }
 
 const TRANS_TABLES = new Set([
-  'verse_translations','hadith_translations','dua_translations','quote_translations'
+  'verse_translations','hadith_translations','dua_translations','quote_translations',
+  'asmaul_husna_translations',
 ]);
 
 /** Büyük diziyi chunk'lara bölerek upsert et */
@@ -227,6 +228,58 @@ async function importQuotes() {
   }
 }
 
+async function importAsmaulHusna() {
+  console.log('\n── Asmaul Husna (99 Names) ──');
+  let base;
+  try {
+    base = await readJson('content/asmaul-husna/base.json');
+  } catch {
+    console.log('  ⚠ content/asmaul-husna/base.json bulunamadı.');
+    console.log('    Önce çalıştırın: node tools/import-asmaul-husna.mjs');
+    return;
+  }
+  const langs = ['en', 'tr', 'fr', 'id'];
+  const allTrans = await Promise.all(
+    langs.map(l => readJson(`content/asmaul-husna/translations/${l}.json`).catch(() => []))
+  );
+
+  // Orphan temizleme
+  const keepIds = new Set(base.map(n => n.id));
+  const { data: existing } = await sb.from('asmaul_husna').select('id');
+  const orphans = (existing ?? []).map(r => r.id).filter(id => !keepIds.has(id));
+  if (orphans.length) {
+    for (let i = 0; i < orphans.length; i += 100) {
+      const chunk = orphans.slice(i, i + 100);
+      await sb.from('asmaul_husna_translations').delete().in('id', chunk);
+      await sb.from('asmaul_husna').delete().in('id', chunk);
+    }
+    console.log(`  🗑  asmaul_husna: ${orphans.length} eski kayıt temizlendi`);
+  }
+
+  const rows = base.map(n => ({
+    id:              n.id,
+    number:          n.number,
+    arabic:          n.arabic,
+    transliteration: n.transliteration,
+    topics:          n.topics ?? ['99 Names of Allah'],
+    popularity:      n.popularity ?? 100,
+  }));
+  await upsert('asmaul_husna', rows);
+
+  for (let i = 0; i < langs.length; i++) {
+    const lang  = langs[i];
+    const trans = allTrans[i];
+    if (!trans.length) { console.log(`  ⚠ asmaul-husna/${lang}: dosya yok, atlandı`); continue; }
+    const trows = trans.map(t => ({
+      id:          t.id,
+      language:    lang,
+      meaning:     t.meaning ?? '',
+      description: t.description ?? '',
+    }));
+    await upsert('asmaul_husna_translations', trows);
+  }
+}
+
 async function importThemes() {
   console.log('\n── Themes ──');
   const rows = [
@@ -261,11 +314,12 @@ async function main() {
     process.exit(1);
   }
 
-  await run('verses',  importVerses);
-  await run('hadiths', importHadiths);
-  await run('duas',    importDuas);
-  await run('quotes',  importQuotes);
-  await run('themes',  importThemes);
+  await run('verses',       importVerses);
+  await run('hadiths',      importHadiths);
+  await run('duas',         importDuas);
+  await run('quotes',       importQuotes);
+  await run('asmaul-husna', importAsmaulHusna);
+  await run('themes',       importThemes);
 
   console.log('\n✅ Import tamamlandı!');
 }

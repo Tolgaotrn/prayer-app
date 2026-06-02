@@ -28,6 +28,7 @@ import { usePrayerTimes } from '../../lib/prayerTimes';
 import { syncWidget } from '../../lib/widgetSync';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
+import { resolveWidgetBgURL } from '../../data/themes';
 
 type Tile = { glyph: GlyphName; key: string; href: Href };
 
@@ -46,14 +47,20 @@ export default function HomeHub() {
   const t = useT();
   const locale = useLocaleTag();
   const prayer = usePrayerTimes();
-  const rawLang = useOnboardingStore((s) => s.language);
-  const streakDays = useAppStore((s) => s.streakDays);
+  const rawLang       = useOnboardingStore((s) => s.language);
+  const selectedTheme = useOnboardingStore((s) => s.selectedTheme);
+  const streakDays    = useAppStore((s) => s.streakDays);
+  const isPremium     = useAppStore((s) => s.isPremium);
+  const followedTopics = useAppStore((s) => s.followedTopics);
+  const savedVerseIds = useAppStore((s) => s.savedVerseIds);
+  const widgetThemeId = useAppStore((s) => s.widgetThemeId);
+  const themeImageURL = resolveWidgetBgURL(widgetThemeId, selectedTheme);
 
   const nextSlot = prayer.slots.find((p) => p.key === prayer.nextKey);
 
   React.useEffect(() => {
-    syncWidget({ language: rawLang, streakDays });
-  }, [rawLang, streakDays, prayer.city]);
+    syncWidget({ language: rawLang, streakDays, isPremium, followedTopics, savedVerseIds, themeImageURL });
+  }, [rawLang, streakDays, prayer.city, isPremium, widgetThemeId]);
 
   const dateStr = new Date().toLocaleDateString(locale, {
     weekday: 'long', day: 'numeric', month: 'long',
@@ -201,7 +208,7 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: spacing.lg, paddingBottom: 120, gap: spacing.lg },
 
   headerRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
-  headerTitle: { fontFamily: fonts.serifBold, fontSize: 24 },
+  headerTitle: { fontFamily: fonts.serifBold, fontSize: 24, lineHeight: 40 },
   headerDate: { fontFamily: fonts.sans, fontSize: 13, marginTop: 2 },
   cityChip: {
     flexDirection: 'row', alignItems: 'center', gap: 4,

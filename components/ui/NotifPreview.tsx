@@ -15,7 +15,7 @@ interface NotifPreviewProps {
 /** Mock iOS-style notification banner — shows the real app icon + name,
  *  with a faint second notification stacked behind it. */
 export function NotifPreview({
-  title = 'Noor',
+  title = 'Huda',
   body = '“The best among you are those who have the best character.” — Prophet Muhammad (peace be upon him)',
   time = 'now',
 }: NotifPreviewProps) {

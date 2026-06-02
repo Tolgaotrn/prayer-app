@@ -72,7 +72,7 @@ export default function RemindersSettings() {
         {/* Bildirim önizleme */}
         <Animated.View entering={FadeInDown.duration(400)}>
           <NotifPreview
-            title="Noor"
+            title="Huda"
             body="'And He found you lost and guided you.' — Quran 93:7"
           />
         </Animated.View>
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
     alignItems: 'center', justifyContent: 'center',
   },
-  title: { fontFamily: fonts.serifBold, fontSize: 22 },
+  title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
   content: {
     paddingHorizontal: spacing.lg,
     paddingBottom: 80,

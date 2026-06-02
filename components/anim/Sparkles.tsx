@@ -8,6 +8,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
 import { colors } from '../../constants/theme';
 
 interface SparkleProps {
@@ -59,27 +60,17 @@ function Sparkle({
   );
 }
 
-/** Pure-CSS four-point star using two rotated diamonds. */
+/** Four-point sparkle (✦) with concave sides — reads as a star, not a plus. */
 export function Star({ size = 14, color = colors.gold.bright }: { size?: number; color?: string }) {
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      <View style={[starStyles.diamond, { width: size * 0.5, height: size, backgroundColor: color }]} />
-      <View
-        style={[
-          starStyles.diamond,
-          { width: size, height: size * 0.5, backgroundColor: color, position: 'absolute' },
-        ]}
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12 0 C12.8 7.6 16.4 11.2 24 12 C16.4 12.8 12.8 16.4 12 24 C11.2 16.4 7.6 12.8 0 12 C7.6 11.2 11.2 7.6 12 0 Z"
+        fill={color}
       />
-    </View>
+    </Svg>
   );
 }
-
-const starStyles = StyleSheet.create({
-  diamond: {
-    borderRadius: 2,
-    transform: [{ scaleY: 1 }],
-  },
-});
 
 interface SparkleFieldProps {
   count?: number;

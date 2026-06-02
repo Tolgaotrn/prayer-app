@@ -17,50 +17,49 @@ import { useThemeColors } from '../lib/useThemeColors';
 import { useAppStore } from '../stores/useAppStore';
 import { haptic } from '../lib/haptics';
 
-type Topic = { label: string; icon: string; free?: boolean };
+type Topic = { label: string; icon: string; subtitle?: string; free?: boolean };
 type Section = { title: string; topics: Topic[] };
 
 /* Ücretsiz konular — en üstte, başlıksız, Free rozeti satır içinde */
 const FREE_TOPICS: Topic[] = [
-  { label: 'General',      icon: 'grid-outline',        free: true },
-  { label: 'Quran Verses', icon: 'book-outline',         free: true },
-  { label: 'Favorites',    icon: 'heart-outline',        free: true },
+  { label: 'General',      icon: 'apps-outline',   subtitle: 'A mix of verses & hadith',  free: true },
+  { label: 'Favorites',    icon: 'heart-outline',  subtitle: 'Your saved content',          free: true },
 ];
 
 const POPULAR_TOPICS: Topic[] = [
-  { label: 'Hadiths',           icon: 'library-outline' },
-  { label: 'Duas & Prayers',    icon: 'hand-left-outline' },
-  { label: 'Islamic Quotes',    icon: 'chatbubble-ellipses-outline' },
-  { label: '99 Names of Allah', icon: 'sparkles-outline' },
-  { label: 'Dhikr',             icon: 'infinite-outline' },
-  { label: 'Patience',          icon: 'hourglass-outline' },
-  { label: 'Gratitude',         icon: 'heart-outline' },
+  { label: 'Quran Verses',          icon: 'book-outline',              subtitle: 'Daily ayahs from the Quran' },
+  { label: 'Hadiths',              icon: 'library-outline',            subtitle: 'Prophetic traditions' },
+  { label: 'Duas & Prayers',       icon: 'hand-left-outline',          subtitle: 'Supplications & adhkar' },
+  { label: 'Islamic Quotes',       icon: 'chatbubble-ellipses-outline', subtitle: 'Wisdom & reflections' },
+  { label: '99 Names of Allah',    icon: 'sparkles-outline',           subtitle: 'Al-Asmaul Husna' },
+  { label: 'Dhikr & Remembrance',  icon: 'infinite-outline',           subtitle: 'Morning & evening adhkar' },
+  { label: 'Patience',             icon: 'hourglass-outline',          subtitle: 'On sabr & perseverance' },
+  { label: 'Gratitude',            icon: 'gift-outline',               subtitle: 'On shukr & thankfulness' },
+  { label: 'Hope',                 icon: 'partly-sunny-outline',       subtitle: 'In Allah\'s mercy & grace' },
 ];
 
 const CATALOG: Section[] = [
   {
     title: 'Faith & Belief',
     topics: [
-      { label: 'Tawakkul',         icon: 'heart-circle-outline' },
-      { label: 'Seeking Guidance', icon: 'compass-outline' },
-      { label: 'Repentance',       icon: 'refresh-circle-outline' },
+      { label: 'Tawakkul',         icon: 'shield-outline',         subtitle: 'Reliance on Allah' },
+      { label: 'Repentance',       icon: 'return-up-back-outline', subtitle: 'Turning back to Allah' },
+      { label: 'Seeking Guidance', icon: 'compass-outline',        subtitle: 'Finding the straight path' },
     ],
   },
   {
     title: 'Character & Morality',
     topics: [
-      { label: 'Honesty',     icon: 'checkmark-circle-outline' },
-      { label: 'Kindness',    icon: 'hand-right-outline' },
-      { label: 'Forgiveness', icon: 'shield-checkmark-outline' },
+      { label: 'Honesty',     icon: 'checkmark-circle-outline',  subtitle: 'Truthfulness & integrity' },
+      { label: 'Kindness',    icon: 'heart-half-outline',         subtitle: 'Ihsan & compassion' },
+      { label: 'Forgiveness', icon: 'water-outline',              subtitle: 'Pardoning & letting go' },
     ],
   },
   {
     title: 'Heart & Spirituality',
     topics: [
-      { label: 'Inner Peace',         icon: 'leaf-outline' },
-      { label: 'Love of God',         icon: 'rose-outline' },
-      { label: 'Dhikr & Remembrance', icon: 'moon-outline' },
-      { label: 'Hope',                icon: 'sunny-outline' },
+      { label: 'Inner Peace',   icon: 'leaf-outline', subtitle: 'Tranquility of the heart' },
+      { label: 'Love of Allah', icon: 'rose-outline', subtitle: 'Mahabbah & closeness to Allah' },
     ],
   },
 ];
@@ -293,7 +292,7 @@ export default function ExploreTopics() {
 function TopicRow({
   topic, locked, followed, tc, onPress, showFreeBadge,
 }: {
-  topic: { label: string; icon: string };
+  topic: { label: string; icon: string; subtitle?: string };
   locked: boolean;
   followed: boolean;
   tc: ReturnType<typeof import('../lib/useThemeColors').useThemeColors>;
@@ -315,10 +314,19 @@ function TopicRow({
       accessibilityRole="button"
       accessibilityLabel={`${topic.label}${locked ? ', premium' : followed ? ', followed' : ''}`}
     >
-      <View style={[styles.topicIcon, { backgroundColor: tc.raisedBg }]}>
+      <View style={[styles.topicIcon, {
+        backgroundColor: followed
+          ? (tc.isDark ? 'rgba(212,175,55,0.18)' : 'rgba(201,150,58,0.14)')
+          : tc.raisedBg,
+      }]}>
         <Ionicons name={topic.icon as any} size={20} color={followed ? tc.gold : tc.muted} />
       </View>
-      <Text style={[styles.topicLabel, { color: tc.heading }]}>{topic.label}</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.topicLabel, { color: tc.heading }]}>{topic.label}</Text>
+        {topic.subtitle ? (
+          <Text style={[styles.topicSubtitle, { color: tc.muted }]}>{topic.subtitle}</Text>
+        ) : null}
+      </View>
       {showFreeBadge && (
         <View style={[styles.freeBadge, { backgroundColor: tc.gold + '20', borderColor: tc.gold + '55' }]}>
           <Text style={[styles.freeBadgeText, { color: tc.gold }]}>Free</Text>
@@ -341,7 +349,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm,
   },
   iconBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  title: { fontFamily: fonts.serifBold, fontSize: 22 },
+  title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
 
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
@@ -377,11 +385,12 @@ const styles = StyleSheet.create({
   topicList: { gap: spacing.sm, marginBottom: spacing.xs },
   topicRow: {
     flexDirection: 'row', alignItems: 'center',
-    minHeight: 58, paddingHorizontal: spacing.md,
+    minHeight: 64, paddingHorizontal: spacing.md, paddingVertical: 10,
     borderRadius: radii.lg, borderWidth: 1, gap: spacing.md,
   },
-  topicIcon: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  topicLabel: { fontFamily: fonts.sansMedium, fontSize: 15, flex: 1 },
+  topicIcon: { width: 40, height: 40, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  topicLabel: { fontFamily: fonts.sansMedium, fontSize: 15 },
+  topicSubtitle: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1, opacity: 0.85 },
   freeBadge: { borderRadius: radii.pill, borderWidth: 1, paddingHorizontal: 8, paddingVertical: 2 },
   freeBadgeText: { fontFamily: fonts.sansSemibold, fontSize: 10 },
 });

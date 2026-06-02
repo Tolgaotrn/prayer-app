@@ -1,11 +1,7 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { SelectScreen } from '../../components/onboarding/SelectScreen';
-import { colors } from '../../constants/theme';
 
 export default function Intention() {
-  const router = useRouter();
   return (
     <SelectScreen
       step={2}
@@ -13,14 +9,13 @@ export default function Intention() {
       storeKey="intentions"
       title="What is your intention?"
       subtitle="Select all that resonate with you"
-      onSkip={() => router.push('/(onboarding)/feeling')}
-      next="/(onboarding)/feeling"
+      next="/(onboarding)/content-select"
       options={[
-        { label: 'Grow closer to Allah', sublabel: 'Strengthen my connection daily' },
-        { label: 'Build a Quran habit', sublabel: 'Read and reflect consistently' },
+        { label: 'Grow closer to Allah', sublabel: 'Deepen my connection every day' },
         { label: 'Find calm & peace', sublabel: 'Ease my heart and mind' },
-        { label: 'Learn the meanings', sublabel: 'Understand verses deeply' },
-        { label: 'Stay motivated', sublabel: 'Gentle daily reminders' },
+        { label: 'Learn the meanings', sublabel: 'Understand verses and hadith deeply' },
+        { label: 'Stay consistent', sublabel: 'Build a lasting daily habit' },
+        { label: 'Stay motivated', sublabel: 'Gentle reminders to keep me going' },
       ]}
     />
   );

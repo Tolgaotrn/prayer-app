@@ -18,22 +18,17 @@ import {
   PlusJakartaSans_700Bold,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { Amiri_400Regular, Amiri_700Bold } from '@expo-google-fonts/amiri';
-import { AppState } from 'react-native';
+import { PostHogProvider } from 'posthog-react-native';
 import { colors } from '../constants/theme';
 import { useConfigureRevenueCat } from '../lib/revenueCat';
-import { analytics } from '../lib/analytics';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+
+const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   useConfigureRevenueCat();
-  // Flush PostHog events when app goes to background
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'background' || state === 'inactive') analytics.flush();
-    });
-    return () => sub.remove();
-  }, []);
 
   const [loaded, error] = useFonts({
     PlayfairDisplay_400Regular,
@@ -56,7 +51,7 @@ export default function RootLayout() {
 
   if (!loaded && !error) return null;
 
-  return (
+  const tree = (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.midnight }}>
       <SafeAreaProvider>
         <View style={{ flex: 1 }} onLayout={onLayout}>
@@ -83,14 +78,33 @@ export default function RootLayout() {
               <Stack.Screen name="reminders-settings" />
               <Stack.Screen name="language-settings" />
               <Stack.Screen name="widget-settings" />
+              <Stack.Screen name="promo-code" />
               <Stack.Screen name="qibla" />
               <Stack.Screen name="dhikr" />
               <Stack.Screen name="notifications-settings" />
               <Stack.Screen name="prayer-times" />
+              <Stack.Screen name="location-setup" options={{ animation: 'slide_from_bottom' }} />
               <Stack.Screen name="explore-topics" options={{ animation: 'slide_from_bottom' }} />
             </Stack>
           </View>
         </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+
+  // PostHog anahtarı yoksa provider'ı hiç render etme — undefined anahtarla
+  // init çökmesini önler. ErrorBoundary tüm ağacı sarar.
+  return (
+    <ErrorBoundary>
+      {POSTHOG_KEY ? (
+        <PostHogProvider
+          apiKey={POSTHOG_KEY}
+          options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}
+        >
+          {tree}
+        </PostHogProvider>
+      ) : (
+        tree
+      )}
+    </ErrorBoundary>
   );
 }

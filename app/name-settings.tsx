@@ -56,7 +56,7 @@ export default function NameSettings() {
 
         <View style={styles.content}>
           <Text style={[styles.label, { color: tc.muted }]}>
-            How should Noor call you?
+            How should Huda call you?
           </Text>
 
           <View style={[styles.inputWrap, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
     alignItems: 'center', justifyContent: 'center',
   },
-  title: { fontFamily: fonts.serifBold, fontSize: 22 },
+  title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
   content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xl,

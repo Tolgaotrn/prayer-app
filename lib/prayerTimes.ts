@@ -16,11 +16,18 @@ import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import {
-  CalculationMethod,
   Coordinates,
+  CalculationParameters,
   PrayerTimes as AdhanPrayerTimes,
   Prayer,
 } from 'adhan';
+import {
+  buildParams,
+  getSettingsSnapshot,
+  loadPrayerSettings,
+  subscribePrayerSettings,
+  effectiveMethod,
+} from './prayerSettings';
 
 export interface PrayerSlot {
   key: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
@@ -33,15 +40,29 @@ export interface PrayerSlot {
 export interface PrayerInfo {
   slots: PrayerSlot[];
   nextKey: PrayerSlot['key'] | null;
+  prevKey: PrayerSlot['key'] | null;
   countdown: string;   // "2h 14m"
+  /** Bir önceki vakitten sıradakine geçişte 0..1 ilerleme (progress halkası için). */
+  progress: number;
+  /** Sıradaki vaktin tam zamanı (geri sayım/animasyon için). */
+  nextTarget: Date | null;
   city: string;
+  countryCode: string | null;
   coords: { latitude: number; longitude: number };
   loading: boolean;
 }
 
 // Varsayılan: İstanbul (izin yoksa ve cache de yoksa)
-const FALLBACK = { latitude: 41.0082, longitude: 28.9784, city: 'Istanbul' };
-const CACHE_KEY = 'noor_last_location';
+const FALLBACK = { latitude: 41.0082, longitude: 28.9784, city: 'Istanbul', countryCode: 'TR' };
+const CACHE_KEY = 'huda_last_location';
+
+// Son bilinen ülke kodu — 'auto' metot çözümü için senkron erişim gerekir.
+let _lastCountryCode: string | null = 'TR';
+
+/** Etkin hesaplama parametreleri (kayıtlı ayar + son ülke). */
+function currentParams(countryCode?: string | null): CalculationParameters {
+  return buildParams(getSettingsSnapshot(), countryCode ?? _lastCountryCode);
+}
 
 const META: Record<PrayerSlot['key'], { name: string; icon: PrayerSlot['icon'] }> = {
   fajr:    { name: 'Fajr',    icon: 'partly-sunny-outline' },
@@ -59,9 +80,13 @@ function fmt(d: Date): string {
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
-export function computeSlots(lat: number, lng: number, date: Date): PrayerSlot[] {
+export function computeSlots(
+  lat: number,
+  lng: number,
+  date: Date,
+  params: CalculationParameters = currentParams(),
+): PrayerSlot[] {
   const coords = new Coordinates(lat, lng);
-  const params = CalculationMethod.MuslimWorldLeague();
   const pt = new AdhanPrayerTimes(coords, date, params);
   const byKey: Record<PrayerSlot['key'], Date> = {
     fajr: pt.fajr,
@@ -84,9 +109,9 @@ export function nextPrayerInfo(
   lat: number,
   lng: number,
   now: Date,
+  params: CalculationParameters = currentParams(),
 ): { key: PrayerSlot['key'] | null; target: Date | null } {
   const coords = new Coordinates(lat, lng);
-  const params = CalculationMethod.MuslimWorldLeague();
   const pt = new AdhanPrayerTimes(coords, now, params);
   const next = pt.nextPrayer();
   if (next === Prayer.None) {
@@ -108,6 +133,25 @@ export function nextPrayerInfo(
   return { key, target };
 }
 
+/** Bir önceki vaktin zamanı (progress halkası için). */
+function prevPrayerTime(
+  lat: number,
+  lng: number,
+  now: Date,
+  params: CalculationParameters,
+): Date | null {
+  const coords = new Coordinates(lat, lng);
+  const pt = new AdhanPrayerTimes(coords, now, params);
+  const cur = pt.currentPrayer();
+  if (cur === Prayer.None) {
+    // Gece yarısı civarı, bugünün ilk vaktinden önce → dünün Isha'sı
+    const yest = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const ptY = new AdhanPrayerTimes(coords, yest, params);
+    return ptY.isha;
+  }
+  return pt.timeForPrayer(cur) ?? null;
+}
+
 export function countdownStr(from: Date, to: Date): string {
   let mins = Math.max(0, Math.round((to.getTime() - from.getTime()) / 60000));
   const h = Math.floor(mins / 60);
@@ -116,7 +160,7 @@ export function countdownStr(from: Date, to: Date): string {
   return `${h}h ${m}m`;
 }
 
-type StoredLoc = { latitude: number; longitude: number; city: string };
+type StoredLoc = { latitude: number; longitude: number; city: string; countryCode?: string | null };
 
 async function readCachedLocation(): Promise<StoredLoc | null> {
   try {
@@ -132,6 +176,34 @@ async function readCachedLocation(): Promise<StoredLoc | null> {
 
 async function writeCachedLocation(loc: StoredLoc): Promise<void> {
   try { await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(loc)); } catch { /* yoksay */ }
+}
+
+/** Cihazda kayıtlı (cache'lenmiş) bir konum var mı? */
+export async function hasStoredLocation(): Promise<boolean> {
+  return (await readCachedLocation()) !== null;
+}
+
+/** Konum izninin mevcut durumu (dialog açmadan kontrol). */
+export async function getLocationPermissionStatus(): Promise<'granted' | 'denied' | 'undetermined'> {
+  try {
+    const { status } = await Location.getForegroundPermissionsAsync();
+    return status as 'granted' | 'denied' | 'undetermined';
+  } catch {
+    return 'undetermined';
+  }
+}
+
+/** Konum iznini iste, verilirse gerçek konumu çöz + cache'le. */
+export async function enableDeviceLocation(): Promise<boolean> {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') return false;
+  await resolveLocation(); // konumu çözüp cache'ler
+  return true;
+}
+
+/** Kullanıcının seçtiği şehri manuel konum olarak kaydet. */
+export async function setManualLocation(loc: StoredLoc): Promise<void> {
+  await writeCachedLocation(loc);
 }
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -152,6 +224,7 @@ export async function resolveLocation(): Promise<StoredLoc> {
   // 1) Önce cache (anında bir değer dönsün diye çağıran taraf zaten cache okur,
   //    ama burada da güvenli taban olarak kullanılır)
   const cached = await readCachedLocation();
+  if (cached?.countryCode) _lastCountryCode = cached.countryCode;
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') return cached ?? FALLBACK;
@@ -169,19 +242,23 @@ export async function resolveLocation(): Promise<StoredLoc> {
     if (!pos) return cached ?? FALLBACK;
 
     let city = cached?.city || FALLBACK.city;
+    let countryCode = cached?.countryCode ?? FALLBACK.countryCode;
     try {
       const geo = await Location.reverseGeocodeAsync({
         latitude: pos.coords.latitude,
         longitude: pos.coords.longitude,
       });
       city = geo[0]?.city || geo[0]?.region || geo[0]?.country || city;
+      countryCode = geo[0]?.isoCountryCode || countryCode;
     } catch { /* reverse geocode opsiyonel */ }
 
     const resolved: StoredLoc = {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
       city,
+      countryCode,
     };
+    _lastCountryCode = countryCode ?? _lastCountryCode;
     await writeCachedLocation(resolved);
     return resolved;
   } catch {
@@ -193,13 +270,19 @@ export function usePrayerTimes(): PrayerInfo {
   const [coords, setCoords] = React.useState<StoredLoc>(FALLBACK);
   const [loading, setLoading] = React.useState(true);
   const [tick, setTick] = React.useState(0);
+  // Ayar değişimi (metot/madhab) → yeniden hesaplama tetikleyicisi
+  const [settingsV, setSettingsV] = React.useState(0);
 
   // Konum: önce cache (anında), sonra canlı çözümleme
   React.useEffect(() => {
     let cancelled = false;
     (async () => {
+      await loadPrayerSettings();
       const cached = await readCachedLocation();
-      if (cached && !cancelled) setCoords(cached);
+      if (cached && !cancelled) {
+        setCoords(cached);
+        if (cached.countryCode) _lastCountryCode = cached.countryCode;
+      }
       const resolved = await resolveLocation();
       if (!cancelled) {
         setCoords(resolved);
@@ -209,31 +292,59 @@ export function usePrayerTimes(): PrayerInfo {
     return () => { cancelled = true; };
   }, []);
 
-  // Her dakika geri sayımı güncelle
+  // Ayar (hesaplama metodu) değişimine abone ol
+  React.useEffect(() => subscribePrayerSettings(() => setSettingsV((v) => v + 1)), []);
+
+  // Her 30 sn geri sayımı/ilerlemeyi güncelle
   React.useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 60000);
+    const id = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(id);
   }, []);
 
   return React.useMemo<PrayerInfo>(() => {
     const now = new Date();
+    const params = currentParams(coords.countryCode);
     let slots: PrayerSlot[] = [];
     let next: { key: PrayerSlot['key'] | null; target: Date | null } = { key: null, target: null };
+    let prevTime: Date | null = null;
     try {
-      slots = computeSlots(coords.latitude, coords.longitude, now);
-      next = nextPrayerInfo(coords.latitude, coords.longitude, now);
+      slots = computeSlots(coords.latitude, coords.longitude, now, params);
+      next = nextPrayerInfo(coords.latitude, coords.longitude, now, params);
+      prevTime = prevPrayerTime(coords.latitude, coords.longitude, now, params);
     } catch {
       slots = [];
     }
+
+    // İlerleme: önceki vakitten sıradaki vakte ne kadar yol alındı
+    let progress = 0;
+    if (prevTime && next.target) {
+      const span = next.target.getTime() - prevTime.getTime();
+      if (span > 0) {
+        progress = Math.min(1, Math.max(0, (now.getTime() - prevTime.getTime()) / span));
+      }
+    }
+
+    // prevKey: slots içinde next'ten bir önceki (sunrise dahil zincir)
+    const order: PrayerSlot['key'][] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    let prevKey: PrayerSlot['key'] | null = null;
+    if (next.key) {
+      const idx = order.indexOf(next.key);
+      prevKey = idx > 0 ? order[idx - 1] : 'isha';
+    }
+
     return {
       slots,
       nextKey: next.key,
+      prevKey,
       countdown: next.target ? countdownStr(now, next.target) : '',
+      progress,
+      nextTarget: next.target,
       city: coords.city,
+      countryCode: coords.countryCode ?? null,
       coords: { latitude: coords.latitude, longitude: coords.longitude },
       loading,
     };
-    // tick → her dakika yeniden hesapla
+    // tick → periyodik, settingsV → metot değişince yeniden hesapla
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coords, loading, tick]);
+  }, [coords, loading, tick, settingsV]);
 }

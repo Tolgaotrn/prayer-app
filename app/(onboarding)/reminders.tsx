@@ -4,7 +4,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
-import { NotifPreview } from '../../components/ui/NotifPreview';
+import { NotifShowcase } from '../../components/ui/NotifShowcase';
 import { Stepper } from '../../components/ui/Stepper';
 import { RangeSlider } from '../../components/ui/RangeSlider';
 import { fonts, radii, spacing } from '../../constants/theme';
@@ -40,7 +40,7 @@ export default function Reminders() {
       onContinue={allowAndSave}
     >
       <Animated.View entering={FadeInDown.duration(450)}>
-        <NotifPreview time={reminderStart >= '12:00' ? 'now' : '8:00 AM'} />
+        <NotifShowcase />
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(120)} style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>

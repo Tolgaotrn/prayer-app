@@ -6,20 +6,29 @@ import { ThemeTile } from '../../components/ui/ThemeTile';
 import { BackButton } from '../../components/ui/BackButton';
 import { fonts, spacing } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
-import { backgroundThemes } from '../../data/themes';
+import { backgroundThemes, sortedThemes } from '../../data/themes';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { useAppStore } from '../../stores/useAppStore';
+import { useRouter } from 'expo-router';
 import { haptic } from '../../lib/haptics';
 
-const FILTERS = ['All', 'Free', 'New'] as const;
+const FILTERS = ['All', 'Free', 'New', 'Live'] as const;
 
 export default function Themes() {
   const tc = useThemeColors();
+  const router = useRouter();
   const selectedTheme = useOnboardingStore((s) => s.selectedTheme);
   const set = useOnboardingStore((s) => s.set);
+  const isPremium = useAppStore((s) => s.isPremium);
   const [filter, setFilter] = React.useState<(typeof FILTERS)[number]>('All');
 
-  const data = backgroundThemes.filter((t) =>
-    filter === 'All' ? true : t.badge === filter,
+  const data = sortedThemes(
+    backgroundThemes.filter((t) =>
+      filter === 'All'  ? true :
+      filter === 'Free' ? !!t.isFree :
+      filter === 'Live' ? t.badge === 'Live' :
+      t.badge === filter,
+    ),
   );
 
   return (
@@ -74,7 +83,9 @@ export default function Themes() {
                 selected={selectedTheme === t.id}
                 showEdit
                 aspectRatio={0.58}
+                isPremium={isPremium}
                 onPress={() => set('selectedTheme', t.id)}
+                onLockedPress={() => router.push('/(onboarding)/paywall')}
               />
             </Animated.View>
           ))}
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   titleRow: { flexDirection: 'row', alignItems: 'center' },
-  title: { fontFamily: fonts.serifBold, fontSize: 28 },
+  title: { fontFamily: fonts.serifBold, fontSize: 28, lineHeight: 46 },
   filters: { flexDirection: 'row', gap: spacing.xs },
   filter: {
     paddingHorizontal: 16,

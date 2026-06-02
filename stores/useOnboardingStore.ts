@@ -45,7 +45,7 @@ const initial: OnboardingState = {
   reminderCount: 3,
   reminderStart: '08:00',
   reminderEnd: '21:00',
-  selectedTheme: 0,
+  selectedTheme: 2, // Sunset Arch (free) — Midnight Crescent kaldırıldı
   attribution: '',
   isCompleted: false,
 };
@@ -68,7 +68,7 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       reset: () => set(initial),
     }),
     {
-      name: 'noor-onboarding',
+      name: 'huda-onboarding',
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),

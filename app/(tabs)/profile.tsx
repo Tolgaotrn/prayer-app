@@ -13,6 +13,7 @@
  */
 import React from 'react';
 import {
+  Alert,
   Linking,
   Platform,
   Pressable,
@@ -40,6 +41,7 @@ import { useT } from '../../lib/i18n';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
+import { restoreRevenueCatPurchases } from '../../lib/revenueCat';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -54,11 +56,23 @@ export default function Profile() {
   const isPremium   = useAppStore((s) => s.isPremium);
   const darkMode    = useAppStore((s) => s.darkMode);
   const setDarkMode = useAppStore((s) => s.setDarkMode);
+  const setPremium  = useAppStore((s) => s.setPremium);
   const savedCount  = useAppStore((s) => s.savedVerseIds.length);
   const themeId     = useOnboardingStore((s) => s.selectedTheme);
   const currentThemeName = getTheme(themeId).name;
 
   const initials = name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
+
+  const restorePurchase = async () => {
+    haptic.select();
+    try {
+      const ok = await restoreRevenueCatPurchases();
+      setPremium(ok);
+      Alert.alert(ok ? 'Purchases restored' : 'No purchase found');
+    } catch {
+      Alert.alert('Restore failed', 'Please try again in a moment.');
+    }
+  };
 
   return (
     <ScreenContainer padded={false}>
@@ -205,6 +219,27 @@ export default function Profile() {
           </View>
         </Animated.View>
 
+        {/* ── REDEEM CODE ── */}
+        {!isPremium && (
+          <Animated.View entering={FadeInDown.delay(275).duration(400)}>
+            <Pressable
+              onPress={() => { haptic.select(); router.push('/promo-code'); }}
+              style={[styles.redeemRow, { backgroundColor: tc.cardBg, borderColor: tc.border }]}
+              accessibilityRole="button"
+              accessibilityLabel="Redeem promo code"
+            >
+              <View style={[styles.redeemIcon, { backgroundColor: tc.gold + '18' }]}>
+                <Ionicons name="gift-outline" size={18} color={tc.gold} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.redeemLabel, { color: tc.heading }]}>Redeem a Code</Text>
+                <Text style={[styles.redeemSub, { color: tc.muted }]}>Have a promo code? Unlock premium free</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={tc.muted} />
+            </Pressable>
+          </Animated.View>
+        )}
+
         {/* ── SUPPORT ── */}
         <Animated.View entering={FadeInDown.delay(300).duration(400)}>
           <SectionLabel label={t('profile.support')} tc={tc} />
@@ -217,7 +252,7 @@ export default function Profile() {
                 haptic.select();
                 const url = Platform.OS === 'ios'
                   ? 'itms-apps://itunes.apple.com/app/id6746878697?action=write-review'
-                  : 'market://details?id=com.noor.app';
+                  : 'market://details?id=com.tolgaoturan.huda';
                 Linking.openURL(url).catch(() => {});
               }}
             />
@@ -228,7 +263,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('mailto:support@noorapp.co?subject=Noor App Feedback').catch(() => {});
+                Linking.openURL('mailto:support@hudaapp.co?subject=Huda App Feedback').catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -251,7 +286,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('https://noorapp.co/privacy').catch(() => {});
+                Linking.openURL('https://hudaapp.co/privacy').catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -261,7 +296,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('https://noorapp.co/terms').catch(() => {});
+                Linking.openURL('https://hudaapp.co/terms').catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -269,7 +304,7 @@ export default function Profile() {
               icon="refresh-outline"
               label={t('profile.restore')}
               tc={tc}
-              onPress={() => { haptic.select(); }}
+              onPress={restorePurchase}
             />
           </View>
         </Animated.View>
@@ -279,7 +314,7 @@ export default function Profile() {
           <View style={[styles.logoMark, { borderColor: tc.border }]}>
             <Text style={[styles.logoText, { color: tc.gold }]}>✦</Text>
           </View>
-          <Text style={[styles.appName, { color: tc.heading }]}>Noor</Text>
+          <Text style={[styles.appName, { color: tc.heading }]}>Huda</Text>
           <Text style={[styles.version, { color: tc.muted }]}>
             {t('profile.version')} {APP_VERSION}
           </Text>
@@ -465,6 +500,14 @@ const styles = StyleSheet.create({
 
   // Footer
   footer: { alignItems: 'center', paddingVertical: spacing.lg, gap: 6, marginTop: spacing.md },
+  redeemRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    borderRadius: radii.lg, borderWidth: 1,
+    padding: spacing.md, marginBottom: spacing.sm,
+  },
+  redeemIcon: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  redeemLabel: { fontFamily: fonts.sansSemibold, fontSize: 15 },
+  redeemSub: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1 },
   logoMark: {
     width: 40, height: 40, borderRadius: 20, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center', marginBottom: 4,

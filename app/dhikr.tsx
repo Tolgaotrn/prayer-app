@@ -1,11 +1,13 @@
-/**
- * dhikr — Yenilenmiş Tasbih ekranı
- *
- * Büyük halkadan oluşan sayaç, altta zikir kartları (scroll yok),
- * her tıkta haptic + scale animasyonu, tur sayacı.
- */
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import Animated, {
   useAnimatedProps,
@@ -15,9 +17,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { ArabicText } from '../components/arabic/ArabicText';
@@ -25,13 +26,24 @@ import { fonts, radii, spacing } from '../constants/theme';
 import { useThemeColors } from '../lib/useThemeColors';
 import { useT } from '../lib/i18n';
 import { haptic } from '../lib/haptics';
+import { useAppStore } from '../stores/useAppStore';
+import { readDhikr, writeDhikr } from '../lib/widgetSync';
 
-const DHIKRS = [
-  { key: 'subhan',     arabic: 'سُبْحَانَ اللهِ',           translit: 'SubhanAllah',       meaning: 'Glory be to God',        target: 33 },
-  { key: 'alhamd',     arabic: 'الْحَمْدُ لِلَّهِ',          translit: 'Alhamdulillah',     meaning: 'All praise is to God',   target: 33 },
-  { key: 'akbar',      arabic: 'اللهُ أَكْبَر',               translit: 'Allahu Akbar',      meaning: 'God is the Greatest',    target: 34 },
-  { key: 'tahlil',     arabic: 'لَا إِلٰهَ إِلَّا اللّٰه',     translit: 'La ilaha illallah', meaning: 'There is no god but God',target: 100 },
-  { key: 'istighfar',  arabic: 'أَسْتَغْفِرُ اللهَ',           translit: 'Astaghfirullah',    meaning: 'I seek God\'s forgiveness', target: 100 },
+type Dhikr = {
+  key: string;
+  arabic: string;
+  translit: string;
+  meaning: string;
+  target: number;
+  custom?: boolean;
+};
+
+const DEFAULT_DHIKRS: Dhikr[] = [
+  { key: 'subhan',    arabic: 'سُبْحَانَ اللهِ',           translit: 'SubhanAllah',       meaning: 'Glory be to God',           target: 33 },
+  { key: 'alhamd',    arabic: 'الْحَمْدُ لِلَّهِ',          translit: 'Alhamdulillah',     meaning: 'All praise is to God',      target: 33 },
+  { key: 'akbar',     arabic: 'اللهُ أَكْبَر',              translit: 'Allahu Akbar',      meaning: 'God is the Greatest',       target: 34 },
+  { key: 'tahlil',    arabic: 'لَا إِلٰهَ إِلَّا اللّٰه',    translit: 'La ilaha illallah', meaning: 'There is no god but God',   target: 100 },
+  { key: 'istighfar', arabic: 'أَسْتَغْفِرُ اللهَ',          translit: 'Astaghfirullah',    meaning: "I seek God's forgiveness",  target: 100 },
 ];
 
 const RING_SIZE = 260;
@@ -46,14 +58,61 @@ export default function DhikrScreen() {
   const tc = useThemeColors();
   const t = useT();
 
+  const addDhikr = useAppStore((s) => s.addDhikr);
+  const absorbDhikrTotal = useAppStore((s) => s.absorbDhikrTotal);
+  const dhikrToday = useAppStore((s) => s.dhikrToday);
+  const dhikrLifetime = useAppStore((s) => s.dhikrTotal);
+
+  const [dhikrs, setDhikrs] = React.useState<Dhikr[]>(DEFAULT_DHIKRS);
   const [idx, setIdx] = React.useState(0);
   const [count, setCount] = React.useState(0);
   const [rounds, setRounds] = React.useState(0);
-  const dhikr = DHIKRS[idx];
+
+  // Custom modal state
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [customArabic, setCustomArabic] = React.useState('');
+  const [customTranslit, setCustomTranslit] = React.useState('');
+  const [customTarget, setCustomTarget] = React.useState('33');
+
+  const dhikr = dhikrs[idx];
 
   const progress = useSharedValue(0);
   const scale = useSharedValue(1);
   const glow = useSharedValue(0.6);
+
+  // Paylaşılan dhikr durumunu (widget ile ortak) yaz
+  const pushShared = (d: Dhikr, c: number, r: number) => {
+    writeDhikr({
+      arabic: d.arabic,
+      translit: d.translit,
+      target: d.target,
+      count: c,
+      rounds: r,
+      total: useAppStore.getState().dhikrTotal,
+    });
+  };
+
+  // Ekrana her dönüşte widget'taki çekimleri içeri al + görünümü senkronla
+  useFocusEffect(
+    React.useCallback(() => {
+      const shared = readDhikr();
+      if (shared) {
+        absorbDhikrTotal(shared.total);
+        const i = dhikrs.findIndex(
+          (d) => d.translit === shared.translit && d.target === shared.target,
+        );
+        if (i >= 0) {
+          setIdx(i);
+          setCount(shared.count);
+          setRounds(shared.rounds);
+          progress.value = withTiming(shared.count / dhikrs[i].target, { duration: 200 });
+        }
+      } else {
+        pushShared(dhikrs[idx], count, rounds);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
 
   const selectDhikr = (i: number) => {
     if (i === idx) return;
@@ -62,6 +121,7 @@ export default function DhikrScreen() {
     setCount(0);
     setRounds(0);
     progress.value = withTiming(0, { duration: 200 });
+    pushShared(dhikrs[i], 0, 0);
   };
 
   const onTap = () => {
@@ -75,9 +135,15 @@ export default function DhikrScreen() {
       withTiming(0.6, { duration: 300 }),
     );
 
+    addDhikr(1); // kalıcı toplam + bugün
+
+    let newCount = next;
+    let newRounds = rounds;
     if (next >= dhikr.target) {
       haptic.success();
-      setRounds((r) => r + 1);
+      newRounds = rounds + 1;
+      newCount = 0;
+      setRounds(newRounds);
       setCount(0);
       progress.value = withTiming(1, { duration: 150 }, () => {
         progress.value = withTiming(0, { duration: 300 });
@@ -87,6 +153,7 @@ export default function DhikrScreen() {
       setCount(next);
       progress.value = withTiming(next / dhikr.target, { duration: 180 });
     }
+    pushShared(dhikr, newCount, newRounds);
   };
 
   const onReset = () => {
@@ -94,6 +161,33 @@ export default function DhikrScreen() {
     setCount(0);
     setRounds(0);
     progress.value = withTiming(0, { duration: 250 });
+    pushShared(dhikr, 0, 0);
+  };
+
+  const addCustom = () => {
+    const name = customTranslit.trim() || customArabic.trim();
+    if (!name) return;
+    const target = parseInt(customTarget, 10) || 33;
+    const newDhikr: Dhikr = {
+      key: `custom_${Date.now()}`,
+      arabic: customArabic.trim(),
+      translit: customTranslit.trim() || name,
+      meaning: '',
+      target,
+      custom: true,
+    };
+    const updated = [...dhikrs, newDhikr];
+    setDhikrs(updated);
+    setIdx(updated.length - 1);
+    setCount(0);
+    setRounds(0);
+    progress.value = withTiming(0, { duration: 200 });
+    pushShared(newDhikr, 0, 0);
+    setModalVisible(false);
+    setCustomArabic('');
+    setCustomTranslit('');
+    setCustomTarget('33');
+    haptic.success();
   };
 
   const animatedCircleProps = useAnimatedProps(() => ({
@@ -132,7 +226,10 @@ export default function DhikrScreen() {
           <ArabicText size={36} color={tc.heading} style={{ textAlign: 'center' }}>
             {dhikr.arabic}
           </ArabicText>
-          <Text style={[styles.meaning, { color: tc.muted }]}>{dhikr.meaning}</Text>
+          <Text style={[styles.translit, { color: tc.gold }]}>{dhikr.translit.toUpperCase()}</Text>
+          {dhikr.meaning ? (
+            <Text style={[styles.meaning, { color: tc.muted }]}>{dhikr.meaning}</Text>
+          ) : null}
         </View>
 
         {/* Ring tap area */}
@@ -143,9 +240,7 @@ export default function DhikrScreen() {
           accessibilityLabel={`Count ${dhikr.translit}, ${count} of ${dhikr.target}`}
         >
           <Animated.View style={tapStyle}>
-            {/* Glow halkası */}
             <Animated.View style={[styles.glowRing, { shadowColor: tc.gold }, glowStyle]} />
-
             <Svg width={RING_SIZE} height={RING_SIZE}>
               <Defs>
                 <SvgGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
@@ -153,12 +248,10 @@ export default function DhikrScreen() {
                   <Stop offset="100%" stopColor={tc.isDark ? '#E8C766' : '#C9963A'} stopOpacity="0.7" />
                 </SvgGradient>
               </Defs>
-              {/* Track */}
               <Circle
                 cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS}
                 stroke={trackColor} strokeWidth={STROKE} fill="none"
               />
-              {/* Progress */}
               <AnimatedCircle
                 cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS}
                 stroke="url(#ringGrad)" strokeWidth={STROKE} fill="none"
@@ -168,38 +261,50 @@ export default function DhikrScreen() {
                 transform={`rotate(-90 ${RING_SIZE / 2} ${RING_SIZE / 2})`}
               />
             </Svg>
-
-            {/* Center */}
             <View style={styles.ringCenter} pointerEvents="none">
               <Text style={[styles.countNum, { color: tc.heading }]}>{count}</Text>
               <Text style={[styles.countOf, { color: tc.muted }]}>/ {dhikr.target}</Text>
-              <View style={[styles.tapPill, { backgroundColor: tc.gold + '18' }]}>
-                <Text style={[styles.tapText, { color: tc.gold }]}>tap to count</Text>
-              </View>
             </View>
           </Animated.View>
         </Pressable>
 
-        {/* Rounds */}
-        {(rounds > 0 || count > 0) && (
-          <View style={[styles.roundsRow, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
-            <View style={styles.roundsItem}>
-              <Text style={[styles.roundsNum, { color: tc.gold }]}>{rounds}</Text>
-              <Text style={[styles.roundsLabel, { color: tc.muted }]}>rounds</Text>
-            </View>
-            <View style={[styles.roundsDivider, { backgroundColor: tc.border }]} />
-            <View style={styles.roundsItem}>
-              <Text style={[styles.roundsNum, { color: tc.gold }]}>{rounds * dhikr.target + count}</Text>
-              <Text style={[styles.roundsLabel, { color: tc.muted }]}>total</Text>
-            </View>
+        {/* İstatistikler — turlar (oturum) + bugün + tüm zamanlar (kalıcı) */}
+        <View style={[styles.roundsRow, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+          <View style={styles.roundsItem}>
+            <Text style={[styles.roundsNum, { color: tc.gold }]}>{rounds}</Text>
+            <Text style={[styles.roundsLabel, { color: tc.muted }]}>rounds</Text>
           </View>
-        )}
+          <View style={[styles.roundsDivider, { backgroundColor: tc.border }]} />
+          <View style={styles.roundsItem}>
+            <Text style={[styles.roundsNum, { color: tc.gold }]}>{dhikrToday}</Text>
+            <Text style={[styles.roundsLabel, { color: tc.muted }]}>today</Text>
+          </View>
+          <View style={[styles.roundsDivider, { backgroundColor: tc.border }]} />
+          <View style={styles.roundsItem}>
+            <Text style={[styles.roundsNum, { color: tc.gold }]}>{dhikrLifetime}</Text>
+            <Text style={[styles.roundsLabel, { color: tc.muted }]}>all time</Text>
+          </View>
+        </View>
       </View>
 
-      {/* Dhikr selector — bottom card grid */}
+      {/* Bottom selector */}
       <View style={[styles.selectorWrap, { backgroundColor: tc.cardBg, borderTopColor: tc.border }]}>
-        <View style={styles.selectorGrid}>
-          {DHIKRS.map((d, i) => {
+        <View style={styles.selectorHeader}>
+          <Text style={[styles.selectorLabel, { color: tc.muted }]}>CHOOSE DHIKR</Text>
+          <Pressable
+            onPress={() => setModalVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Add custom dhikr"
+          >
+            <Text style={[styles.customBtn, { color: tc.gold }]}>+ Custom</Text>
+          </Pressable>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tilesRow}
+        >
+          {dhikrs.map((d, i) => {
             const active = i === idx;
             return (
               <Pressable
@@ -209,20 +314,99 @@ export default function DhikrScreen() {
                 accessibilityState={{ selected: active }}
                 style={[
                   styles.dhikrTile,
-                  { backgroundColor: active ? tc.gold : tc.raisedBg, borderColor: active ? tc.gold : tc.border },
+                  {
+                    backgroundColor: active
+                      ? (tc.isDark ? '#1A1A2E' : '#2C2418')
+                      : tc.raisedBg,
+                    borderColor: active ? (tc.isDark ? '#3A3A5E' : '#4A3828') : tc.border,
+                  },
                 ]}
               >
-                <Text style={[styles.dhikrTranslit, { color: active ? '#fff' : tc.body }]} numberOfLines={1}>
-                  {d.translit}
-                </Text>
-                <Text style={[styles.dhikrTarget, { color: active ? 'rgba(255,255,255,0.7)' : tc.muted }]}>
-                  ×{d.target}
+                {d.arabic ? (
+                  <ArabicText
+                    size={22}
+                    color={active ? '#fff' : tc.heading}
+                    style={{ textAlign: 'center' }}
+                  >
+                    {d.arabic}
+                  </ArabicText>
+                ) : (
+                  <Text style={[styles.dhikrTranslit, { color: active ? '#fff' : tc.heading }]}>
+                    {d.translit}
+                  </Text>
+                )}
+                <Text style={[styles.dhikrTarget, { color: active ? 'rgba(255,255,255,0.55)' : tc.muted }]}>
+                  {d.translit} ×{d.target}
                 </Text>
               </Pressable>
             );
           })}
-        </View>
+        </ScrollView>
       </View>
+
+      {/* Custom Dhikr Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+          <Pressable
+            style={[styles.modalSheet, { backgroundColor: tc.cardBg }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={[styles.modalHandle, { backgroundColor: tc.border }]} />
+            <Text style={[styles.modalTitle, { color: tc.heading }]}>New Dhikr</Text>
+
+            <Text style={[styles.fieldLabel, { color: tc.muted }]}>Arabic text (optional)</Text>
+            <TextInput
+              style={[styles.input, { color: tc.heading, borderColor: tc.border, backgroundColor: tc.raisedBg, textAlign: 'right', fontFamily: fonts.arabic, fontSize: 20 }]}
+              value={customArabic}
+              onChangeText={setCustomArabic}
+              placeholder="اكتب هنا..."
+              placeholderTextColor={tc.muted}
+            />
+
+            <Text style={[styles.fieldLabel, { color: tc.muted }]}>Name / Transliteration</Text>
+            <TextInput
+              style={[styles.input, { color: tc.heading, borderColor: tc.border, backgroundColor: tc.raisedBg }]}
+              value={customTranslit}
+              onChangeText={setCustomTranslit}
+              placeholder="e.g. Bismillah"
+              placeholderTextColor={tc.muted}
+            />
+
+            <Text style={[styles.fieldLabel, { color: tc.muted }]}>Target count</Text>
+            <TextInput
+              style={[styles.input, { color: tc.heading, borderColor: tc.border, backgroundColor: tc.raisedBg }]}
+              value={customTarget}
+              onChangeText={setCustomTarget}
+              keyboardType="number-pad"
+              placeholder="33"
+              placeholderTextColor={tc.muted}
+            />
+
+            <Pressable
+              onPress={addCustom}
+              style={[styles.addBtn, { backgroundColor: tc.gold }]}
+              accessibilityRole="button"
+              accessibilityLabel="Add dhikr"
+            >
+              <Text style={styles.addBtnText}>Add Dhikr</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setModalVisible(false)}
+              style={styles.cancelBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Cancel"
+            >
+              <Text style={[styles.cancelText, { color: tc.muted }]}>Cancel</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ScreenContainer>
   );
 }
@@ -235,14 +419,15 @@ const styles = StyleSheet.create({
   headerBtn: {
     width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center',
   },
-  title: { fontFamily: fonts.serifBold, fontSize: 20 },
+  title: { fontFamily: fonts.serifBold, fontSize: 20, lineHeight: 33 },
 
   main: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: spacing.lg, gap: spacing.lg,
   },
 
-  textBlock: { alignItems: 'center', gap: 6 },
+  textBlock: { alignItems: 'center', gap: 4 },
+  translit: { fontFamily: fonts.sansSemibold, fontSize: 13, letterSpacing: 1.2 },
   meaning: { fontFamily: fonts.sans, fontSize: 13 },
 
   ringWrap: { alignItems: 'center', justifyContent: 'center' },
@@ -261,32 +446,59 @@ const styles = StyleSheet.create({
   },
   countNum: { fontFamily: fonts.serifBold, fontSize: 72, lineHeight: 78 },
   countOf: { fontFamily: fonts.sansMedium, fontSize: 15 },
-  tapPill: {
-    borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 4, marginTop: 8,
-  },
-  tapText: { fontFamily: fonts.sansSemibold, fontSize: 11 },
 
   roundsRow: {
     flexDirection: 'row', borderRadius: radii.xl, borderWidth: 1,
-    paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, gap: spacing.xl,
+    paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, gap: spacing.lg,
   },
-  roundsItem: { alignItems: 'center', gap: 2 },
-  roundsNum: { fontFamily: fonts.serifBold, fontSize: 22 },
+  roundsItem: { alignItems: 'center', gap: 2, minWidth: 56 },
+  roundsNum: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
   roundsLabel: { fontFamily: fonts.sans, fontSize: 11 },
   roundsDivider: { width: 1, height: 32, alignSelf: 'center' },
 
   selectorWrap: {
     borderTopWidth: 1, paddingTop: spacing.md, paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.md,
   },
-  selectorGrid: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center',
+  selectorHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg, marginBottom: spacing.sm,
   },
+  selectorLabel: { fontFamily: fonts.sansSemibold, fontSize: 11, letterSpacing: 1.2 },
+  customBtn: { fontFamily: fonts.sansSemibold, fontSize: 13 },
+  tilesRow: { paddingHorizontal: spacing.md, gap: spacing.sm, flexDirection: 'row' },
   dhikrTile: {
     borderRadius: radii.lg, borderWidth: 1.5,
     paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
-    alignItems: 'center', minWidth: 100,
+    alignItems: 'center', minWidth: 110,
   },
-  dhikrTranslit: { fontFamily: fonts.sansSemibold, fontSize: 13 },
-  dhikrTarget: { fontFamily: fonts.sans, fontSize: 11, marginTop: 2 },
+  dhikrTranslit: { fontFamily: fonts.sansSemibold, fontSize: 15 },
+  dhikrTarget: { fontFamily: fonts.sans, fontSize: 11, marginTop: 4 },
+
+  // Modal
+  modalOverlay: {
+    flex: 1, justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  modalSheet: {
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    padding: spacing.xl, paddingBottom: 40,
+  },
+  modalHandle: {
+    width: 36, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: spacing.lg,
+  },
+  modalTitle: { fontFamily: fonts.serifBold, fontSize: 22, marginBottom: spacing.lg },
+  fieldLabel: { fontFamily: fonts.sansSemibold, fontSize: 12, letterSpacing: 0.8, marginBottom: 6 },
+  input: {
+    borderWidth: 1.5, borderRadius: radii.lg,
+    paddingHorizontal: spacing.md, paddingVertical: 12,
+    fontFamily: fonts.sans, fontSize: 15,
+    marginBottom: spacing.md,
+  },
+  addBtn: {
+    borderRadius: radii.xl, paddingVertical: 14,
+    alignItems: 'center', marginTop: spacing.sm,
+  },
+  addBtnText: { fontFamily: fonts.sansBold, fontSize: 15, color: '#fff' },
+  cancelBtn: { alignItems: 'center', paddingVertical: spacing.md },
+  cancelText: { fontFamily: fonts.sans, fontSize: 14 },
 });

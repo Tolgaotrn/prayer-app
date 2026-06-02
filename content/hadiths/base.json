@@ -10,7 +10,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -44,7 +46,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "repentance"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -554,7 +558,10 @@
     "section": {
       "book": 8
     },
-    "topics": [],
+    "topics": [
+      "tawakkul",
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -758,7 +765,9 @@
     "section": {
       "book": 10
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -911,7 +920,9 @@
     "section": {
       "book": 10
     },
-    "topics": [],
+    "topics": [
+      "kindness"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -1302,7 +1313,9 @@
     "section": {
       "book": 21
     },
-    "topics": [],
+    "topics": [
+      "dhikr"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -1421,7 +1434,9 @@
     "section": {
       "book": 24
     },
-    "topics": [],
+    "topics": [
+      "kindness"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -1472,7 +1487,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -1523,7 +1540,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -1540,7 +1559,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -2050,7 +2071,9 @@
     "section": {
       "book": 4
     },
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -2067,7 +2090,9 @@
     "section": {
       "book": 4
     },
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -2084,7 +2109,9 @@
     "section": {
       "book": 4
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -2475,7 +2502,9 @@
     "section": {
       "book": 4
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -2815,7 +2844,9 @@
     "section": {
       "book": 5
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3342,7 +3373,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3478,7 +3511,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -3495,7 +3530,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "repentance"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3512,7 +3549,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "repentance"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3665,7 +3704,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3699,7 +3740,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -3988,7 +4031,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "dhikr"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -4056,7 +4101,10 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace",
+      "dhikr"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -4141,7 +4189,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "dhikr"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -4855,7 +4905,9 @@
     "section": {
       "book": 7
     },
-    "topics": [],
+    "topics": [
+      "kindness"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -5246,7 +5298,9 @@
     "section": {
       "book": 15
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -5450,7 +5504,9 @@
     "section": {
       "book": 24
     },
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -5569,7 +5625,9 @@
     "section": {
       "book": 34
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -5603,7 +5661,9 @@
     "section": {
       "book": 35
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -5688,7 +5748,10 @@
     "section": {
       "book": 0
     },
-    "topics": [],
+    "topics": [
+      "guidance",
+      "kindness"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -5722,7 +5785,10 @@
     "section": {
       "book": 0
     },
-    "topics": [],
+    "topics": [
+      "love",
+      "kindness"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -5807,7 +5873,9 @@
     "section": {
       "book": 0
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -6640,7 +6708,9 @@
     "section": {
       "book": 6
     },
-    "topics": [],
+    "topics": [
+      "patience"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7133,7 +7203,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7150,7 +7222,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7167,7 +7241,10 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "hope",
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7252,7 +7329,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7269,7 +7348,9 @@
     "section": {
       "book": 1
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7286,7 +7367,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7354,7 +7437,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7405,7 +7490,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7422,7 +7509,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7439,7 +7528,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7558,7 +7649,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7660,7 +7753,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7677,7 +7772,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7711,7 +7808,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -7796,7 +7895,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7830,7 +7931,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7847,7 +7950,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7864,7 +7969,9 @@
     "section": {
       "book": 2
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7881,7 +7988,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7915,7 +8024,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7949,7 +8060,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7966,7 +8079,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -7983,7 +8098,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8017,7 +8134,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8034,7 +8153,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8051,7 +8172,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -8068,7 +8191,10 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "kindness",
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8119,7 +8245,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8187,7 +8315,9 @@
     "section": {
       "book": 3
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8255,7 +8385,9 @@
     "section": {
       "book": 5
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8272,7 +8404,9 @@
     "section": {
       "book": 5
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8340,7 +8474,9 @@
     "section": {
       "book": 5
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,
@@ -8408,7 +8544,9 @@
     "section": {
       "book": 7
     },
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "length": "medium",
     "displaySafe": true,
     "needsContext": false,
@@ -8493,7 +8631,9 @@
     "section": {
       "book": 7
     },
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "length": "short",
     "displaySafe": true,
     "needsContext": false,

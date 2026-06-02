@@ -128,7 +128,7 @@ export default function VerseDetail() {
 
 const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  surahName: { fontFamily: fonts.serifSemibold, fontSize: 18 },
+  surahName: { fontFamily: fonts.serifSemibold, fontSize: 18, lineHeight: 30 },
   arabicWrap: { marginTop: spacing.xl, paddingHorizontal: spacing.xs },
   translation: {
     fontFamily: fonts.serif,

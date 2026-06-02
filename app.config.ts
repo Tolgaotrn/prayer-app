@@ -2,7 +2,7 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'Noor',
+  name: 'Huda',
   slug: 'noor',
   version: '1.0.0',
   orientation: 'portrait',
@@ -18,21 +18,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.noor.app',
+    bundleIdentifier: 'com.tolgaoturan.huda',
     buildNumber: '1',
     entitlements: {
-      'com.apple.security.application-groups': ['group.com.noor.app'],
+      'com.apple.security.application-groups': ['group.com.tolgaoturan.huda'],
     },
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
-        'Noor uses your location to show accurate daily prayer times for your city.',
-      NSLocationAlwaysAndWhenInUseUsageDescription:
-        'Noor uses your location to keep prayer-time widgets accurate for your city.',
+        'Huda uses your location to show accurate daily prayer times for your city.',
     },
   },
   android: {
-    package: 'com.noor.app',
+    package: 'com.tolgaoturan.huda',
     adaptiveIcon: {
       foregroundImage: './assets/icons/icon.png',
       backgroundColor: '#F2EDE4',
@@ -50,14 +48,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-location',
       {
         locationWhenInUsePermission:
-          'Noor uses your location to show accurate daily prayer times for your city.',
+          'Huda uses your location to show accurate daily prayer times for your city.',
       },
     ],
     [
       '@bacons/apple-targets',
       {
-        // Set via EAS Secret: eas secret:create --name APPLE_TEAM_ID
-        appleTeamId: process.env.APPLE_TEAM_ID ?? 'REPLACE_WITH_APPLE_TEAM_ID',
+        // Override via EAS Secret if needed: eas secret:create --name APPLE_TEAM_ID
+        appleTeamId: process.env.APPLE_TEAM_ID ?? 'M72UZZY834',
       },
     ],
     'expo-video',
@@ -70,8 +68,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     // Keys exposed to the app bundle (public keys only — never secret keys here)
     revenueCatApiKey: process.env.REVENUECAT_API_KEY ?? '',
-    postHogApiKey: process.env.POSTHOG_API_KEY ?? '',
-    postHogHost: process.env.POSTHOG_HOST ?? 'https://eu.posthog.com',
     router: {},
     eas: {
       projectId: '5fa3ab12-3a40-4fe4-a5a1-808d1ba3d1ec',

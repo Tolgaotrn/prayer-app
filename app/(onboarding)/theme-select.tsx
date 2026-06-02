@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { ThemeTile } from '../../components/ui/ThemeTile';
 import { spacing } from '../../constants/theme';
-import { backgroundThemes } from '../../data/themes';
+import { backgroundThemes, sortedThemes } from '../../data/themes';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 
 export default function ThemeSelect() {
@@ -22,7 +22,7 @@ export default function ThemeSelect() {
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 8 }}>
         <View style={styles.grid}>
-          {backgroundThemes.map((t, i) => (
+          {sortedThemes(backgroundThemes).map((t, i) => (
             <Animated.View
               key={t.id}
               entering={FadeInDown.delay(i * 60).duration(420)}

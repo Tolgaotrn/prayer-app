@@ -122,7 +122,7 @@ export default function Settings() {
           >
             <Ionicons name="sparkles" size={18} color={colors.gold.bright} />
             <Text style={styles.premiumText}>
-              Noor Premium — {isPremium ? '✓ Active' : 'Unlock'}
+              Huda Premium — {isPremium ? '✓ Active' : 'Unlock'}
             </Text>
             <Text style={styles.manage}>Manage ›</Text>
           </Pressable>
@@ -202,7 +202,7 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
   headingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
-  heading: { fontFamily: fonts.serifBold, fontSize: 28 },
+  heading: { fontFamily: fonts.serifBold, fontSize: 28, lineHeight: 46 },
   premium: {
     borderRadius: radii.lg,
     borderWidth: 1.5,

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Noor",
+    "name": "Huda",
     "slug": "noor",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,21 +18,20 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.noor.app",
+      "bundleIdentifier": "com.tolgaoturan.huda",
       "buildNumber": "1",
       "entitlements": {
         "com.apple.security.application-groups": [
-          "group.com.noor.app"
+          "group.com.tolgaoturan.huda"
         ]
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "Noor uses your location to show accurate daily prayer times for your city.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Noor uses your location to keep prayer-time widgets accurate for your city."
+        "NSLocationWhenInUseUsageDescription": "Huda uses your location to show accurate daily prayer times for your city."
       }
     },
     "android": {
-      "package": "com.noor.app",
+      "package": "com.tolgaoturan.huda",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/icon.png",
         "backgroundColor": "#F2EDE4"
@@ -54,13 +53,13 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Noor uses your location to show accurate daily prayer times for your city."
+          "locationWhenInUsePermission": "Huda uses your location to show accurate daily prayer times for your city."
         }
       ],
       [
         "@bacons/apple-targets",
         {
-          "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID"
+          "appleTeamId": "M72UZZY834"
         }
       ],
       "expo-video",

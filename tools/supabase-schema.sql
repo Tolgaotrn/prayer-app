@@ -123,6 +123,28 @@ create table if not exists themes (
   created_at   timestamptz default now()
 );
 
+-- ── ASMAUL HUSNA (99 Names of Allah) ───────────────────────
+create table if not exists asmaul_husna (
+  id              text primary key,
+  number          int  not null,
+  arabic          text not null,
+  transliteration text not null,
+  topics          text[] default array['99 Names of Allah'],
+  popularity      int  default 100,
+  created_at      timestamptz default now()
+);
+create index if not exists asma_number_idx on asmaul_husna(number);
+
+create table if not exists asmaul_husna_translations (
+  id          text not null,
+  language    text not null,
+  meaning     text not null,
+  description text,
+  primary key (id, language),
+  foreign key (id) references asmaul_husna(id) on delete cascade
+);
+create index if not exists asmatrans_lang_idx on asmaul_husna_translations(language);
+
 -- ── RLS (Row Level Security) — public read, no write ────────
 alter table verses              enable row level security;
 alter table verse_translations  enable row level security;
@@ -134,13 +156,18 @@ alter table quotes              enable row level security;
 alter table quote_translations  enable row level security;
 alter table themes              enable row level security;
 
+alter table asmaul_husna              enable row level security;
+alter table asmaul_husna_translations enable row level security;
+
 -- Herkes okuyabilir (anon dahil)
-create policy "public read" on verses              for select using (true);
-create policy "public read" on verse_translations  for select using (true);
-create policy "public read" on hadiths             for select using (true);
-create policy "public read" on hadith_translations for select using (true);
-create policy "public read" on duas                for select using (true);
-create policy "public read" on dua_translations    for select using (true);
-create policy "public read" on quotes              for select using (true);
-create policy "public read" on quote_translations  for select using (true);
-create policy "public read" on themes              for select using (true);
+create policy "public read" on verses                     for select using (true);
+create policy "public read" on verse_translations         for select using (true);
+create policy "public read" on hadiths                    for select using (true);
+create policy "public read" on hadith_translations        for select using (true);
+create policy "public read" on duas                       for select using (true);
+create policy "public read" on dua_translations           for select using (true);
+create policy "public read" on quotes                     for select using (true);
+create policy "public read" on quote_translations         for select using (true);
+create policy "public read" on themes                     for select using (true);
+create policy "public read" on asmaul_husna               for select using (true);
+create policy "public read" on asmaul_husna_translations  for select using (true);

@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "tr",
+    "meaning": "En Merhametli",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "tr",
+    "meaning": "Çok Merhametli",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "tr",
+    "meaning": "Hükümdar",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "tr",
+    "meaning": "Kutsal",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "tr",
+    "meaning": "Selamet Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "tr",
+    "meaning": "Güvence Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "tr",
+    "meaning": "Gözetip Koruyan",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "tr",
+    "meaning": "Güçlü ve Üstün",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "tr",
+    "meaning": "Zorlayıcı",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "tr",
+    "meaning": "Büyüklük Sahibi",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "tr",
+    "meaning": "Yaratan",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "tr",
+    "meaning": "Yoktan Var Eden",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "tr",
+    "meaning": "Şekil Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "tr",
+    "meaning": "Çok Bağışlayan",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "tr",
+    "meaning": "Hâkimiyet Sahibi",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "tr",
+    "meaning": "Her Şeyi Bilen",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "tr",
+    "meaning": "Daraltan",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "tr",
+    "meaning": "Genişleten",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "tr",
+    "meaning": "Alçaltan",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "tr",
+    "meaning": "Yükselten",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "tr",
+    "meaning": "İzzet Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "tr",
+    "meaning": "Alçaltan",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "tr",
+    "meaning": "İşiten",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "tr",
+    "meaning": "Gören",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "tr",
+    "meaning": "Hükmeden",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "tr",
+    "meaning": "Adaletli",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "tr",
+    "meaning": "Lütuf Sahibi",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "tr",
+    "meaning": "Her Şeyden Haberdar",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "tr",
+    "meaning": "Yumuşak Davranan",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "tr",
+    "meaning": "Büyük",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "tr",
+    "meaning": "Koruyan",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "tr",
+    "meaning": "Rızık Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "tr",
+    "meaning": "Hesap Gören",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "tr",
+    "meaning": "Yüce",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "tr",
+    "meaning": "Cömert",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "tr",
+    "meaning": "Gözetici",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "tr",
+    "meaning": "Kabul Eden",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "tr",
+    "meaning": "Geniş Lütuf Sahibi",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "tr",
+    "meaning": "Hâkim",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "tr",
+    "meaning": "Seven",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "tr",
+    "meaning": "Yüce ve Şanlı",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "tr",
+    "meaning": "Dirilten",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "tr",
+    "meaning": "Öldüren",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "tr",
+    "meaning": "Diri",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "tr",
+    "meaning": "Kendi Kendine Var Olan",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "tr",
+    "meaning": "Bulan",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "tr",
+    "meaning": "Şanlı",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "tr",
+    "meaning": "Tek",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "tr",
+    "meaning": "Kendine Yeten",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "tr",
+    "meaning": "Güçlü",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "tr",
+    "meaning": "Güçlü ve Sağlam",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "tr",
+    "meaning": "Koruyucu Veli",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "tr",
+    "meaning": "Övgüye Layık",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "tr",
+    "meaning": "Her Şeyi Sayan",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "tr",
+    "meaning": "İlk",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "tr",
+    "meaning": "Son",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "tr",
+    "meaning": "Açık",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "tr",
+    "meaning": "Gizli",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "tr",
+    "meaning": "Yöneten",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "tr",
+    "meaning": "Yüce",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "tr",
+    "meaning": "İyilik Yapan",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "tr",
+    "meaning": "Tövbeleri Kabul Eden",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "tr",
+    "meaning": "İntikam Alan",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "tr",
+    "meaning": "Bağışlayan",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "tr",
+    "meaning": "Lütufkâr",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "tr",
+    "meaning": "Mülkün Gerçek Sahibi",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "tr",
+    "meaning": "İki Cihan Efendisi",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "tr",
+    "meaning": "Zengin Kılan",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "tr",
+    "meaning": "Zarar Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "tr",
+    "meaning": "Fayda Veren",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "tr",
+    "meaning": "Nur",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "tr",
+    "meaning": "Yol Gösteren",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "tr",
+    "meaning": "Benzersiz ve Eşsiz",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "tr",
+    "meaning": "Kalıcı",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "tr",
+    "meaning": "Vâris",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "tr",
+    "meaning": "Doğru Yola İleten",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "tr",
+    "meaning": "Sabırlı",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "tr",
+    "meaning": "",
+    "description": ""
+  }
+]

@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "fr",
+    "meaning": "Le Tout Miséricordieux",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "fr",
+    "meaning": "Le Très Miséricordieux",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "fr",
+    "meaning": "Le Roi",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "fr",
+    "meaning": "Le Très Saint",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "fr",
+    "meaning": "La Source de Paix",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "fr",
+    "meaning": "Celui qui donne la Foi",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "fr",
+    "meaning": "Le Gardien",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "fr",
+    "meaning": "Le Tout Puissant",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "fr",
+    "meaning": "Le Contraignant",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "fr",
+    "meaning": "Le Très Grand",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "fr",
+    "meaning": "Le Créateur",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "fr",
+    "meaning": "Celui qui donne l'existence",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "fr",
+    "meaning": "Le Formateur",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "fr",
+    "meaning": "Le Très Pardonneur",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "fr",
+    "meaning": "Le Dominateur",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "fr",
+    "meaning": "Le Tout Donateur",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "fr",
+    "meaning": "Le Pourvoyeur",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "fr",
+    "meaning": "Celui qui resserre",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "fr",
+    "meaning": "Celui qui étend",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "fr",
+    "meaning": "Celui qui abaisse",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "fr",
+    "meaning": "Celui qui élève",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "fr",
+    "meaning": "Celui qui donne la gloire",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "fr",
+    "meaning": "Celui qui abaisse",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "fr",
+    "meaning": "Celui qui entend tout",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "fr",
+    "meaning": "Celui qui voit tout",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "fr",
+    "meaning": "Le Juge",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "fr",
+    "meaning": "Le Juste",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "fr",
+    "meaning": "Le Subtil",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "fr",
+    "meaning": "Le Parfaitement Informé",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "fr",
+    "meaning": "Le Clément",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "fr",
+    "meaning": "Le Très Grand",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "fr",
+    "meaning": "Celui qui pardonne",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "fr",
+    "meaning": "Le Pourvoyeur",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "fr",
+    "meaning": "Celui qui compte",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "fr",
+    "meaning": "Le Majestueux",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "fr",
+    "meaning": "Le Généreux",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "fr",
+    "meaning": "Le Tout Observateur",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "fr",
+    "meaning": "Celui qui répond",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "fr",
+    "meaning": "L'Omniprésent",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "fr",
+    "meaning": "Le Sage",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "fr",
+    "meaning": "L'Aimant",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "fr",
+    "meaning": "Le Glorieux",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "fr",
+    "meaning": "Celui qui ressuscite",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "fr",
+    "meaning": "Celui qui fait mourir",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "fr",
+    "meaning": "Le Vivant",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "fr",
+    "meaning": "Celui qui subsiste par lui-même",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "fr",
+    "meaning": "Celui qui trouve",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "fr",
+    "meaning": "Le Glorieux",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "fr",
+    "meaning": "L'Unique",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "fr",
+    "meaning": "L'Éternel",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "fr",
+    "meaning": "Le Puissant",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "fr",
+    "meaning": "Le Fort",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "fr",
+    "meaning": "Le Protecteur",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "fr",
+    "meaning": "Le Digne de louange",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "fr",
+    "meaning": "Celui qui compte tout",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "fr",
+    "meaning": "Le Premier",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "fr",
+    "meaning": "Le Dernier",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "fr",
+    "meaning": "L'Apparent",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "fr",
+    "meaning": "Le Caché",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "fr",
+    "meaning": "Celui qui gouverne",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "fr",
+    "meaning": "Le Très Haut",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "fr",
+    "meaning": "Le Bienfaisant",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "fr",
+    "meaning": "Celui qui accepte le repentir",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "fr",
+    "meaning": "Le Vengeur",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "fr",
+    "meaning": "Celui qui pardonne",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "fr",
+    "meaning": "Le Compatissant",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "fr",
+    "meaning": "Le Maître du Royaume",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "fr",
+    "meaning": "Le Maître de la Majesté",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "fr",
+    "meaning": "L'Équitable",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "fr",
+    "meaning": "Celui qui nuit",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "fr",
+    "meaning": "Celui qui profite",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "fr",
+    "meaning": "La Lumière",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "fr",
+    "meaning": "Le Guide",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "fr",
+    "meaning": "L'Incomparable",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "fr",
+    "meaning": "L'Éternel Subsistant",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "fr",
+    "meaning": "L'Héritier",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "fr",
+    "meaning": "Le Guide sur la voie droite",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "fr",
+    "meaning": "Le Patient",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "fr",
+    "meaning": "",
+    "description": ""
+  }
+]

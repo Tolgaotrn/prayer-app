@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "id",
+    "meaning": "Yang Maha Pengasih",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "id",
+    "meaning": "Yang Maha Penyayang",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "id",
+    "meaning": "Yang Maha Merajai",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "id",
+    "meaning": "Yang Maha Suci",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Keselamatan",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Keamanan",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "id",
+    "meaning": "Yang Maha Memelihara",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "id",
+    "meaning": "Yang Maha Perkasa",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "id",
+    "meaning": "Yang Memiliki Kehendak",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "id",
+    "meaning": "Yang Maha Megah",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "id",
+    "meaning": "Yang Maha Pencipta",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "id",
+    "meaning": "Yang Maha Melepaskan",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "id",
+    "meaning": "Yang Maha Membentuk Rupa",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "id",
+    "meaning": "Yang Maha Pengampun",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "id",
+    "meaning": "Yang Maha Pemaksa",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "id",
+    "meaning": "Yang Maha Pemberi",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "id",
+    "meaning": "Yang Maha Memutuskan",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "id",
+    "meaning": "Yang Maha Meluaskan",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "id",
+    "meaning": "Yang Maha Merendahkan",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "id",
+    "meaning": "Yang Maha Meninggikan",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "id",
+    "meaning": "Yang Maha Memuliakan",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "id",
+    "meaning": "Yang Maha Menghinakan",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "id",
+    "meaning": "Yang Maha Mendengar",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "id",
+    "meaning": "Yang Maha Melihat",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "id",
+    "meaning": "Yang Maha Adil",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "id",
+    "meaning": "Yang Maha Bijaksana",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "id",
+    "meaning": "Yang Maha Lembut",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "id",
+    "meaning": "Yang Maha Mengetahui",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "id",
+    "meaning": "Yang Maha Penyantun",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "id",
+    "meaning": "Yang Maha Agung",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "id",
+    "meaning": "Yang Maha Mengampuni",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "id",
+    "meaning": "Yang Maha Pemberi Rezeki",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "id",
+    "meaning": "Yang Maha Menghitung",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "id",
+    "meaning": "Yang Maha Mulia",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "id",
+    "meaning": "Yang Maha Pemurah",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "id",
+    "meaning": "Yang Maha Mengawasi",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "id",
+    "meaning": "Yang Maha Memperkenankan Doa",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "id",
+    "meaning": "Yang Maha Luas",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "id",
+    "meaning": "Yang Maha Bijaksana",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "id",
+    "meaning": "Yang Maha Penyayang",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "id",
+    "meaning": "Yang Maha Mulia",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "id",
+    "meaning": "Yang Maha Membangkitkan",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "id",
+    "meaning": "Yang Maha Mematikan",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "id",
+    "meaning": "Yang Maha Hidup",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "id",
+    "meaning": "Yang Maha Berdiri Sendiri",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "id",
+    "meaning": "Yang Maha Menemukan",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "id",
+    "meaning": "Yang Maha Mulia",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "id",
+    "meaning": "Yang Maha Esa",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "id",
+    "meaning": "Yang Maha Dibutuhkan",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "id",
+    "meaning": "Yang Maha Kuat",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "id",
+    "meaning": "Yang Maha Kuat",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "id",
+    "meaning": "Yang Maha Melindungi",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "id",
+    "meaning": "Yang Maha Terpuji",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "id",
+    "meaning": "Yang Maha Menghitung",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "id",
+    "meaning": "Yang Pertama",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "id",
+    "meaning": "Yang Terakhir",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "id",
+    "meaning": "Yang Maha Nyata",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "id",
+    "meaning": "Yang Maha Tersembunyi",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "id",
+    "meaning": "Yang Maha Memerintah",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "id",
+    "meaning": "Yang Maha Tinggi",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "id",
+    "meaning": "Yang Maha Dermawan",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "id",
+    "meaning": "Yang Maha Menerima Taubat",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "id",
+    "meaning": "Yang Maha Membalas",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "id",
+    "meaning": "Yang Maha Memaafkan",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "id",
+    "meaning": "Yang Maha Lembut",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "id",
+    "meaning": "Yang Maha Memiliki Kerajaan",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "id",
+    "meaning": "Yang Memiliki Keagungan dan Kemuliaan",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "id",
+    "meaning": "Yang Maha Adil",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Mudarat",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Manfaat",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "id",
+    "meaning": "Yang Maha Bercahaya",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Petunjuk",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "id",
+    "meaning": "Yang Maha Indah",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "id",
+    "meaning": "Yang Maha Kekal",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "id",
+    "meaning": "Yang Maha Mewarisi",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "id",
+    "meaning": "Yang Maha Memberi Petunjuk",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "id",
+    "meaning": "Yang Maha Penyabar",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "id",
+    "meaning": "",
+    "description": ""
+  }
+]

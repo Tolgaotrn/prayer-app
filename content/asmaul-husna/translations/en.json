@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "en",
+    "meaning": "The Beneficent",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "en",
+    "meaning": "The Merciful",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "en",
+    "meaning": "The King / Eternal Lord",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "en",
+    "meaning": "The Purest",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "en",
+    "meaning": "The Source of Peace",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "en",
+    "meaning": "The inspirer of faith",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "en",
+    "meaning": "The Guardian",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "en",
+    "meaning": "The Precious / The Most Mighty",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "en",
+    "meaning": "The Compeller",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "en",
+    "meaning": "The Greatest",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "en",
+    "meaning": "The Creator",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "en",
+    "meaning": "The Maker of Order",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "en",
+    "meaning": "The Shaper of Beauty",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "en",
+    "meaning": "The Forgiving",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "en",
+    "meaning": "The Subduer",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "en",
+    "meaning": "The Giver of All",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "en",
+    "meaning": "The Sustainer",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "en",
+    "meaning": "The Opener",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "en",
+    "meaning": "The Knower of all",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "en",
+    "meaning": "The Constrictor",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "en",
+    "meaning": "The Reliever",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "en",
+    "meaning": "The Abaser",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "en",
+    "meaning": "The Exalter",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "en",
+    "meaning": "The Bestower of Honour",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "en",
+    "meaning": "The Humiliator",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "en",
+    "meaning": "The Hearer of all",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "en",
+    "meaning": "The Seer of all",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "en",
+    "meaning": "The Judge",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "en",
+    "meaning": "The Just",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "en",
+    "meaning": "The Subtle One",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "en",
+    "meaning": "The All Aware",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "en",
+    "meaning": "The Forebearing",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "en",
+    "meaning": "The Maginificent",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "en",
+    "meaning": "The Great Forgiver",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "en",
+    "meaning": "The Rewarder of Thankfulness",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "en",
+    "meaning": "The Highest",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "en",
+    "meaning": "The Greatest",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "en",
+    "meaning": "The Preserver",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "en",
+    "meaning": "The Nourisher",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "en",
+    "meaning": "The Reckoner",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "en",
+    "meaning": "The Majestic",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "en",
+    "meaning": "The Generous",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "en",
+    "meaning": "The Watchful One",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "en",
+    "meaning": "The Responder to Prayer",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "en",
+    "meaning": "The All Comprehending",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "en",
+    "meaning": "The Perfectly Wise",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "en",
+    "meaning": "The Loving One",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "en",
+    "meaning": "The Most Glorious One",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "en",
+    "meaning": "The Resurrector",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "en",
+    "meaning": "The Witness",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "en",
+    "meaning": "The Truth",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "en",
+    "meaning": "The Trustee",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "en",
+    "meaning": "The Possessor of all strength",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "en",
+    "meaning": "The Forceful",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "en",
+    "meaning": "The Protector",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "en",
+    "meaning": "The Praised",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "en",
+    "meaning": "The Appraiser",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "en",
+    "meaning": "The Originator",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "en",
+    "meaning": "The Restorer",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "en",
+    "meaning": "The Giver of life",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "en",
+    "meaning": "The Taker of life",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "en",
+    "meaning": "The Ever Living",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "en",
+    "meaning": "The Self Existing",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "en",
+    "meaning": "The Finder",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "en",
+    "meaning": "The Glorious",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "en",
+    "meaning": "The Only One",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "en",
+    "meaning": "The One",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "en",
+    "meaning": "The Supreme Provider",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "en",
+    "meaning": "The Powerful",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "en",
+    "meaning": "The Creator of all power",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "en",
+    "meaning": "The Expediter",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "en",
+    "meaning": "The Delayer",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "en",
+    "meaning": "The First",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "en",
+    "meaning": "The Last",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "en",
+    "meaning": "The Manifest",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "en",
+    "meaning": "The Hidden",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "en",
+    "meaning": "The Governor",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "en",
+    "meaning": "The Supreme One",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "en",
+    "meaning": "The Doer of Good",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "en",
+    "meaning": "The Guide to Repentence",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "en",
+    "meaning": "The Avenger",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "en",
+    "meaning": "The Forgiver",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "en",
+    "meaning": "The Clement",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "en",
+    "meaning": "The Owner / Soverign of All",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "en",
+    "meaning": "Possessor of Majesty and Bounty",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "en",
+    "meaning": "The Equitable One",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "en",
+    "meaning": "The Gatherer",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "en",
+    "meaning": "The Rich One",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "en",
+    "meaning": "The Enricher",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "en",
+    "meaning": "The Preventer of harm",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "en",
+    "meaning": "The Creator of the harmful",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "en",
+    "meaning": "The Bestower of Benefits",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "en",
+    "meaning": "The Light",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "en",
+    "meaning": "The Guider",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "en",
+    "meaning": "The Originator",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "en",
+    "meaning": "The Everlasting One",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "en",
+    "meaning": "The Inhertior",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "en",
+    "meaning": "The Most Righteous Guide",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "en",
+    "meaning": "The Patient One",
+    "description": ""
+  }
+]

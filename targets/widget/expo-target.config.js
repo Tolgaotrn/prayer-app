@@ -1,7 +1,7 @@
 /** @type {import('@bacons/apple-targets').Config} */
 module.exports = {
   type: 'widget',
-  name: 'NoorWidget',
+  name: 'HudaWidget',
   icon: '../../assets/icons/icon.png',
   colors: {
     // Krem/altın marka renkleri — widget arka planı + aksanlar
@@ -9,6 +9,6 @@ module.exports = {
     $widgetBackground: '#F2EDE4',
   },
   entitlements: {
-    'com.apple.security.application-groups': ['group.com.noor.app'],
+    'com.apple.security.application-groups': ['group.com.tolgaoturan.huda'],
   },
 };

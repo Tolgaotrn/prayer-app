@@ -53,7 +53,7 @@ function Btn({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={icon === 'add' ? 'Increase' : 'Decrease'}
+      accessibilityLabel={icon === 'chevron-up' ? 'Increase' : 'Decrease'}
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [styles.btn, { backgroundColor: tc.cardBg }, pressed && { opacity: 0.6 }, disabled && { opacity: 0.3 }]}

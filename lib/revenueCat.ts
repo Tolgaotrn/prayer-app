@@ -2,15 +2,17 @@ import { Platform } from 'react-native';
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
 import { useAppStore } from '../stores/useAppStore';
-import { analytics } from './analytics';
 
 const extra = (Constants.expoConfig?.extra ?? {}) as Record<string, string>;
 
-// Priority: EAS extra (app.config.ts) → env var → sandbox fallback
+// Production'da SADECE gerçek anahtar kullanılır. Test anahtarı yalnızca dev
+// build'lerde fallback — prod'a test anahtarıyla çıkmak IAP'yi bozar ve Apple
+// reddine yol açar.
+const DEV_TEST_KEY = 'test_hjXfHNjRxKrFcFyGSgxGOjBCOrw';
 const REVENUECAT_API_KEY: string =
   extra.revenueCatApiKey ||
   (process.env.REVENUECAT_API_KEY as string | undefined) ||
-  'test_hjXfHNjRxKrFcFyGSgxGOjBCOrw';
+  (__DEV__ ? DEV_TEST_KEY : '');
 const PREMIUM_ENTITLEMENT_ID = 'premium';
 
 let configured = false;
@@ -24,15 +26,18 @@ function isNativePurchasesSupported() {
 }
 
 function hasPremiumEntitlement(customerInfo: CustomerInfo) {
-  const activeEntitlements = customerInfo.entitlements.active;
-  return Boolean(
-    activeEntitlements[PREMIUM_ENTITLEMENT_ID] ||
-      Object.keys(activeEntitlements).length > 0,
-  );
+  return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT_ID]);
 }
 
 async function loadPurchases(): Promise<PurchasesModule | null> {
   if (!isNativePurchasesSupported()) return null;
+
+  if (!REVENUECAT_API_KEY) {
+    console.error(
+      'RevenueCat API key is missing. Set REVENUECAT_API_KEY (EAS secret) before building for release.',
+    );
+    return null;
+  }
 
   const { default: Purchases, LOG_LEVEL } = await import('react-native-purchases');
 
@@ -94,27 +99,8 @@ export async function purchaseRevenueCatPackage(pack: PurchasesPackage) {
   const Purchases = await loadPurchases();
   if (!Purchases) return false;
 
-  analytics.track('purchase_started', {
-    plan: pack.packageType,
-    product_id: pack.product.identifier,
-  });
-
-  try {
-    const { customerInfo } = await Purchases.purchasePackage(pack);
-    const ok = hasPremiumEntitlement(customerInfo);
-    analytics.track(ok ? 'purchase_completed' : 'purchase_failed', {
-      plan: pack.packageType,
-      product_id: pack.product.identifier,
-    });
-    return ok;
-  } catch (err: any) {
-    if (err?.userCancelled) {
-      analytics.track('purchase_cancelled', { plan: pack.packageType });
-    } else {
-      analytics.track('purchase_failed', { plan: pack.packageType, error: String(err) });
-    }
-    throw err;
-  }
+  const { customerInfo } = await Purchases.purchasePackage(pack);
+  return hasPremiumEntitlement(customerInfo);
 }
 
 export async function restoreRevenueCatPurchases() {
@@ -122,9 +108,7 @@ export async function restoreRevenueCatPurchases() {
   if (!Purchases) return false;
 
   const customerInfo = await Purchases.restorePurchases();
-  const ok = hasPremiumEntitlement(customerInfo);
-  analytics.track('purchase_restored', { success: ok });
-  return ok;
+  return hasPremiumEntitlement(customerInfo);
 }
 
 export type { PurchasesPackage };

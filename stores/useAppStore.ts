@@ -3,6 +3,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Verse } from '../data/types';
 
+export type WidgetContentType = 'auto' | 'prayer' | 'verse' | 'hadith' | 'quote' | 'streak';
+
 interface AppState {
   savedVerseIds: string[];
   streakDays: number;
@@ -10,7 +12,13 @@ interface AppState {
   isPremium: boolean;
   darkMode: boolean;
   currentVerseIndex: number;
-  followedTopics: string[];   // explore-topics'te seçilen konular
+  followedTopics: string[];
+  homeWidgetContent: WidgetContentType;
+  lockWidgetContent: WidgetContentType;
+  dhikrTotal: number;            // lifetime tesbih sayısı
+  dhikrToday: number;            // bugünkü tesbih sayısı
+  dhikrTodayDate: string | null; // bugünün tarihi (gün dönüşü için)
+  widgetThemeId: number | null;  // widget arka planı: null=app teması, 0=minimal, diğer=tema id
 }
 
 interface AppActions {
@@ -22,6 +30,11 @@ interface AppActions {
   setCurrentVerseIndex: (i: number) => void;
   toggleFollowTopic: (topic: string) => void;
   isFollowed: (topic: string) => boolean;
+  setHomeWidgetContent: (t: WidgetContentType) => void;
+  setLockWidgetContent: (t: WidgetContentType) => void;
+  addDhikr: (n?: number) => void;            // app içi dokunuşta artır
+  absorbDhikrTotal: (total: number) => void; // widget'taki çekimleri içeri al
+  setWidgetThemeId: (id: number | null) => void;
 }
 
 function todayKey(): string {
@@ -38,6 +51,12 @@ export const useAppStore = create<AppState & AppActions>()(
       darkMode: false,
       currentVerseIndex: 0,
       followedTopics: ['General'],
+      homeWidgetContent: 'auto',
+      lockWidgetContent: 'verse',
+      dhikrTotal: 0,
+      dhikrToday: 0,
+      dhikrTodayDate: null,
+      widgetThemeId: null,
 
       toggleSave: (verse) =>
         set((state) => ({
@@ -69,9 +88,38 @@ export const useAppStore = create<AppState & AppActions>()(
         })),
 
       isFollowed: (topic) => get().followedTopics.includes(topic),
+
+      setHomeWidgetContent: (t) => set({ homeWidgetContent: t }),
+      setLockWidgetContent: (t) => set({ lockWidgetContent: t }),
+
+      addDhikr: (n = 1) =>
+        set((state) => {
+          const today = todayKey();
+          const isToday = state.dhikrTodayDate === today;
+          return {
+            dhikrTotal: state.dhikrTotal + n,
+            dhikrToday: (isToday ? state.dhikrToday : 0) + n,
+            dhikrTodayDate: today,
+          };
+        }),
+
+      absorbDhikrTotal: (total) =>
+        set((state) => {
+          const delta = total - state.dhikrTotal;
+          if (delta <= 0) return state;
+          const today = todayKey();
+          const isToday = state.dhikrTodayDate === today;
+          return {
+            dhikrTotal: total,
+            dhikrToday: (isToday ? state.dhikrToday : 0) + delta,
+            dhikrTodayDate: today,
+          };
+        }),
+
+      setWidgetThemeId: (id) => set({ widgetThemeId: id }),
     }),
     {
-      name: 'noor-app',
+      name: 'huda-app',
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),

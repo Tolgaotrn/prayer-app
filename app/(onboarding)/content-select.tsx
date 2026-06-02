@@ -28,7 +28,7 @@ export default function ContentSelect() {
       title="What would you like to see every day?"
       subtitle="Pick everything you'd love in your feed"
       ctaDisabled={selected.length === 0}
-      onContinue={() => router.push('/(onboarding)/content-style')}
+      onContinue={() => router.push('/(onboarding)/home-pref')}
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.grid}>
         {ITEMS.map((item, i) => (

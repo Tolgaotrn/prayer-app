@@ -8,10 +8,10 @@
  *  4. Cache de yok → seed data (ilk açılışta garanti)
  *
  * İçerik kuralları:
- *  ÜCRETSİZ: General, Quran Verses, Favorites, Duas & Prayers
- *  PREMİUM: Hadiths, 99 Names of Allah, Dhikr, diğer konular
+ *  ÜCRETSİZ: General (tüm türlerden karma), Favorites
+ *  PREMİUM: Quran Verses, Hadiths, Duas & Prayers, Islamic Quotes, 99 Names, diğerleri
  *
- *  General seçiliyse → sadece verse + saved (favorites) gösterilir
+ *  General → verse(~15%) + hadith(~30%) + quote(~30%) + dua(~25%) karışımı, ~250 item
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,8 +39,24 @@ export interface ThemeItem {
   is_free:   boolean;
 }
 
-// Ücretli olmayan konular
-const FREE_TOPICS = new Set(['General', 'Quran Verses', 'Favorites', 'Duas & Prayers']);
+// Ücretli olmayan konular — sadece General ve Favorites ücretsiz
+const FREE_TOPICS = new Set(['General', 'Favorites']);
+
+// UI topic label → Supabase topics[] tag
+const TOPIC_TAG_MAP: Record<string, string> = {
+  'Patience':             'patience',
+  'Gratitude':            'gratitude',
+  'Hope':                 'hope',
+  'Repentance':           'repentance',
+  'Tawakkul':             'tawakkul',
+  'Seeking Guidance':     'guidance',
+  'Forgiveness':          'forgiveness',
+  'Inner Peace':          'peace',
+  'Love of Allah':        'love',
+  'Honesty':              'honesty',
+  'Kindness':             'kindness',
+  'Dhikr & Remembrance':  'dhikr',
+};
 
 // Onboarding dil değerini → Lang'e çevir
 export function resolveLang(stored: string | undefined): Lang {
@@ -54,7 +70,7 @@ export function resolveLang(stored: string | undefined): Lang {
 
 // ── Cache ─────────────────────────────────────────────────────
 const TTL_MS = 24 * 60 * 60 * 1000;
-const KEY    = (k: string) => `noor_cache_${k}`;
+const KEY    = (k: string) => `huda_cache_${k}`;
 
 async function readCache<T>(k: string): Promise<T | null> {
   try {
@@ -125,26 +141,33 @@ async function buildFeed(
   savedIds: string[],
 ): Promise<FeedItem[]> {
   const hasGeneral   = topics.includes('General') || topics.length === 0;
-  const hasVerses    = topics.includes('Quran Verses')  || hasGeneral;
-  const hasFavorites = topics.includes('Favorites')     || hasGeneral;
-  const hasDuas      = topics.includes('Duas & Prayers');
-  const hasHadiths   = topics.includes('Hadiths');
-  const hasQuotes    = topics.includes('Islamic Quotes');
+  const hasVerses    = topics.includes('Quran Verses');   // artık sadece premium
+  const hasFavorites = topics.includes('Favorites') || hasGeneral;
+  const hasDuas      = topics.includes('Duas & Prayers') || hasGeneral;
+  const hasHadiths   = topics.includes('Hadiths')        || hasGeneral;
+  const hasQuotes    = topics.includes('Islamic Quotes')  || hasGeneral;
+  const has99Names   = topics.includes('99 Names of Allah');
+
+  // Topic'lere karşılık gelen DB tag'leri (TOPIC_TAG_MAP'ten)
+  const specificTopics = topics.filter(t => TOPIC_TAG_MAP[t]);
+  const dbTags = specificTopics.map(t => TOPIC_TAG_MAP[t]);
 
   const promises: PromiseLike<void>[] = [];
   const results: FeedItem[] = [];
 
-  // ── Verses ──
-  if (hasVerses) {
+  // ── Verses — premium Quran Verses topic veya General'dan küçük sample ──
+  if (hasVerses || hasGeneral) {
+    const verseLimit = hasVerses ? 493 : 150; // General'da sadece ~30 verse
+    const verseSlice = hasVerses ? Math.ceil(limit * 0.6) : Math.min(30, Math.ceil(limit * 0.15));
     promises.push(
       supabase
         .from('verses')
         .select('id, arabic, surah_name, ayah, topics, verse_translations!inner(text)')
         .eq('verse_translations.language', lang)
         .eq('display_safe', true)
-        .limit(493) // tüm verses çek, karıştır
+        .limit(verseLimit)
         .then(({ data }) => {
-          shuffle(data ?? []).slice(0, Math.ceil(limit * 0.6)).forEach((v: any) => results.push({
+          shuffle(data ?? []).slice(0, verseSlice).forEach((v: any) => results.push({
             id: v.id, kind: 'verse',
             arabic: v.arabic,
             translation: v.verse_translations[0]?.text ?? '',
@@ -157,6 +180,7 @@ async function buildFeed(
 
   // ── Hadiths ──
   if (hasHadiths) {
+    const hadithSlice = hasGeneral ? Math.ceil(limit * 0.30) : Math.ceil(limit * 0.5);
     promises.push(
       supabase
         .from('hadiths')
@@ -166,7 +190,7 @@ async function buildFeed(
         .in('grade', ['sahih', 'hasan', 'mixed_canonical'])
         .limit(367)
         .then(({ data }) => {
-          shuffle(data ?? []).slice(0, Math.ceil(limit * 0.5)).forEach((h: any) => results.push({
+          shuffle(data ?? []).slice(0, hadithSlice).forEach((h: any) => results.push({
             id: h.id, kind: 'hadith',
             arabic: h.arabic,
             translation: h.hadith_translations[0]?.text ?? '',
@@ -202,6 +226,7 @@ async function buildFeed(
 
   // ── Quotes ──
   if (hasQuotes) {
+    const quoteSlice = hasGeneral ? Math.ceil(limit * 0.30) : Math.ceil(limit * 0.3);
     promises.push(
       supabase
         .from('quotes')
@@ -209,7 +234,7 @@ async function buildFeed(
         .eq('quote_translations.language', lang)
         .limit(300)
         .then(({ data }) => {
-          shuffle(data ?? []).slice(0, Math.ceil(limit * 0.3)).forEach((q: any) => results.push({
+          shuffle(data ?? []).slice(0, quoteSlice).forEach((q: any) => results.push({
             id: q.id, kind: 'quote',
             arabic: '',
             translation: q.quote_translations[0]?.text ?? '',
@@ -218,6 +243,99 @@ async function buildFeed(
           }));
         })
     );
+  }
+
+  // ── 99 Names of Allah ──
+  if (has99Names) {
+    promises.push(
+      supabase
+        .from('asmaul_husna')
+        .select('id, number, arabic, transliteration, asmaul_husna_translations!inner(meaning, description)')
+        .eq('asmaul_husna_translations.language', lang)
+        .then(({ data }) => {
+          (data ?? []).forEach((n: any) => results.push({
+            id: n.id,
+            kind: 'quote',
+            arabic: n.arabic,
+            translation: `${n.transliteration} — ${n.asmaul_husna_translations[0]?.meaning ?? ''}`,
+            reference: `99 Names of Allah · #${n.number}`,
+            topics: ['99 Names of Allah'],
+          }));
+        })
+    );
+  }
+
+  // ── Topic-specific: Patience, Gratitude, Hope, vb. ──
+  if (dbTags.length > 0) {
+    // Verses filtered by topic tag
+    promises.push(
+      supabase
+        .from('verses')
+        .select('id, arabic, surah_name, ayah, topics, verse_translations!inner(text)')
+        .eq('verse_translations.language', lang)
+        .eq('display_safe', true)
+        .overlaps('topics', dbTags)
+        .limit(200)
+        .then(({ data }) => {
+          shuffle(data ?? []).slice(0, Math.ceil(limit * 0.6)).forEach((v: any) => {
+            if (!results.find(r => r.id === v.id)) results.push({
+              id: v.id, kind: 'verse',
+              arabic: v.arabic,
+              translation: v.verse_translations[0]?.text ?? '',
+              reference: `${v.surah_name} · Ayah ${v.ayah}`,
+              topics: v.topics ?? [],
+            });
+          });
+        })
+    );
+
+    // Hadiths filtered by topic tag
+    promises.push(
+      supabase
+        .from('hadiths')
+        .select('id, arabic, collection_name, reference, topics, hadith_translations!inner(text)')
+        .eq('hadith_translations.language', lang)
+        .eq('display_safe', true)
+        .in('grade', ['sahih', 'hasan', 'mixed_canonical'])
+        .overlaps('topics', dbTags)
+        .limit(200)
+        .then(({ data }) => {
+          shuffle(data ?? []).slice(0, Math.ceil(limit * 0.4)).forEach((h: any) => {
+            if (!results.find(r => r.id === h.id)) results.push({
+              id: h.id, kind: 'hadith',
+              arabic: h.arabic,
+              translation: h.hadith_translations[0]?.text ?? '',
+              reference: `${h.collection_name ?? 'Hadith'} ${h.reference ?? ''}`.trim(),
+              topics: h.topics ?? [],
+            });
+          });
+        })
+    );
+
+    // Dhikr topic için duas'ı da dahil et
+    if (dbTags.includes('dhikr')) {
+      const duaLang = lang === 'id' ? 'id' : 'en';
+      promises.push(
+        supabase
+          .from('duas')
+          .select('id, arabic, occasion, category, dua_translations!inner(text)')
+          .eq('dua_translations.language', duaLang)
+          .eq('display_safe', true)
+          .in('category', ['morning-dhikr', 'evening-dhikr', 'dhikr-after-salah'])
+          .limit(89)
+          .then(({ data }) => {
+            shuffle(data ?? []).slice(0, Math.ceil(limit * 0.3)).forEach((d: any) => {
+              if (!results.find(r => r.id === d.id)) results.push({
+                id: d.id, kind: 'dua',
+                arabic: d.arabic,
+                translation: d.dua_translations[0]?.text ?? '',
+                reference: d.occasion ?? 'Dhikr',
+                topics: ['dhikr'],
+              });
+            });
+          })
+      );
+    }
   }
 
   // ── Favorites — kaydedilen içerik HER TÜRDEN olabilir (verse/hadith/dua/quote) ──
@@ -375,6 +493,6 @@ export async function fetchThemes(): Promise<ThemeItem[]> {
 // ── Cache temizle ─────────────────────────────────────────────
 export async function clearContentCache() {
   const keys = await AsyncStorage.getAllKeys();
-  const ours = keys.filter(k => k.startsWith('noor_cache_'));
+  const ours = keys.filter(k => k.startsWith('huda_cache_'));
   if (ours.length > 0) await AsyncStorage.multiRemove(ours);
 }

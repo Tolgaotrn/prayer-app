@@ -77,7 +77,7 @@ export default function Categories() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.lg },
-  title: { fontFamily: fonts.serifBold, fontSize: 22, color: colors.text.heading },
+  title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36, color: colors.text.heading },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   cell: { width: '47.5%', flexGrow: 1 },
   tile: {

@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
     alignItems: 'center', justifyContent: 'center',
   },
-  title: { fontFamily: fonts.serifBold, fontSize: 22 },
+  title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
   content: { paddingHorizontal: spacing.lg, gap: spacing.xs },
   sub: { fontFamily: fonts.sans, fontSize: 14, marginBottom: spacing.sm },
   langRow: {

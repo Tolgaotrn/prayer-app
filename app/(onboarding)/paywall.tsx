@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +17,6 @@ import {
   restoreRevenueCatPurchases,
   type PurchasesPackage,
 } from '../../lib/revenueCat';
-import { analytics, getPaywallVariant, type PaywallVariant } from '../../lib/analytics';
 
 const FEATURES = [
   '5000+ verses, hadiths & duas',
@@ -27,12 +26,11 @@ const FEATURES = [
   'A completely ad-free experience',
 ];
 
-type Plan = 'annual' | 'monthly' | 'weekly';
+type Plan = 'annual' | 'monthly';
 
 const PLANS: { id: Plan; title: string; sub: string; price: string; note: string; badge?: string; old?: string; trial?: string }[] = [
-  { id: 'annual',  title: 'Annual Premium',  sub: '12 months', price: '$2.50/mo', note: 'Billed annually', badge: '-65% OFF', old: '$83.88', trial: '7 days free trial' },
-  { id: 'monthly', title: 'Monthly Premium', sub: '30 days',   price: '$6.99/mo', note: '' },
-  { id: 'weekly',  title: 'Weekly Premium',  sub: '7 days',    price: '$3.99/wk', note: '' },
+  { id: 'annual',  title: 'Annual Premium',  sub: '12 months', price: '$2.50', note: 'Billed $29.99/year', badge: 'BEST VALUE · 65% OFF', old: '$83.88', trial: '7 days free trial' },
+  { id: 'monthly', title: 'Monthly Premium', sub: '1 month',   price: '$6.99', note: 'Billed monthly' },
 ];
 
 export default function Paywall() {
@@ -44,7 +42,6 @@ export default function Paywall() {
   const [packages, setPackages] = React.useState<PurchasesPackage[]>([]);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
   const [countdown, setCountdown] = React.useState(5);
-  const [variant, setVariant] = React.useState<PaywallVariant>('control');
 
   React.useEffect(() => {
     if (countdown <= 0) return;
@@ -56,15 +53,6 @@ export default function Paywall() {
     getRevenueCatPackages()
       .then(setPackages)
       .catch((error) => console.warn('RevenueCat offerings failed', error));
-
-    // A/B test: fetch paywall variant from PostHog feature flag
-    getPaywallVariant().then((v) => {
-      setVariant(v);
-      // 'annual_first' variant → pre-select annual (already default)
-      // 'simple' variant → pre-select weekly (lower commitment)
-      if (v === 'simple') setPlan('weekly');
-      analytics.track('paywall_viewed', { source: 'onboarding', variant: v });
-    });
   }, []);
 
   const finish = (premium: boolean) => {
@@ -73,8 +61,10 @@ export default function Paywall() {
     router.replace('/(tabs)/feed');
   };
 
+  const selectedPlan = PLANS.find((p) => p.id === plan) ?? PLANS[0];
+
   const selectedPackage = React.useMemo(() => {
-    const map: Record<Plan, string> = { annual: 'ANNUAL', monthly: 'MONTHLY', weekly: 'WEEKLY' };
+    const map: Record<Plan, string> = { annual: 'ANNUAL', monthly: 'MONTHLY' };
     const t = map[plan];
     return (
       packages.find((p) => p.packageType === t) ??
@@ -85,7 +75,6 @@ export default function Paywall() {
 
   const startTrial = async () => {
     haptic.medium();
-    analytics.track('paywall_cta_tapped', { plan, variant });
     if (!selectedPackage) {
       Alert.alert('Not available', 'Premium plans could not be loaded. Please try again later.');
       return;
@@ -137,7 +126,7 @@ export default function Paywall() {
         </View>
 
         <Animated.Text entering={FadeInDown.delay(80)} style={[styles.title, { color: tc.heading }]}>
-          Unlock the complete{'\n'}Noor experience
+          Unlock the complete{'\n'}Huda experience
         </Animated.Text>
 
         <View style={styles.features}>
@@ -158,7 +147,7 @@ export default function Paywall() {
                 data={p}
                 selected={plan === p.id}
                 tc={tc}
-                onPress={() => { haptic.select(); setPlan(p.id); analytics.track('paywall_plan_selected', { plan: p.id, variant }); }}
+                onPress={() => { haptic.select(); setPlan(p.id); }}
               />
             </Animated.View>
           ))}
@@ -174,10 +163,28 @@ export default function Paywall() {
           <Ionicons name="checkmark" size={15} color={tc.gold} />
           <Text style={[styles.assureText, { color: tc.gold }]}>You will not be charged today</Text>
         </View>
+        <Text style={[styles.disclosure, { color: tc.muted }]}>
+          {selectedPackage
+            ? `${selectedPlan.title} — ${selectedPlan.price}/mo, ${selectedPlan.note}. `
+            : ''}
+          Payment is charged to your Apple ID at confirmation. The subscription renews
+          automatically unless cancelled at least 24 hours before the period ends. Manage
+          or cancel anytime in your App Store account settings.
+        </Text>
         <View style={styles.legalRow}>
           <Text style={[styles.legalLink, { color: tc.muted }]} onPress={restorePurchase}>Restore</Text>
-          <Text style={[styles.legalLink, { color: tc.muted }]}>Terms of Use</Text>
-          <Text style={[styles.legalLink, { color: tc.muted }]}>Privacy Policy</Text>
+          <Text
+            style={[styles.legalLink, { color: tc.muted }]}
+            onPress={() => Linking.openURL('https://hudaapp.co/terms').catch(() => {})}
+          >
+            Terms of Use
+          </Text>
+          <Text
+            style={[styles.legalLink, { color: tc.muted }]}
+            onPress={() => Linking.openURL('https://hudaapp.co/privacy').catch(() => {})}
+          >
+            Privacy Policy
+          </Text>
         </View>
       </View>
     </ScreenContainer>
@@ -192,6 +199,7 @@ function PlanCard({
   tc: ReturnType<typeof useThemeColors>;
   onPress: () => void;
 }) {
+  const selBg = tc.isDark ? 'rgba(212,175,55,0.12)' : 'rgba(201,150,58,0.10)';
   return (
     <Pressable
       onPress={onPress}
@@ -199,8 +207,12 @@ function PlanCard({
       accessibilityState={{ selected }}
       style={[
         styles.plan,
-        { backgroundColor: tc.isDark ? tc.cardBg : '#FFFFFF', borderColor: selected ? tc.gold : tc.border },
-        selected && { borderWidth: 2 },
+        {
+          backgroundColor: selected ? selBg : (tc.isDark ? tc.cardBg : '#FFFFFF'),
+          borderColor: selected ? tc.gold : tc.border,
+          borderWidth: selected ? 2 : 1.5,
+        },
+        selected && styles.planSelectedShadow,
       ]}
     >
       {data.badge ? (
@@ -209,20 +221,28 @@ function PlanCard({
         </View>
       ) : null}
 
+      <View style={[styles.radio, { borderColor: selected ? tc.gold : tc.muted, backgroundColor: selected ? tc.gold : 'transparent' }]}>
+        {selected ? <Ionicons name="checkmark" size={14} color={tc.onGold} /> : null}
+      </View>
+
       <View style={{ flex: 1 }}>
         <Text style={[styles.planTitle, { color: tc.heading }]}>{data.title}</Text>
         <Text style={[styles.planSub, { color: tc.muted }]}>{data.sub}</Text>
-        {data.trial ? <Text style={[styles.planTrial, { color: tc.gold }]}>{data.trial}</Text> : null}
+        {data.trial ? (
+          <View style={styles.trialRow}>
+            <Ionicons name="gift-outline" size={12} color={tc.gold} />
+            <Text style={[styles.planTrial, { color: tc.gold }]}>{data.trial}</Text>
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.priceCol}>
         {data.old ? <Text style={[styles.oldPrice, { color: tc.muted }]}>{data.old}</Text> : null}
-        <Text style={[styles.planPrice, { color: tc.heading }]}>{data.price}</Text>
+        <View style={styles.priceRow}>
+          <Text style={[styles.planPrice, { color: tc.heading }]}>{data.price}</Text>
+          <Text style={[styles.perMo, { color: tc.muted }]}>/mo</Text>
+        </View>
         {data.note ? <Text style={[styles.planNote, { color: tc.muted }]}>{data.note}</Text> : null}
-      </View>
-
-      <View style={[styles.radio, { borderColor: selected ? tc.gold : tc.muted }]}>
-        {selected ? <View style={[styles.radioDot, { backgroundColor: tc.gold }]} /> : null}
       </View>
     </Pressable>
   );
@@ -243,33 +263,45 @@ const styles = StyleSheet.create({
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   fCheck: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   featureText: { fontFamily: fonts.sansMedium, fontSize: 15, flexShrink: 1 },
-  plans: { marginTop: spacing.xl, gap: spacing.sm },
+  plans: { marginTop: spacing.xl + spacing.sm, gap: spacing.md },
   plan: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     borderRadius: radii.lg,
-    borderWidth: 1.5,
     padding: spacing.md,
-    minHeight: 78,
+    minHeight: 82,
+  },
+  planSelectedShadow: {
+    shadowColor: '#C9963A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
   },
   badge: {
-    position: 'absolute', top: -10, right: spacing.md,
-    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3,
+    position: 'absolute', top: -11, left: spacing.md,
+    borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4,
   },
   badgeText: { fontFamily: fonts.sansBold, fontSize: 10, letterSpacing: 0.5 },
   planTitle: { fontFamily: fonts.sansBold, fontSize: 16 },
   planSub: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1 },
-  planTrial: { fontFamily: fonts.sansSemibold, fontSize: 12, marginTop: 3 },
+  trialRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  planTrial: { fontFamily: fonts.sansSemibold, fontSize: 12 },
   priceCol: { alignItems: 'flex-end' },
+  priceRow: { flexDirection: 'row', alignItems: 'baseline', gap: 1 },
   oldPrice: { fontFamily: fonts.sans, fontSize: 12, textDecorationLine: 'line-through' },
-  planPrice: { fontFamily: fonts.sansBold, fontSize: 17 },
+  planPrice: { fontFamily: fonts.sansBold, fontSize: 19 },
+  perMo: { fontFamily: fonts.sansMedium, fontSize: 12 },
   planNote: { fontFamily: fonts.sans, fontSize: 11, marginTop: 1 },
   radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  radioDot: { width: 12, height: 12, borderRadius: 6 },
   footer: { paddingBottom: spacing.sm },
   assure: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: spacing.sm },
   assureText: { fontFamily: fonts.sansSemibold, fontSize: 13 },
+  disclosure: {
+    fontFamily: fonts.sans, fontSize: 10, lineHeight: 15,
+    textAlign: 'center', marginTop: spacing.sm, paddingHorizontal: spacing.md,
+  },
   legalRow: { flexDirection: 'row', justifyContent: 'center', gap: spacing.lg, marginTop: spacing.sm },
   legalLink: { fontFamily: fonts.sans, fontSize: 12, textDecorationLine: 'underline' },
 });

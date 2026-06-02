@@ -31,7 +31,12 @@ import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
 import { fetchFeedItems, FeedItem, resolveLang } from '../../lib/contentDb';
+import { syncWidget } from '../../lib/widgetSync';
+import { backgroundThemes } from '../../data/themes';
 import { useT } from '../../lib/i18n';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getLocationPermissionStatus, hasStoredLocation } from '../../lib/prayerTimes';
+import { LOCATION_PROMPTED_KEY } from '../location-setup';
 
 const { height: SCREEN_H, width: SCREEN_W } = Dimensions.get('window');
 
@@ -71,13 +76,47 @@ export default function Feed() {
     registerOpen();
     const t = setTimeout(() => setShowBanner(false), 3200);
 
-    fetchFeedItems(lang, 100, followedTopics, isPremium, savedIds, langChanged).then(data => {
+    fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged).then(data => {
       setItems(data);
       setLoading(false);
     });
 
     return () => clearTimeout(t);
   }, [lang, followedTopics.join(',')]);
+
+  // Widget verisini her açılışta senkronize et (home-card'a girmese bile)
+  React.useEffect(() => {
+    const themeImageURL = backgroundThemes.find((t) => t.id === themeId)?.image.uri;
+    syncWidget({
+      language: rawLang,
+      streakDays,
+      followedTopics,
+      isPremium,
+      savedVerseIds: savedIds,
+      themeImageURL,
+      force: true,
+    });
+  }, [rawLang, themeId, streakDays, isPremium, followedTopics.join(','), savedIds.join(',')]);
+
+  // Girişte konum kapalıysa bir kez konum kurulum ekranını öner
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const prompted = await AsyncStorage.getItem(LOCATION_PROMPTED_KEY);
+        if (prompted) return;
+        const [status, stored] = await Promise.all([
+          getLocationPermissionStatus(),
+          hasStoredLocation(),
+        ]);
+        if (cancelled) return;
+        if (status !== 'granted' && !stored) {
+          router.push('/location-setup');
+        }
+      } catch { /* yoksay */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const activeItem = items[activeIndex] ?? items[0];
   const isSaved    = activeItem ? savedIds.includes(activeItem.id) : false;
@@ -253,7 +292,7 @@ export default function Feed() {
           exiting={SlideOutUp.duration(400)}
           style={[styles.banner, { top: insets.top + 54 }]}
         >
-          <StreakWidget streakDays={streakDays} title="New streak started" />
+          <StreakWidget streakDays={streakDays} />
         </Animated.View>
       )}
     </View>
@@ -339,13 +378,17 @@ function FeedSlide({
   return (
     <GestureDetector gesture={doubleTap}>
     <View style={styles.slide}>
-      <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />
+      {/* Video tema ise gradient atlıyoruz — VideoView zaten arkada render ediliyor */}
+      {!video && <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />}
       {/* Image sadece video tema değilse gösterilir */}
       {!video && (
         <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
       )}
       <LinearGradient
-        colors={['rgba(7,10,20,0.5)', 'rgba(7,10,20,0.15)', 'rgba(7,10,20,0.55)', 'rgba(7,10,20,0.92)']}
+        colors={video
+          ? ['rgba(0,0,0,0.25)', 'rgba(0,0,0,0.05)', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.88)']
+          : ['rgba(7,10,20,0.5)', 'rgba(7,10,20,0.15)', 'rgba(7,10,20,0.55)', 'rgba(7,10,20,0.92)']
+        }
         locations={[0, 0.35, 0.62, 1]}
         style={StyleSheet.absoluteFill}
       />
@@ -378,18 +421,18 @@ function FeedSlide({
             <Animated.Text
               entering={FadeIn.duration(700)}
               style={[styles.translation, styles.translationLarge]}
-              numberOfLines={10}
+              numberOfLines={7}
               adjustsFontSizeToFit
-              minimumFontScale={0.6}
+              minimumFontScale={0.55}
             >
               "{item.translation}"
             </Animated.Text>
           ) : (
             <Text
               style={[styles.translation, styles.translationLarge]}
-              numberOfLines={10}
+              numberOfLines={7}
               adjustsFontSizeToFit
-              minimumFontScale={0.6}
+              minimumFontScale={0.55}
             >
               "{item.translation}"
             </Text>
@@ -398,14 +441,34 @@ function FeedSlide({
 
         {/* Referans */}
         <View style={styles.refRow}>
-          <View style={styles.refLine} />
+          <RefLine active={active} />
           <Text style={styles.reference}>{item.reference}</Text>
-          <View style={styles.refLine} />
+          <RefLine active={active} />
         </View>
       </View>
     </View>
     </GestureDetector>
   );
+}
+
+/* ── Aktif kartta yumuşakça uzayan altın ayraç çizgisi ── */
+function RefLine({ active }: { active: boolean }) {
+  const w = useSharedValue(active ? 28 : 0);
+  React.useEffect(() => {
+    w.value = withDelay(active ? 180 : 0,
+      withTiming(active ? 28 : 0, { duration: active ? 520 : 200, easing: Easing.out(Easing.cubic) }));
+  }, [active]);
+  const style = useAnimatedStyle(() => ({ width: w.value, opacity: w.value / 28 }));
+  return <Animated.View style={[styles.refLine, style]} />;
+}
+
+/* ── Basışta yumuşak küçülme — micro-feedback ── */
+function usePressScale(min = 0.9) {
+  const scale = useSharedValue(1);
+  const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const onPressIn = () => { scale.value = withTiming(min, { duration: 90 }); };
+  const onPressOut = () => { scale.value = withTiming(1, { duration: 140, easing: Easing.out(Easing.back(2)) }); };
+  return { style, onPressIn, onPressOut };
 }
 
 /* ── Aksiyon butonu ─────────────────────────────────────────── */
@@ -414,11 +477,21 @@ function ActionButton({
 }: {
   icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; active?: boolean;
 }) {
+  const press = usePressScale(0.88);
   return (
-    <Pressable style={styles.actionBtn} onPress={onPress} accessibilityRole="button" accessibilityLabel={label}>
-      <BlurView intensity={30} tint="light" style={styles.actionBlur}>
-        <Ionicons name={icon} size={22} color={active ? colors.gold.bright : colors.white} />
-      </BlurView>
+    <Pressable
+      style={styles.actionBtn}
+      onPress={onPress}
+      onPressIn={press.onPressIn}
+      onPressOut={press.onPressOut}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      <Animated.View style={press.style}>
+        <BlurView intensity={30} tint="light" style={styles.actionBlur}>
+          <Ionicons name={icon} size={22} color={active ? colors.gold.bright : colors.white} />
+        </BlurView>
+      </Animated.View>
       <Text style={styles.actionLabel}>{label}</Text>
     </Pressable>
   );
@@ -431,19 +504,23 @@ function CircleButton({
   icon: keyof typeof Ionicons.glyphMap | 'crown-outline';
   onPress: () => void; label: string; gold?: boolean;
 }) {
+  const press = usePressScale(0.9);
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.circleBtn, gold ? styles.circleGold : styles.circleDark]}
+      onPressIn={press.onPressIn}
+      onPressOut={press.onPressOut}
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={8}
     >
-      {icon === 'crown-outline' ? (
-        <Ionicons name="ribbon" size={20} color={colors.white} />
-      ) : (
-        <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={20} color={gold ? colors.white : colors.text.heading} />
-      )}
+      <Animated.View style={[styles.circleBtn, gold ? styles.circleGold : styles.circleDark, press.style]}>
+        {icon === 'crown-outline' ? (
+          <Ionicons name="ribbon" size={20} color={colors.white} />
+        ) : (
+          <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={20} color={gold ? colors.white : colors.text.heading} />
+        )}
+      </Animated.View>
     </Pressable>
   );
 }
@@ -453,7 +530,8 @@ const styles = StyleSheet.create({
   slide: { height: SCREEN_H, width: SCREEN_W, justifyContent: 'center', overflow: 'hidden' },
   slideContent: {
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xl,
+    paddingTop: spacing.xxl + 16,   // top action bar için ekstra boşluk
+    paddingBottom: spacing.xxl + 40, // bottom actions için ekstra boşluk
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
@@ -464,11 +542,13 @@ const styles = StyleSheet.create({
   },
   translation: {
     fontFamily: fonts.serif, fontSize: 18, color: 'rgba(245,240,225,0.92)',
-    textAlign: 'center', marginTop: spacing.sm, lineHeight: 28,
+    textAlign: 'center', marginTop: spacing.sm, lineHeight: 30,
+    flexShrink: 1,        // uzun metinde container'ı taşmasın
+    maxWidth: '100%',
   },
   translationLarge: {
     fontSize: 22,
-    lineHeight: 34,
+    lineHeight: 36,       // Playfair 1.64x oran — ascender kırpılması önlenir
     marginTop: 0,
   },
   reference: {
@@ -489,8 +569,8 @@ const styles = StyleSheet.create({
   },
 
   emptyTitle: {
-    fontFamily: fonts.serifBold, fontSize: 22, color: colors.text.heading,
-    textAlign: 'center', marginTop: spacing.lg,
+    fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36,
+    color: colors.text.heading, textAlign: 'center', marginTop: spacing.lg,
   },
   emptyBody: {
     fontFamily: fonts.sans, fontSize: 15, color: colors.text.muted,

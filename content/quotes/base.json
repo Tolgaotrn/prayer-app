@@ -28,7 +28,8 @@
     "author": "The Quran 1:1",
     "text": "In the name of Allah, the Entirely Merciful, the Especially Merciful.",
     "topics": [
-      "tawakkul"
+      "tawakkul",
+      "hope"
     ],
     "popularityScore": 1325
   },
@@ -76,7 +77,8 @@
     "text": "So remember Me; I will remember you. And be grateful to Me and do not deny Me.",
     "topics": [
       "gratitude",
-      "prayer"
+      "prayer",
+      "dhikr"
     ],
     "popularityScore": 1315
   },
@@ -109,7 +111,8 @@
     "author": "The Quran 1:3",
     "text": "The Entirely Merciful, the Especially Merciful,",
     "topics": [
-      "tawakkul"
+      "tawakkul",
+      "hope"
     ],
     "popularityScore": 1275
   },
@@ -132,7 +135,8 @@
     "text": "[Who say], \"Our Lord, let not our hearts deviate after You have guided us and grant us from Yourself mercy. Indeed, You are the Bestower.",
     "topics": [
       "hope",
-      "peace"
+      "peace",
+      "guidance"
     ],
     "popularityScore": 1255
   },
@@ -166,7 +170,8 @@
     "author": "The Quran 18:10",
     "text": "[Mention] when the youths retreated to the cave and said, \"Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance.\"",
     "topics": [
-      "hope"
+      "hope",
+      "guidance"
     ],
     "popularityScore": 1245
   },
@@ -188,7 +193,8 @@
     "author": "The Quran 1:6",
     "text": "Guide us to the straight path -",
     "topics": [
-      "prayer"
+      "prayer",
+      "guidance"
     ],
     "popularityScore": 1240
   },
@@ -216,7 +222,9 @@
     "sourceId": "quran_93_5",
     "author": "The Quran 93:5",
     "text": "And your Lord is going to give you, and you will be satisfied.",
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "popularityScore": 1225
   },
   {
@@ -225,7 +233,9 @@
     "sourceId": "quran_94_5",
     "author": "The Quran 94:5",
     "text": "For indeed, with hardship [will be] ease.",
-    "topics": [],
+    "topics": [
+      "patience"
+    ],
     "popularityScore": 1225
   },
   {
@@ -234,7 +244,9 @@
     "sourceId": "quran_94_6",
     "author": "The Quran 94:6",
     "text": "Indeed, with hardship [will be] ease.",
-    "topics": [],
+    "topics": [
+      "patience"
+    ],
     "popularityScore": 1225
   },
   {
@@ -307,7 +319,8 @@
     "author": "The Quran 1:7",
     "text": "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray.",
     "topics": [
-      "gratitude"
+      "gratitude",
+      "guidance"
     ],
     "popularityScore": 1215
   },
@@ -347,7 +360,8 @@
     "author": "The Quran 13:28",
     "text": "Those who have believed and whose hearts are assured by the remembrance of Allah. Unquestionably, by the remembrance of Allah hearts are assured.\"",
     "topics": [
-      "peace"
+      "peace",
+      "dhikr"
     ],
     "popularityScore": 1185
   },
@@ -389,7 +403,9 @@
     "author": "The Quran 39:53",
     "text": "Say, \"O My servants who have transgressed against themselves [by sinning], do not despair of the mercy of Allah. Indeed, Allah forgives all sins. Indeed, it is He who is the Forgiving, the Merciful.\"",
     "topics": [
-      "hope"
+      "hope",
+      "forgiveness",
+      "repentance"
     ],
     "popularityScore": 1155
   },
@@ -400,7 +416,8 @@
     "author": "The Quran 25:63",
     "text": "And the servants of the Most Merciful are those who walk upon the earth easily, and when the ignorant address them [harshly], they say [words of] peace,",
     "topics": [
-      "peace"
+      "peace",
+      "hope"
     ],
     "popularityScore": 1135
   },
@@ -432,7 +449,9 @@
     "sourceId": "quran_20_25",
     "author": "The Quran 20:25",
     "text": "[Moses] said, \"My Lord, expand for me my breast [with assurance]",
-    "topics": [],
+    "topics": [
+      "peace"
+    ],
     "popularityScore": 1125
   },
   {
@@ -452,7 +471,9 @@
     "sourceId": "quran_20_114",
     "author": "The Quran 20:114",
     "text": "So high [above all] is Allah, the Sovereign, the Truth. And, [O Muhammad], do not hasten with [recitation of] the Qur'an before its revelation is completed to you, and say, \"My Lord, increase me in knowledge.\"",
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "popularityScore": 1055
   },
   {
@@ -464,7 +485,9 @@
     "topics": [
       "hope",
       "patience",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 385
   },
@@ -477,7 +500,8 @@
     "topics": [
       "hope",
       "gratitude",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 385
   },
@@ -503,7 +527,8 @@
     "topics": [
       "hope",
       "peace",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 385
   },
@@ -563,7 +588,10 @@
     "text": "Then exalt [Him] with praise of your Lord and ask forgiveness of Him. Indeed, He is ever Accepting of repentance.",
     "topics": [
       "hope",
-      "gratitude"
+      "gratitude",
+      "repentance",
+      "forgiveness",
+      "dhikr"
     ],
     "popularityScore": 355
   },
@@ -589,7 +617,8 @@
     "topics": [
       "hope",
       "peace",
-      "character"
+      "character",
+      "repentance"
     ],
     "popularityScore": 325
   },
@@ -615,7 +644,8 @@
     "topics": [
       "hope",
       "prayer",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 325
   },
@@ -628,7 +658,9 @@
     "topics": [
       "hope",
       "patience",
-      "character"
+      "character",
+      "repentance",
+      "forgiveness"
     ],
     "popularityScore": 325
   },
@@ -665,7 +697,8 @@
     "text": "O mankind, worship your Lord, who created you and those before you, that you may become righteous -",
     "topics": [
       "prayer",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -689,7 +722,8 @@
     "text": "Those are the ones upon whom are blessings from their Lord and mercy. And it is those who are the [rightly] guided.",
     "topics": [
       "hope",
-      "gratitude"
+      "gratitude",
+      "guidance"
     ],
     "popularityScore": 315
   },
@@ -701,7 +735,10 @@
     "text": "Kind speech and forgiveness are better than charity followed by injury. And Allah is Free of need and Forbearing.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "patience",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -713,7 +750,9 @@
     "text": "The patient, the true, the obedient, those who spend [in the way of Allah], and those who seek forgiveness before dawn.",
     "topics": [
       "hope",
-      "patience"
+      "patience",
+      "repentance",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -725,7 +764,8 @@
     "text": "Indeed, the first House [of worship] established for mankind was that at Makkah - blessed and a guidance for the worlds.",
     "topics": [
       "prayer",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 315
   },
@@ -737,7 +777,9 @@
     "text": "And hasten to forgiveness from your Lord and a garden as wide as the heavens and earth, prepared for the righteous",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -773,7 +815,9 @@
     "text": "Allah has promised those who believe and do righteous deeds [that] for them there is forgiveness and great reward.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -785,7 +829,8 @@
     "text": "Indeed, my protector is Allah, who has sent down the Book; and He is an ally to the righteous.",
     "topics": [
       "tawakkul",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -797,7 +842,8 @@
     "text": "Their Lord gives them good tidings of mercy from Him and approval and of gardens for them wherein is enduring pleasure.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "patience"
     ],
     "popularityScore": 315
   },
@@ -809,7 +855,8 @@
     "text": "And sufficient is Allah as a witness between us and you that we were of your worship unaware.\"",
     "topics": [
       "prayer",
-      "tawakkul"
+      "tawakkul",
+      "honesty"
     ],
     "popularityScore": 315
   },
@@ -833,7 +880,8 @@
     "text": "And be patient, for indeed, Allah does not allow to be lost the reward of those who do good.",
     "topics": [
       "patience",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -869,7 +917,10 @@
     "text": "Our Lord, forgive me and my parents and the believers the Day the account is established.\"",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness",
+      "repentance"
     ],
     "popularityScore": 315
   },
@@ -893,7 +944,8 @@
     "text": "They said, \"We have given you good tidings in truth, so do not be of the despairing.\"",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "honesty"
     ],
     "popularityScore": 315
   },
@@ -905,7 +957,8 @@
     "text": "And if you should count the favors of Allah, you could not enumerate them. Indeed, Allah is Forgiving and Merciful.",
     "topics": [
       "hope",
-      "gratitude"
+      "gratitude",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -929,7 +982,9 @@
     "text": "Wealth and children are [but] adornment of the worldly life. But the enduring good deeds are better to your Lord for reward and better for [one's] hope.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "patience",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -941,7 +996,9 @@
     "text": "[Abraham] said, \"Peace will be upon you. I will ask forgiveness for you of my Lord. Indeed, He is ever gracious to me.",
     "topics": [
       "hope",
-      "peace"
+      "peace",
+      "repentance",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -953,7 +1010,8 @@
     "text": "And We admitted him into Our mercy. Indeed, he was of the righteous.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -965,7 +1023,8 @@
     "text": "And We admitted them into Our mercy. Indeed, they were of the righteous.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -977,7 +1036,8 @@
     "text": "And they had been guided [in worldly life] to good speech, and they were guided to the path of the Praiseworthy.",
     "topics": [
       "gratitude",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 315
   },
@@ -989,7 +1049,9 @@
     "text": "And those who have believed and done righteous deeds - for them is forgiveness and noble provision.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -1001,7 +1063,8 @@
     "text": "O you who have believed, bow and prostrate and worship your Lord and do good - that you may succeed.",
     "topics": [
       "prayer",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -1025,7 +1088,8 @@
     "text": "And if not for the favor of Allah upon you and His mercy... and because Allah is Accepting of repentance and Wise.",
     "topics": [
       "hope",
-      "gratitude"
+      "gratitude",
+      "repentance"
     ],
     "popularityScore": 315
   },
@@ -1061,7 +1125,8 @@
     "text": "Otherwise, he who wrongs, then substitutes good after evil - indeed, I am Forgiving and Merciful.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -1085,7 +1150,8 @@
     "text": "And those who strive for Us - We will surely guide them to Our ways. And indeed, Allah is with the doers of good.",
     "topics": [
       "tawakkul",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 315
   },
@@ -1097,7 +1163,8 @@
     "text": "As guidance and mercy for the doers of good",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 315
   },
@@ -1109,7 +1176,9 @@
     "text": "That He may reward those who believe and do righteous deeds. Those will have forgiveness and noble provision.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 315
   },
@@ -1133,7 +1202,8 @@
     "text": "You can only warn one who follows the message and fears the Most Merciful unseen. So give him good tidings of forgiveness and noble reward.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -1157,7 +1227,8 @@
     "text": "So We forgave him that; and indeed, for him is nearness to Us and a good place of return.",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "love"
     ],
     "popularityScore": 315
   },
@@ -1169,7 +1240,8 @@
     "text": "And indeed, for him is nearness to Us and a good place of return.",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "love"
     ],
     "popularityScore": 315
   },
@@ -1205,7 +1277,8 @@
     "text": "And whoever is patient and forgives - indeed, that is of the matters [requiring] determination.",
     "topics": [
       "hope",
-      "patience"
+      "patience",
+      "forgiveness"
     ],
     "popularityScore": 315
   },
@@ -1265,7 +1338,8 @@
     "text": "So be patient for the decision of your Lord and do not obey from among them a sinner or ungrateful [disbeliever].",
     "topics": [
       "patience",
-      "gratitude"
+      "gratitude",
+      "repentance"
     ],
     "popularityScore": 315
   },
@@ -1342,7 +1416,8 @@
     "author": "The Quran 36:27",
     "text": "Of how my Lord has forgiven me and placed me among the honored.\"",
     "topics": [
-      "hope"
+      "hope",
+      "forgiveness"
     ],
     "popularityScore": 305
   },
@@ -1463,7 +1538,8 @@
     "author": "The Quran 67:12",
     "text": "Indeed, those who fear their Lord unseen will have forgiveness and great reward.",
     "topics": [
-      "hope"
+      "hope",
+      "forgiveness"
     ],
     "popularityScore": 305
   },
@@ -1476,7 +1552,8 @@
     "topics": [
       "prayer",
       "peace",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 295
   },
@@ -1489,7 +1566,8 @@
     "topics": [
       "patience",
       "prayer",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 295
   },
@@ -1515,7 +1593,8 @@
     "topics": [
       "hope",
       "tawakkul",
-      "character"
+      "character",
+      "forgiveness"
     ],
     "popularityScore": 295
   },
@@ -1528,7 +1607,11 @@
     "topics": [
       "hope",
       "patience",
-      "gratitude"
+      "gratitude",
+      "repentance",
+      "forgiveness",
+      "dhikr",
+      "honesty"
     ],
     "popularityScore": 295
   },
@@ -1541,7 +1624,9 @@
     "topics": [
       "hope",
       "peace",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 295
   },
@@ -1586,7 +1671,9 @@
     "text": "Except for those who have believed and done righteous deeds and advised each other to truth and advised each other to patience.",
     "topics": [
       "patience",
-      "character"
+      "character",
+      "honesty",
+      "kindness"
     ],
     "popularityScore": 295
   },
@@ -1608,7 +1695,8 @@
     "author": "The Quran 81:21",
     "text": "Obeyed there [in the heavens] and trustworthy.",
     "topics": [
-      "tawakkul"
+      "tawakkul",
+      "honesty"
     ],
     "popularityScore": 285
   },
@@ -1696,7 +1784,9 @@
     "author": "The Quran 85:14",
     "text": "And He is the Forgiving, the Affectionate,",
     "topics": [
-      "hope"
+      "hope",
+      "forgiveness",
+      "love"
     ],
     "popularityScore": 285
   },
@@ -1718,7 +1808,8 @@
     "author": "The Quran 96:19",
     "text": "No! Do not obey him. But prostrate and draw near [to Allah].",
     "topics": [
-      "peace"
+      "peace",
+      "love"
     ],
     "popularityScore": 285
   },
@@ -1740,7 +1831,8 @@
     "author": "The Quran 101:6",
     "text": "Then as for one whose scales are heavy [with good deeds],",
     "topics": [
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 285
   },
@@ -1762,7 +1854,8 @@
     "author": "The Quran 107:5",
     "text": "[But] who are heedless of their prayer -",
     "topics": [
-      "prayer"
+      "prayer",
+      "repentance"
     ],
     "popularityScore": 285
   },
@@ -1788,7 +1881,8 @@
     "topics": [
       "patience",
       "tawakkul",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 265
   },
@@ -1800,7 +1894,8 @@
     "text": "And We had already given Moses and Aaron the criterion and a light and a reminder for the righteous",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 265
   },
@@ -1812,7 +1907,8 @@
     "text": "And Paradise will be brought near [that Day] to the righteous.",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 265
   },
@@ -1824,7 +1920,8 @@
     "text": "And those who believe and do righteous deeds - We will surely admit them among the righteous [into Paradise].",
     "topics": [
       "tawakkul",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 265
   },
@@ -1836,7 +1933,8 @@
     "text": "And as for those who had believed and done righteous deeds, they will be in a garden [of Paradise], delighted.",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 265
   },
@@ -1861,7 +1959,8 @@
     "text": "And we will surely let them taste the nearer punishment short of the greater punishment that perhaps they will repent.",
     "topics": [
       "tawakkul",
-      "peace"
+      "peace",
+      "repentance"
     ],
     "popularityScore": 265
   },
@@ -1873,7 +1972,8 @@
     "text": "And Paradise will be brought near to the righteous, not far,",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 265
   },
@@ -1909,7 +2009,9 @@
     "text": "Those are the ones who have exchanged guidance for error and forgiveness for punishment. How patient they are in pursuit of the Fire!",
     "topics": [
       "hope",
-      "patience"
+      "patience",
+      "guidance",
+      "forgiveness"
     ],
     "popularityScore": 255
   },
@@ -1921,7 +2023,9 @@
     "text": "And do not make [your oath by] Allah an excuse against being righteous and fearing Allah and making peace among people. And Allah is Hearing and Knowing.",
     "topics": [
       "peace",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 255
   },
@@ -1957,7 +2061,10 @@
     "text": "Indeed, those who disbelieve and commit wrong [or injustice] - never will Allah forgive them, nor will He guide them to a path.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "guidance",
+      "forgiveness",
+      "repentance"
     ],
     "popularityScore": 255
   },
@@ -1981,7 +2088,9 @@
     "text": "They said, \"Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.\"",
     "topics": [
       "hope",
-      "tawakkul"
+      "tawakkul",
+      "repentance",
+      "forgiveness"
     ],
     "popularityScore": 255
   },
@@ -2017,7 +2126,8 @@
     "text": "So consume what you have taken of war booty [as being] lawful and good, and fear Allah. Indeed, Allah is Forgiving and Merciful.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness"
     ],
     "popularityScore": 255
   },
@@ -2029,7 +2139,8 @@
     "text": "And remove the fury in the believers' hearts. And Allah turns in forgiveness to whom He wills; and Allah is Knowing and Wise.",
     "topics": [
       "hope",
-      "peace"
+      "peace",
+      "forgiveness"
     ],
     "popularityScore": 255
   },
@@ -2041,7 +2152,8 @@
     "text": "O mankind, there has to come to you instruction from your Lord and healing for what is in the breasts and guidance and mercy for the believers.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "guidance"
     ],
     "popularityScore": 255
   },
@@ -2113,7 +2225,9 @@
     "text": "And establish prayer at the two ends of the day and at the approach of the night. Indeed, good deeds do away with misdeeds. That is a reminder for those who remember.",
     "topics": [
       "prayer",
-      "character"
+      "character",
+      "kindness",
+      "repentance"
     ],
     "popularityScore": 255
   },
@@ -2173,7 +2287,9 @@
     "text": "Your Lord is most knowing of what is within yourselves. If you should be righteous [in intention] - then indeed He is ever, to the often returning [to Him], Forgiving.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 255
   },
@@ -2184,7 +2300,8 @@
     "author": "The Quran 18:107",
     "text": "Indeed, those who have believed and done righteous deeds - they will have the Gardens of Paradise as a lodging,",
     "topics": [
-      "character"
+      "character",
+      "kindness"
     ],
     "popularityScore": 255
   },
@@ -2208,7 +2325,10 @@
     "text": "But indeed, I am the Perpetual Forgiver of whoever repents and believes and does righteousness and then continues in guidance.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "repentance",
+      "guidance",
+      "kindness"
     ],
     "popularityScore": 255
   },
@@ -2232,7 +2352,8 @@
     "text": "And rely upon the Ever-Living who does not die, and exalt [Allah] with His praise. And sufficient is He to be, with the sins of His servants, Acquainted -",
     "topics": [
       "gratitude",
-      "tawakkul"
+      "tawakkul",
+      "repentance"
     ],
     "popularityScore": 255
   },
@@ -2244,7 +2365,10 @@
     "text": "Except for those who repent, believe and do righteous work. For them Allah will replace their evil deeds with good. And ever is Allah Forgiving and Merciful.",
     "topics": [
       "hope",
-      "character"
+      "character",
+      "repentance",
+      "forgiveness",
+      "kindness"
     ],
     "popularityScore": 255
   },
@@ -2254,7 +2378,9 @@
     "sourceId": "abudawud_30",
     "author": "Sunan Abu Dawud 30",
     "text": "Narrated Aisha, Ummul Mu'minin: When the Prophet (ﷺ) came out of the privy, he used to say: \"Grant me Thy forgiveness",
-    "topics": [],
+    "topics": [
+      "forgiveness"
+    ],
     "popularityScore": 240
   },
   {
@@ -2515,7 +2641,9 @@
     "sourceId": "bukhari_14",
     "author": "Sahih al-Bukhari 14",
     "text": "Narrated Abu Huraira: \"Allah's Messenger (ﷺ) said, \"By Him in Whose Hands my life is, none of you will have faith till he loves me more than his father and his children",
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "popularityScore": 180
   },
   {
@@ -2524,7 +2652,9 @@
     "sourceId": "bukhari_15",
     "author": "Sahih al-Bukhari 15",
     "text": "Narrated Anas: The Prophet (ﷺ) said \"None of you will have faith till he loves me more than his father, his children and all mankind",
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "popularityScore": 180
   },
   {
@@ -2596,7 +2726,9 @@
     "sourceId": "abudawud_59",
     "author": "Sunan Abu Dawud 59",
     "text": "Narrated AbulMalih: The Prophet (ﷺ) said: Allah does not accept charity from goods acquired by embezzlement as He does not accept prayer without purification",
-    "topics": [],
+    "topics": [
+      "kindness"
+    ],
     "popularityScore": 180
   },
   {
@@ -2695,7 +2827,9 @@
     "sourceId": "ibnmajah_31",
     "author": "Sunan Ibn Majah 31",
     "text": "It was narrated from that 'Ali said:\"The Messenger of Allah (ﷺ) said: 'Do not tell lies about me, for telling lies about me leads to Hell (Fire)",
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "popularityScore": 180
   },
   {
@@ -2704,7 +2838,9 @@
     "sourceId": "ibnmajah_33",
     "author": "Sunan Ibn Majah 33",
     "text": "It was narrated from that Jabir said:\"The Messenger of Allah (ﷺ) said: 'Whoever tells lies about me deliberately, let him take his place in Hell",
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "popularityScore": 180
   },
   {
@@ -2722,7 +2858,9 @@
     "sourceId": "ibnmajah_37",
     "author": "Sunan Ibn Majah 37",
     "text": "It was narrated from Abu Sa'eed said:\"The Messenger of Allah (ﷺ) said: 'Whoever tells lies about me deliberately, let him take his place in Hell",
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "popularityScore": 180
   },
   {
@@ -2857,7 +2995,9 @@
     "sourceId": "ibnmajah_7",
     "author": "Sunan Ibn Majah 7",
     "text": "Abu Hurairah narrated that:The Messenger of Allah (ﷺ) said: \"A group of my Ummah will continue to adhere steadfastly to the command of Allah and those who oppose them will not be able to harm them",
-    "topics": [],
+    "topics": [
+      "patience"
+    ],
     "popularityScore": 150
   },
   {
@@ -2884,7 +3024,10 @@
     "sourceId": "ibnmajah_30",
     "author": "Sunan Ibn Majah 30",
     "text": "It was narrated from 'Abdur-Rahman bin 'Abdullah bin Mas'ud that his father said:\"The Messenger of Allah (ﷺ) said: 'Whoever tells lies about me deliberately, let him take his place in Hell",
-    "topics": [],
+    "topics": [
+      "hope",
+      "honesty"
+    ],
     "popularityScore": 150
   },
   {
@@ -2893,7 +3036,9 @@
     "sourceId": "ibnmajah_32",
     "author": "Sunan Ibn Majah 32",
     "text": "It was narrated that Anas bin Malik said:\"The Messenger of Allah (ﷺ) said: 'Whoever tells lies about me', I (the narrator) think that he also said 'deliberately', let him take his place in Hell",
-    "topics": [],
+    "topics": [
+      "honesty"
+    ],
     "popularityScore": 150
   },
   {
@@ -2911,7 +3056,9 @@
     "sourceId": "ibnmajah_50",
     "author": "Sunan Ibn Majah 50",
     "text": "It was narrated that 'Abdullah bin 'Abbas said:\"The Messenger of Allah (ﷺ) said: 'Allah refuses to accept the good deeds of one who follows innovation until he gives up that innovation",
-    "topics": [],
+    "topics": [
+      "kindness"
+    ],
     "popularityScore": 150
   },
   {
@@ -2920,7 +3067,9 @@
     "sourceId": "ibnmajah_53",
     "author": "Sunan Ibn Majah 53",
     "text": "It was narrated that Abu Hurairah said:\"The Messenger of Allah (ﷺ) said: 'Whoever is given a Fatwa (verdict) that has no basis, then his sin will be upon the one who issued that Fatwa",
-    "topics": [],
+    "topics": [
+      "repentance"
+    ],
     "popularityScore": 150
   },
   {
@@ -2947,7 +3096,10 @@
     "sourceId": "ibnmajah_66",
     "author": "Sunan Ibn Majah 66",
     "text": "It was narrated from Anas bin Malik that:\"The Messenger of Allah (ﷺ) said: 'None of you truly believes until he loves for his brother\" or he said \"for his neighbor, what he loves for himself",
-    "topics": [],
+    "topics": [
+      "love",
+      "kindness"
+    ],
     "popularityScore": 150
   },
   {
@@ -2956,7 +3108,9 @@
     "sourceId": "ibnmajah_67",
     "author": "Sunan Ibn Majah 67",
     "text": "It was narrated that Anas bin Malik said:\"The Messenger of Allah (ﷺ) said: 'None of you truly believes until I am more beloved to him than his child, his father and all the people",
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "popularityScore": 150
   },
   {
@@ -2974,7 +3128,9 @@
     "sourceId": "bukhari_17",
     "author": "Sahih al-Bukhari 17",
     "text": "Narrated Anas: The Prophet (ﷺ) said, \"Love for the Ansar is a sign of faith and hatred for the Ansar is a sign of hypocrisy",
-    "topics": [],
+    "topics": [
+      "love"
+    ],
     "popularityScore": 130
   },
   {
@@ -3154,7 +3310,9 @@
     "sourceId": "tirmidhi_26",
     "author": "Jami' at-Tirmidhi 26",
     "text": "Rabah Bin Abdur-Rahman bin Abu Sufyan bin Huwaitib narrated :the same from his grandmother the daughter of Sa'eed bin Zaid, from her father, from the Prophet",
-    "topics": [],
+    "topics": [
+      "hope"
+    ],
     "popularityScore": 130
   },
   {

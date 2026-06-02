@@ -11,7 +11,7 @@ export default function Feeling() {
       variant="radio"
       storeKey="feeling"
       title="What is most present in your heart right now?"
-      next="/(onboarding)/quran-relation"
+      next="/(onboarding)/content-select"
       options={[
         'Seeking peace',
         'Seeking patience',

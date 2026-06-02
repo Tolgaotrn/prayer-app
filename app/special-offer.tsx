@@ -16,7 +16,6 @@ import {
   restoreRevenueCatPurchases,
   type PurchasesPackage,
 } from '../lib/revenueCat';
-import { analytics } from '../lib/analytics';
 
 /**
  * Special offer — ara sıra gösterilen "7 gün ücretsiz" teklif ekranı.
@@ -30,7 +29,6 @@ export default function SpecialOffer() {
   const [isPurchasing, setIsPurchasing] = React.useState(false);
 
   useEffect(() => {
-    analytics.track('paywall_viewed', { source: 'special_offer' });
     getRevenueCatPackages()
       .then(setPackages)
       .catch((error) => console.warn('RevenueCat offerings failed', error));
@@ -49,7 +47,6 @@ export default function SpecialOffer() {
 
   const tryNow = async () => {
     haptic.medium();
-    analytics.track('paywall_cta_tapped', { source: 'special_offer' });
     if (!selectedPackage) {
       Alert.alert('Not available', 'Premium plans could not be loaded. Please try again later.');
       return;

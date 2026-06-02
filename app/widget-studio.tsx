@@ -133,7 +133,7 @@ function Pill({ label, active, onPress }: { label: string; active: boolean; onPr
 
 const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  title: { fontFamily: fonts.serifSemibold, fontSize: 20, color: colors.text.heading },
+  title: { fontFamily: fonts.serifSemibold, fontSize: 20, lineHeight: 33, color: colors.text.heading },
   add: { fontFamily: fonts.sansSemibold, fontSize: 15, color: colors.gold.bright },
   stage: { alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.xl, minHeight: 300 },
   widget: {
