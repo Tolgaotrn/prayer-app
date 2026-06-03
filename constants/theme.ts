@@ -1,5 +1,5 @@
 /**
- * Noor design system.
+ * Huda design system.
  * Dark-first Islamic companion app. Deep navy backgrounds, gold accents,
  * Playfair serif display, Amiri Arabic, Plus Jakarta Sans UI.
  */

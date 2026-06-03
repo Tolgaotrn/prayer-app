@@ -3,10 +3,10 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Huda',
-  slug: 'noor',
+  slug: 'huda',
   version: '1.0.0',
   orientation: 'portrait',
-  scheme: 'noor',
+  scheme: 'huda',
   icon: './assets/icons/icon.png',
   userInterfaceStyle: 'light',
   backgroundColor: '#F2EDE4',

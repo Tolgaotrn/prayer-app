@@ -1,4 +1,4 @@
-# Noor — Daily Islamic Verses App
+# Huda — Daily Islamic Verses App
 ## Projeyi anlama rehberi (yeni konuşmalar için)
 
 Bu dosya yeni bir Codex konuşmasının projeyi **sıfırdan anlamadan** devam edebilmesi için yazıldı.
@@ -8,7 +8,7 @@ Tolga ile çalışırken şunları bil: kısa ve net konuşur, görmek istediği
 
 ## Projenin özü
 
-**Noor** — günlük İslami ayet, dua, hadis ve alıntı sunan bir mobil uygulama.
+**Huda** — günlük İslami ayet, dua, hadis ve alıntı sunan bir mobil uygulama.
 Dark-first tasarım, altın aksanlar, gerçek cami fotoğrafları, world-class animasyonlar.
 
 **Çalıştırmak için:**

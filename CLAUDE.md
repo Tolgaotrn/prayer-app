@@ -1,4 +1,4 @@
-# Noor — Islamic Companion App
+# Huda — Islamic Companion App
 > Yeni konuşmalar için tam bağlam rehberi. Bunu oku, sormadan devam et.
 
 ---
@@ -17,7 +17,7 @@
 
 ## Projenin özü
 
-**Noor** — günlük İslami ayet, dua, hadis ve alıntı sunan bir mobil uygulama.
+**Huda** — günlük İslami ayet, dua, hadis ve alıntı sunan bir mobil uygulama.
 
 **Tema:** Krem/warm — `darkMode` default `false`. Altın aksanlar, gerçek cami fotoğrafları. Dark mode settings'te toggle ile açılır. `welcome.tsx` hariç her yer krem.
 
@@ -35,7 +35,7 @@ eas build --profile development --platform ios  # Swift değişikliklerinde
 localStorage.setItem('noor-onboarding', JSON.stringify({
   state: { name: 'Tolga', isCompleted: true, selectedTheme: 1, language: 'Turkish' }, version: 0
 }));
-localStorage.setItem('noor-app', JSON.stringify({
+localStorage.setItem('huda-app', JSON.stringify({
   state: { savedVerseIds: [], streakDays: 7, isPremium: true,
            darkMode: false, currentVerseIndex: 0, followedTopics: ['General'],
            homeWidgetContent: 'auto', lockWidgetContent: 'verse' }, version: 0
