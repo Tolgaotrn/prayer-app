@@ -64,7 +64,9 @@ export function ThemeTile({
             source={theme.image}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
-            transition={300}
+            transition={200}
+            cachePolicy="memory-disk"
+            priority="high"
             placeholder={{ blurhash: 'L37nIw00~q9F4n%MD%xu00~q-;%M' }}
           />
         )}

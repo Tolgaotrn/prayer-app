@@ -17,3 +17,7 @@ widget-resim/
 expo-env.d.ts
 # @end expo-cli
 .env
+
+# Junk archives (never bundle into the app)
+*.rar
+*.zip

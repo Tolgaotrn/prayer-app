@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
+import { usePostHog } from 'posthog-react-native';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { NotifShowcase } from '../../components/ui/NotifShowcase';
 import { Stepper } from '../../components/ui/Stepper';
@@ -23,11 +24,20 @@ function toHHMM(min: number): string {
 
 export default function Reminders() {
   const router = useRouter();
+  const posthog = usePostHog();
   const tc = useThemeColors();
   const { reminderCount, reminderStart, reminderEnd, set } = useOnboardingStore();
 
   const allowAndSave = async () => {
-    try { await Notifications.requestPermissionsAsync(); } catch { /* devam et */ }
+    try {
+      const result = await Notifications.requestPermissionsAsync();
+      posthog?.capture('notification_permission_requested', {
+        granted: result.granted,
+        status: result.status,
+      });
+    } catch (e) {
+      posthog?.capture('notification_permission_error', { error: String(e) });
+    }
     router.push('/(onboarding)/theme-select');
   };
 

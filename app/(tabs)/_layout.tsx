@@ -17,7 +17,6 @@ export default function TabsLayout() {
       <Tabs.Screen name="home-card" />
       <Tabs.Screen name="themes" />
       <Tabs.Screen name="profile" />
-      <Tabs.Screen name="settings" />
     </Tabs>
   );
 }

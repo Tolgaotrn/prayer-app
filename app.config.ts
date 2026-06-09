@@ -3,7 +3,7 @@ import type { ExpoConfig, ConfigContext } from 'expo/config';
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Huda',
-  slug: 'huda',
+  slug: 'noor',
   version: '1.0.0',
   orientation: 'portrait',
   scheme: 'huda',
@@ -11,13 +11,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'light',
   backgroundColor: '#F2EDE4',
   splash: {
-    image: './assets/icons/icon.png',
+    // Logo düz krem (#F2EDE4) zemine gömülü → contain bandı görünmez,
+    // splash arka planı uygulama yüzeyiyle birebir aynı (beyaz bant yok).
+    image: './assets/icons/splash-icon.png',
     resizeMode: 'contain',
     backgroundColor: '#F2EDE4',
   },
   assetBundlePatterns: ['**/*'],
   ios: {
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: 'com.tolgaoturan.huda',
     buildNumber: '1',
     entitlements: {
@@ -27,6 +29,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
         'Huda uses your location to show accurate daily prayer times for your city.',
+      NSPrivacyPolicyURL:
+        'https://aware-bone-2fc.notion.site/Huda-App-Privacy-Policy-3764d64566b6818899ead7c74e226341',
     },
   },
   android: {
@@ -66,8 +70,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
   },
   extra: {
-    // Keys exposed to the app bundle (public keys only — never secret keys here)
-    revenueCatApiKey: process.env.REVENUECAT_API_KEY ?? '',
+    // Public RevenueCat iOS key — safe to embed in the bundle. Env var overrides
+    // it if set (e.g. for a separate sandbox project), but never falls back to ''.
+    revenueCatApiKey:
+      process.env.REVENUECAT_API_KEY ?? 'appl_XJJfseLiJHJYJnSwKHYlDrFvcGb',
     router: {},
     eas: {
       projectId: '5fa3ab12-3a40-4fe4-a5a1-808d1ba3d1ec',

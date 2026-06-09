@@ -4,6 +4,22 @@
  */
 
 const BASE = 'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/themes';
+const RENDER_BASE = 'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/render/image/public/themes';
+
+/**
+ * Tema görselini Supabase'in resize endpoint'inden küçültülmüş olarak verir.
+ * (Şu an galeri/feed TAM çözünürlük kullanıyor — kalite önemli. Bu helper widget
+ *  gibi yerlerde gerekirse diye duruyor.)
+ */
+export function themeImageURL(uri: string, width: number, quality = 72): string {
+  const file = uri.split('/themes/')[1];
+  if (!file) return uri;
+  return `${RENDER_BASE}/${file}?width=${width}&quality=${quality}`;
+}
+
+// Tüm tema görsellerinin TAM çözünürlüklü URL listesi (prefetch için).
+export const allThemeImageURLs = (): string[] =>
+  backgroundThemes.map((t) => t.image.uri);
 
 export interface BackgroundTheme {
   id: number;

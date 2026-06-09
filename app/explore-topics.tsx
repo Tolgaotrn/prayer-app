@@ -14,52 +14,52 @@ import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { StreakWidget } from '../components/ui/StreakWidget';
 import { fonts, radii, spacing } from '../constants/theme';
 import { useThemeColors } from '../lib/useThemeColors';
+import { useT } from '../lib/i18n';
 import { useAppStore } from '../stores/useAppStore';
 import { haptic } from '../lib/haptics';
 
-type Topic = { label: string; icon: string; subtitle?: string; free?: boolean };
-type Section = { title: string; topics: Topic[] };
+type Topic = { label: string; icon: string; labelKey: string; subKey: string; free?: boolean };
+type Section = { titleKey: string; topics: Topic[] };
 
-/* Ücretsiz konular — en üstte, başlıksız, Free rozeti satır içinde */
 const FREE_TOPICS: Topic[] = [
-  { label: 'General',      icon: 'apps-outline',   subtitle: 'A mix of verses & hadith',  free: true },
-  { label: 'Favorites',    icon: 'heart-outline',  subtitle: 'Your saved content',          free: true },
+  { label: 'General',   icon: 'apps-outline',  labelKey: 'topic.General',   subKey: 'topicsub.General',   free: true },
+  { label: 'Favorites', icon: 'heart-outline', labelKey: 'topic.Favorites', subKey: 'topicsub.Favorites', free: true },
 ];
 
 const POPULAR_TOPICS: Topic[] = [
-  { label: 'Quran Verses',          icon: 'book-outline',              subtitle: 'Daily ayahs from the Quran' },
-  { label: 'Hadiths',              icon: 'library-outline',            subtitle: 'Prophetic traditions' },
-  { label: 'Duas & Prayers',       icon: 'hand-left-outline',          subtitle: 'Supplications & adhkar' },
-  { label: 'Islamic Quotes',       icon: 'chatbubble-ellipses-outline', subtitle: 'Wisdom & reflections' },
-  { label: '99 Names of Allah',    icon: 'sparkles-outline',           subtitle: 'Al-Asmaul Husna' },
-  { label: 'Dhikr & Remembrance',  icon: 'infinite-outline',           subtitle: 'Morning & evening adhkar' },
-  { label: 'Patience',             icon: 'hourglass-outline',          subtitle: 'On sabr & perseverance' },
-  { label: 'Gratitude',            icon: 'gift-outline',               subtitle: 'On shukr & thankfulness' },
-  { label: 'Hope',                 icon: 'partly-sunny-outline',       subtitle: 'In Allah\'s mercy & grace' },
+  { label: '99 Names of Allah',   icon: 'sparkles-outline',            labelKey: 'topic.99 Names of Allah',   subKey: 'topicsub.99 Names of Allah' },
+  { label: 'Quran Verses',        icon: 'book-outline',                labelKey: 'topic.Quran Verses',        subKey: 'topicsub.Quran Verses' },
+  { label: 'Hadiths',             icon: 'library-outline',             labelKey: 'topic.Hadiths',             subKey: 'topicsub.Hadiths' },
+  { label: 'Duas & Prayers',      icon: 'hand-left-outline',           labelKey: 'topic.Duas & Prayers',      subKey: 'topicsub.Duas & Prayers' },
+  { label: 'Islamic Quotes',      icon: 'chatbubble-ellipses-outline', labelKey: 'topic.Islamic Quotes',      subKey: 'topicsub.Islamic Quotes' },
+  { label: 'Dhikr & Remembrance', icon: 'infinite-outline',            labelKey: 'topic.Dhikr & Remembrance', subKey: 'topicsub.Dhikr & Remembrance' },
+  { label: 'Patience',            icon: 'hourglass-outline',           labelKey: 'topic.Patience',            subKey: 'topicsub.Patience' },
+  { label: 'Gratitude',           icon: 'gift-outline',                labelKey: 'topic.Gratitude',           subKey: 'topicsub.Gratitude' },
+  { label: 'Hope',                icon: 'partly-sunny-outline',        labelKey: 'topic.Hope',                subKey: 'topicsub.Hope' },
 ];
 
 const CATALOG: Section[] = [
   {
-    title: 'Faith & Belief',
+    titleKey: 'topicsec.Faith & Belief',
     topics: [
-      { label: 'Tawakkul',         icon: 'shield-outline',         subtitle: 'Reliance on Allah' },
-      { label: 'Repentance',       icon: 'return-up-back-outline', subtitle: 'Turning back to Allah' },
-      { label: 'Seeking Guidance', icon: 'compass-outline',        subtitle: 'Finding the straight path' },
+      { label: 'Tawakkul',         icon: 'shield-outline',         labelKey: 'topic.Tawakkul',         subKey: 'topicsub.Tawakkul' },
+      { label: 'Repentance',       icon: 'return-up-back-outline', labelKey: 'topic.Repentance',       subKey: 'topicsub.Repentance' },
+      { label: 'Seeking Guidance', icon: 'compass-outline',        labelKey: 'topic.Seeking Guidance', subKey: 'topicsub.Seeking Guidance' },
     ],
   },
   {
-    title: 'Character & Morality',
+    titleKey: 'topicsec.Character & Morality',
     topics: [
-      { label: 'Honesty',     icon: 'checkmark-circle-outline',  subtitle: 'Truthfulness & integrity' },
-      { label: 'Kindness',    icon: 'heart-half-outline',         subtitle: 'Ihsan & compassion' },
-      { label: 'Forgiveness', icon: 'water-outline',              subtitle: 'Pardoning & letting go' },
+      { label: 'Honesty',     icon: 'checkmark-circle-outline', labelKey: 'topic.Honesty',     subKey: 'topicsub.Honesty' },
+      { label: 'Kindness',    icon: 'heart-half-outline',       labelKey: 'topic.Kindness',    subKey: 'topicsub.Kindness' },
+      { label: 'Forgiveness', icon: 'water-outline',            labelKey: 'topic.Forgiveness', subKey: 'topicsub.Forgiveness' },
     ],
   },
   {
-    title: 'Heart & Spirituality',
+    titleKey: 'topicsec.Heart & Spirituality',
     topics: [
-      { label: 'Inner Peace',   icon: 'leaf-outline', subtitle: 'Tranquility of the heart' },
-      { label: 'Love of Allah', icon: 'rose-outline', subtitle: 'Mahabbah & closeness to Allah' },
+      { label: 'Inner Peace',   icon: 'leaf-outline', labelKey: 'topic.Inner Peace',   subKey: 'topicsub.Inner Peace' },
+      { label: 'Love of Allah', icon: 'rose-outline', labelKey: 'topic.Love of Allah', subKey: 'topicsub.Love of Allah' },
     ],
   },
 ];
@@ -67,12 +67,13 @@ const CATALOG: Section[] = [
 const ALL_TOPICS = [
   ...FREE_TOPICS.map(t => ({ ...t, section: 'Free' })),
   ...POPULAR_TOPICS.map(t => ({ ...t, section: 'Most Popular' })),
-  ...CATALOG.flatMap(s => s.topics.map(t => ({ ...t, section: s.title }))),
+  ...CATALOG.flatMap(s => s.topics.map(t => ({ ...t, section: s.titleKey }))),
 ];
 
 export default function ExploreTopics() {
   const router            = useRouter();
   const tc                = useThemeColors();
+  const t                 = useT();
   const isPremium         = useAppStore((s) => s.isPremium);
   const followedTopics    = useAppStore((s) => s.followedTopics);
   const toggleFollowTopic = useAppStore((s) => s.toggleFollowTopic);
@@ -85,28 +86,30 @@ export default function ExploreTopics() {
     toggleFollowTopic(label);
   };
 
+  // Arama: hem label (orijinal) hem lokalize isim üzerinde çalışır
   const searchResults = useMemo(() => {
     if (!query.trim()) return null;
     const q = query.toLowerCase();
-    return ALL_TOPICS.filter(t => t.label.toLowerCase().includes(q));
-  }, [query]);
+    return ALL_TOPICS.filter(tp =>
+      tp.label.toLowerCase().includes(q) ||
+      t(tp.labelKey).toLowerCase().includes(q),
+    );
+  }, [query, t]);
 
   const inputBg = tc.isDark ? 'rgba(30,42,82,0.9)' : tc.raisedBg;
 
   return (
     <ScreenContainer padded={false}>
-      {/* ── HEADER (Edit butonu yok) ── */}
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
           style={[styles.iconBtn, { backgroundColor: tc.cardBg }]}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t('common.back')}
         >
           <Ionicons name="close" size={22} color={tc.heading} />
         </Pressable>
-        <Text style={[styles.title, { color: tc.heading }]}>Browse topics</Text>
-        {/* sağ taraf boş — simetri için aynı boyutta görünmez view */}
+        <Text style={[styles.title, { color: tc.heading }]}>{t('topics.title')}</Text>
         <View style={styles.iconBtn} />
       </View>
 
@@ -115,7 +118,7 @@ export default function ExploreTopics() {
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: 80 }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* ── PREMIUM BANNER ── */}
+        {/* Premium banner — sadece free kullanıcılara */}
         {!isPremium && (
           <Animated.View entering={FadeInDown.duration(380)}>
             <Pressable
@@ -124,8 +127,8 @@ export default function ExploreTopics() {
               accessibilityRole="button"
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.bannerTitle}>Access all topics</Text>
-                <Text style={styles.bannerSub}>Follow topics to personalise your daily verses</Text>
+                <Text style={styles.bannerTitle}>{t('topics.bannerTitle')}</Text>
+                <Text style={styles.bannerSub}>{t('topics.bannerSub')}</Text>
               </View>
               <View style={styles.bannerIcon}>
                 <Ionicons name="book" size={30} color="rgba(255,255,255,0.85)" />
@@ -134,23 +137,21 @@ export default function ExploreTopics() {
           </Animated.View>
         )}
 
-        {/* ── STREAK ── */}
         <Animated.View entering={FadeInDown.delay(60).duration(380)}>
           <StreakWidget streakDays={streakDays} style={{ marginBottom: spacing.sm }} />
         </Animated.View>
 
-        {/* ── SEARCH — streak'in altında ── */}
         <Animated.View entering={FadeInDown.delay(100).duration(380)} style={{ marginBottom: spacing.xs }}>
           <View style={[styles.searchWrap, { backgroundColor: inputBg, borderColor: tc.border }]}>
             <Ionicons name="search-outline" size={18} color={tc.muted} />
             <TextInput
               value={query}
               onChangeText={setQuery}
-              placeholder="Search topics..."
+              placeholder={t('topics.search')}
               placeholderTextColor={tc.muted}
               style={[styles.searchInput, { color: tc.heading }]}
               returnKeyType="search"
-              accessibilityLabel="Search topics"
+              accessibilityLabel={t('topics.search')}
             />
             {query.length > 0 && (
               <Pressable onPress={() => setQuery('')} hitSlop={8}>
@@ -161,14 +162,13 @@ export default function ExploreTopics() {
         </Animated.View>
 
         {searchResults !== null ? (
-          /* ── ARAMA SONUÇLARI ── */
           <Animated.View entering={FadeInDown.duration(240)}>
             {searchResults.length === 0 ? (
-              <Text style={[styles.emptyText, { color: tc.muted }]}>No topics found</Text>
+              <Text style={[styles.emptyText, { color: tc.muted }]}>{t('topics.noResults')}</Text>
             ) : (
               <>
                 <Text style={[styles.sectionTitle, { color: tc.heading }]}>
-                  Results ({searchResults.length})
+                  {t('topics.results', { n: searchResults.length })}
                 </Text>
                 <View style={styles.topicList}>
                   {searchResults.map((topic) => {
@@ -181,6 +181,7 @@ export default function ExploreTopics() {
                         locked={locked}
                         followed={followed}
                         tc={tc}
+                        t={t}
                         onPress={() => onTopic(topic.label, locked)}
                         showFreeBadge={!!topic.free}
                       />
@@ -192,91 +193,74 @@ export default function ExploreTopics() {
           </Animated.View>
         ) : (
           <>
-            {/* ── MY TOPICS chips ── */}
+            {/* My Topics chips */}
             {followedTopics.length > 0 && (
               <Animated.View entering={FadeInDown.delay(130)} style={{ marginBottom: spacing.md }}>
                 <View style={styles.sectionHeader}>
-                  <Text style={[styles.sectionTitle, { color: tc.heading, marginTop: 0, marginBottom: 0 }]}>My Topics</Text>
+                  <Text style={[styles.sectionTitle, { color: tc.heading, marginTop: 0, marginBottom: 0 }]}>
+                    {t('topics.myTopics')}
+                  </Text>
                   <Text style={[styles.sectionCount, { color: tc.muted }]}>
-                    {followedTopics.length} followed
+                    {t('topics.followed', { n: followedTopics.length })}
                   </Text>
                 </View>
                 <View style={[styles.chipRow, { marginTop: spacing.sm }]}>
-                  {followedTopics.map((t) => (
+                  {followedTopics.map((tp) => (
                     <Pressable
-                      key={t}
+                      key={tp}
                       style={[styles.chip, { backgroundColor: tc.gold + '22', borderColor: tc.gold }]}
-                      onPress={() => { haptic.select(); toggleFollowTopic(t); }}
+                      onPress={() => { haptic.select(); toggleFollowTopic(tp); }}
                       accessibilityRole="button"
                     >
-                      <Text style={[styles.chipText, { color: tc.gold }]}>{t}</Text>
+                      {/* chip'te lokalize isim göster */}
+                      <Text style={[styles.chipText, { color: tc.gold }]}>
+                        {t(`topic.${tp}`) !== `topic.${tp}` ? t(`topic.${tp}`) : tp}
+                      </Text>
                     </Pressable>
                   ))}
                 </View>
               </Animated.View>
             )}
 
-            {/* ── FREE TOPICS — başlık YOK, satır içi Free rozeti var ── */}
+            {/* Free topics */}
             <Animated.View entering={FadeInDown.delay(160).duration(380)}>
               <View style={styles.topicList}>
                 {FREE_TOPICS.map((topic) => {
                   const followed = followedTopics.includes(topic.label);
                   return (
-                    <TopicRow
-                      key={topic.label}
-                      topic={topic}
-                      locked={false}
-                      followed={followed}
-                      tc={tc}
-                      onPress={() => onTopic(topic.label, false)}
-                      showFreeBadge
-                    />
+                    <TopicRow key={topic.label} topic={topic} locked={false} followed={followed}
+                      tc={tc} t={t} onPress={() => onTopic(topic.label, false)} showFreeBadge />
                   );
                 })}
               </View>
             </Animated.View>
 
-            {/* ── MOST POPULAR ── */}
+            {/* Most Popular */}
             <Animated.View entering={FadeInDown.delay(200).duration(380)}>
-              <Text style={[styles.sectionTitle, { color: tc.heading }]}>Most Popular</Text>
+              <Text style={[styles.sectionTitle, { color: tc.heading }]}>{t('topics.mostPopular')}</Text>
               <View style={styles.topicList}>
                 {POPULAR_TOPICS.map((topic) => {
                   const locked   = !isPremium;
                   const followed = followedTopics.includes(topic.label);
                   return (
-                    <TopicRow
-                      key={topic.label}
-                      topic={topic}
-                      locked={locked}
-                      followed={followed}
-                      tc={tc}
-                      onPress={() => onTopic(topic.label, locked)}
-                    />
+                    <TopicRow key={topic.label} topic={topic} locked={locked} followed={followed}
+                      tc={tc} t={t} onPress={() => onTopic(topic.label, locked)} />
                   );
                 })}
               </View>
             </Animated.View>
 
-            {/* ── DİĞER BÖLÜMLER ── */}
+            {/* Catalog sections */}
             {CATALOG.map((section, si) => (
-              <Animated.View
-                key={section.title}
-                entering={FadeInDown.delay(240 + si * 60).duration(380)}
-              >
-                <Text style={[styles.sectionTitle, { color: tc.heading }]}>{section.title}</Text>
+              <Animated.View key={section.titleKey} entering={FadeInDown.delay(240 + si * 60).duration(380)}>
+                <Text style={[styles.sectionTitle, { color: tc.heading }]}>{t(section.titleKey)}</Text>
                 <View style={styles.topicList}>
                   {section.topics.map((topic) => {
                     const locked   = !isPremium && !topic.free;
                     const followed = followedTopics.includes(topic.label);
                     return (
-                      <TopicRow
-                        key={topic.label}
-                        topic={topic}
-                        locked={locked}
-                        followed={followed}
-                        tc={tc}
-                        onPress={() => onTopic(topic.label, locked)}
-                      />
+                      <TopicRow key={topic.label} topic={topic} locked={locked} followed={followed}
+                        tc={tc} t={t} onPress={() => onTopic(topic.label, locked)} />
                     );
                   })}
                 </View>
@@ -290,46 +274,43 @@ export default function ExploreTopics() {
 }
 
 function TopicRow({
-  topic, locked, followed, tc, onPress, showFreeBadge,
+  topic, locked, followed, tc, t, onPress, showFreeBadge,
 }: {
-  topic: { label: string; icon: string; subtitle?: string };
+  topic: Topic;
   locked: boolean;
   followed: boolean;
   tc: ReturnType<typeof import('../lib/useThemeColors').useThemeColors>;
+  t: ReturnType<typeof import('../lib/i18n').useT>;
   onPress: () => void;
   showFreeBadge?: boolean;
 }) {
+  const localLabel = t(topic.labelKey);
+  const localSub   = t(topic.subKey);
   return (
     <Pressable
       style={[
         styles.topicRow,
         {
-          backgroundColor: followed
-            ? (tc.isDark ? 'rgba(212,175,55,0.12)' : 'rgba(201,150,58,0.1)')
-            : tc.cardBg,
+          backgroundColor: followed ? (tc.isDark ? 'rgba(212,175,55,0.12)' : 'rgba(201,150,58,0.1)') : tc.cardBg,
           borderColor: followed ? tc.gold : tc.border,
         },
       ]}
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${topic.label}${locked ? ', premium' : followed ? ', followed' : ''}`}
+      accessibilityLabel={`${localLabel}${locked ? ', premium' : followed ? ', followed' : ''}`}
     >
       <View style={[styles.topicIcon, {
-        backgroundColor: followed
-          ? (tc.isDark ? 'rgba(212,175,55,0.18)' : 'rgba(201,150,58,0.14)')
-          : tc.raisedBg,
+        backgroundColor: followed ? (tc.isDark ? 'rgba(212,175,55,0.18)' : 'rgba(201,150,58,0.14)') : tc.raisedBg,
       }]}>
         <Ionicons name={topic.icon as any} size={20} color={followed ? tc.gold : tc.muted} />
       </View>
       <View style={{ flex: 1 }}>
-        <Text style={[styles.topicLabel, { color: tc.heading }]}>{topic.label}</Text>
-        {topic.subtitle ? (
-          <Text style={[styles.topicSubtitle, { color: tc.muted }]}>{topic.subtitle}</Text>
-        ) : null}
+        <Text style={[styles.topicLabel, { color: tc.heading }]}>{localLabel}</Text>
+        {localSub ? <Text style={[styles.topicSubtitle, { color: tc.muted }]}>{localSub}</Text> : null}
       </View>
-      {showFreeBadge && (
-        <View style={[styles.freeBadge, { backgroundColor: tc.gold + '20', borderColor: tc.gold + '55' }]}>
-          <Text style={[styles.freeBadgeText, { color: tc.gold }]}>Free</Text>
+      {showFreeBadge && !locked && (
+        <View style={[styles.freeBadge, { borderColor: tc.gold + '66', backgroundColor: tc.gold + '18' }]}>
+          <Text style={[styles.freeBadgeText, { color: tc.gold }]}>{t('topics.free')}</Text>
         </View>
       )}
       {locked ? (
@@ -350,16 +331,13 @@ const styles = StyleSheet.create({
   },
   iconBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   title: { fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 36 },
-
   searchWrap: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
     borderRadius: radii.lg, borderWidth: 1,
-    paddingHorizontal: spacing.md, paddingVertical: 10,
-    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.md, paddingVertical: 10, marginBottom: spacing.sm,
   },
   searchInput: { flex: 1, fontFamily: fonts.sans, fontSize: 15, paddingVertical: 0 },
   emptyText: { fontFamily: fonts.sans, fontSize: 15, textAlign: 'center', marginTop: spacing.xl },
-
   banner: {
     flexDirection: 'row', alignItems: 'center',
     borderRadius: radii.xl, padding: spacing.md, marginBottom: spacing.md, gap: spacing.md,
@@ -370,18 +348,15 @@ const styles = StyleSheet.create({
     width: 56, height: 56, borderRadius: 28,
     backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center',
   },
-
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionTitle: { fontFamily: fonts.sansBold, fontSize: 18, marginTop: spacing.md, marginBottom: spacing.sm },
   sectionCount: { fontFamily: fonts.sans, fontSize: 13 },
-
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   chip: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6,
   },
   chipText: { fontFamily: fonts.sansMedium, fontSize: 13 },
-
   topicList: { gap: spacing.sm, marginBottom: spacing.xs },
   topicRow: {
     flexDirection: 'row', alignItems: 'center',

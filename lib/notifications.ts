@@ -11,16 +11,26 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import type { PrayerSlot } from './prayerTimes';
+import { fetchFeedItems, getOfflineFeedItems, resolveLang, type FeedItem } from './contentDb';
+import { translate, resolveUILang } from './i18n';
+import { useOnboardingStore } from '../stores/useOnboardingStore';
+import { useAppStore } from '../stores/useAppStore';
 
 const PREFS_KEY = 'huda_notif_prefs';
 
 export interface ContentTime { hour: number; minute: number; }
 
+/** Günlük ilham sıklığı: kapalı · her saat · her 3 saat. */
+export type InspirationFrequency = 'off' | 'hourly' | 'every3h';
+
+/** Her 3 saatlik modda bildirim gönderilecek (uyanık) saatler. */
+export const EVERY_3H_HOURS = [6, 9, 12, 15, 18, 21];
+
 export interface NotifPrefs {
   // Namaz vakitleri — hangilerinin bildirimi açık
   prayerEnabled: Record<string, boolean>;
-  // Saatlik ilham bildirimleri (tek toggle)
-  dailyInspirationEnabled: boolean;
+  // Günlük ilham bildirim sıklığı
+  inspirationFrequency: InspirationFrequency;
 }
 
 const DEFAULT_PREFS: NotifPrefs = {
@@ -31,42 +41,75 @@ const DEFAULT_PREFS: NotifPrefs = {
     maghrib: true,
     isha: false,
   },
-  dailyInspirationEnabled: false,
+  inspirationFrequency: 'off',
 };
 
-/** 24 saatlik farklı ilham mesajları — her saat için ayrı içerik */
-const HOURLY_INSPIRATION: { title: string; body: string }[] = [
-  { title: 'Huda · Dawn Reminder',       body: 'Verily, with every difficulty there is relief. (94:6)' },
-  { title: 'Huda · Early Morning',       body: 'Actions are but by intentions. — Bukhari & Muslim' },
-  { title: 'Huda · Morning Reflection',  body: 'Whoever fears Allah — He will make for him a way out. (65:2)' },
-  { title: 'Huda · Morning Verse',       body: 'Your smile to your brother is charity. — Tirmidhi' },
-  { title: 'Huda · A Morning Thought',   body: 'And He is with you wherever you are. (57:4)' },
-  { title: 'Huda · Before You Start',    body: 'The most beloved deeds to Allah are the most consistent, even if small.' },
-  { title: 'Huda · Good Morning',        body: 'Allah does not burden a soul beyond that it can bear. (2:286)' },
-  { title: 'Huda · Morning Inspiration', body: 'Be conscious of Allah wherever you are. — Tirmidhi' },
-  { title: 'Huda · Mid-Morning',         body: 'Whoever travels a path seeking knowledge, Allah eases his path to Paradise.' },
-  { title: 'Huda · Forenoon',            body: 'Indeed, Allah is with the patient. (2:153)' },
-  { title: 'Huda · Late Morning',        body: 'A good word is charity. — Bukhari & Muslim' },
-  { title: 'Huda · Before Midday',       body: 'None of you truly believes until he loves for his brother what he loves for himself.' },
-  { title: 'Huda · Midday Reminder',     body: 'Whoever believes in Allah, let him speak good or remain silent.' },
-  { title: 'Huda · Afternoon Light',     body: 'Indeed, Allah is gentle and loves gentleness. — Muslim' },
-  { title: 'Huda · Early Afternoon',     body: 'So remember Me; I will remember you. (2:152)' },
-  { title: 'Huda · Afternoon Verse',     body: 'Whoever does not show mercy to people, Allah will not show mercy to him.' },
-  { title: 'Huda · Late Afternoon',      body: 'Do not lose hope, nor be sad. (3:139)' },
-  { title: 'Huda · Pre-Sunset',          body: 'Cleanliness is half of faith. — Muslim' },
-  { title: 'Huda · Evening Thought',     body: 'And whoever relies upon Allah — then He is sufficient for him. (65:3)' },
-  { title: 'Huda · Evening Verse',       body: 'Modesty is a branch of faith. — Bukhari & Muslim' },
-  { title: 'Huda · After Maghrib',       body: 'He who knows himself knows his Lord.' },
-  { title: 'Huda · Night Reflection',    body: 'The Muslim is one from whose tongue and hand others are safe.' },
-  { title: 'Huda · Late Evening',        body: 'And in His remembrance do hearts find rest. (13:28)' },
-  { title: 'Huda · Night Reminder',      body: 'Whoever remains silent is saved. — Tirmidhi' },
-];
+// İçerik türü → i18n başlık anahtarı (zaten 5 dilde mevcut, çeviri uydurmuyoruz)
+const KIND_TITLE_KEY: Record<FeedItem['kind'], string> = {
+  verse:  'rem.dailyVerse',
+  hadith: 'rem.dailyHadith',
+  dua:    'rem.dailyDua',
+  quote:  'rem.dailyWisdom',
+};
+
+interface NotifContent { title: string; body: string; meta: string }
+
+/**
+ * Bildirimler için SEÇİLİ DİLDE içerik havuzu çeker.
+ * - Kaynak: DB feed (offline → AsyncStorage cache servis edilir).
+ * - Arapça seçiliyse SADECE Arapça metni olan içerik (quote vb. dışlanır).
+ * - Diğer dillerde SADECE o dilin çevirisi (İngilizce sızmaz).
+ * - O dilde içerik yoksa havuz boş döner → hiç bildirim planlanmaz.
+ * - Her çağrıda karıştırılır → açılışlar arası farklı içerik.
+ */
+async function loadNotifPool(minCount: number): Promise<NotifContent[]> {
+  const rawLang    = useOnboardingStore.getState().language;
+  const uiLang     = resolveUILang(rawLang);
+  const arabicOnly = rawLang === 'Arabic';
+  const lang       = resolveLang(rawLang);
+  const app        = useAppStore.getState();
+
+  let items = await fetchFeedItems(
+    lang,
+    Math.max(minCount, 30),
+    app.followedTopics,
+    app.isPremium,
+    app.savedVerseIds,
+    false,
+    arabicOnly,
+  ).catch(() => [] as FeedItem[]);
+
+  // DB + cache boşsa (internet yok, ilk açılış) → çevrimdışı varsayılan içerik.
+  // Böylece bildirimler her dilde offline da seçili dilde çalışır.
+  if (items.length === 0) items = getOfflineFeedItems(lang, arabicOnly, app.followedTopics);
+
+  const pool: NotifContent[] = [];
+  for (const it of items) {
+    const body = (arabicOnly ? it.arabic : it.translation)?.trim();
+    if (!body) continue; // içerik yoksa akma
+    pool.push({
+      title: translate(uiLang, KIND_TITLE_KEY[it.kind] ?? 'rem.daily'),
+      body,
+      meta: it.reference ?? '',
+    });
+  }
+  // Karıştır — her yeniden planlamada farklı sıra/içerik
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+}
 
 export async function loadNotifPrefs(): Promise<NotifPrefs> {
   try {
     const raw = await AsyncStorage.getItem(PREFS_KEY);
     if (!raw) return DEFAULT_PREFS;
     const parsed = JSON.parse(raw);
+    // Eski boolean alanı → yeni sıklık enum'una göç
+    if (parsed && typeof parsed.dailyInspirationEnabled === 'boolean' && !parsed.inspirationFrequency) {
+      parsed.inspirationFrequency = parsed.dailyInspirationEnabled ? 'hourly' : 'off';
+    }
     return { ...DEFAULT_PREFS, ...parsed };
   } catch {
     return DEFAULT_PREFS;
@@ -97,17 +140,10 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const PRAYER_MESSAGES: Record<string, { title: string; body: string }> = {
-  fajr:    { title: 'Fajr · Dawn Prayer',   body: 'Time for Fajr. Begin your day with the remembrance of Allah.' },
-  sunrise: { title: 'Sunrise',              body: 'The sun has risen. A new day of blessings awaits.' },
-  dhuhr:   { title: 'Dhuhr · Midday Prayer', body: 'Time for Dhuhr. Pause and reconnect with Allah.' },
-  asr:     { title: 'Asr · Afternoon Prayer', body: 'Time for Asr. The afternoon prayer awaits you.' },
-  maghrib: { title: 'Maghrib · Sunset Prayer', body: 'The sun has set. Time for Maghrib prayer.' },
-  isha:    { title: 'Isha · Night Prayer',   body: 'End your day with Isha prayer. Peace be upon you.' },
-};
-
 /**
  * Seçili namaz vakitleri için bildirim planla.
+ * Başlık = seçili dildeki namaz adı (i18n). Gövde = o dilde gerçek bir ayet/hadis
+ * (DB'den). İçerik bulunamazsa gövde boş kalır (yine de namaz adı gösterilir).
  * Her slot için mevcut bildirimi iptal edip yenisini oluşturur.
  */
 export async function schedulePrayerNotifications(
@@ -118,6 +154,10 @@ export async function schedulePrayerNotifications(
   const granted = await requestPermission();
   if (!granted) return;
 
+  const uiLang = resolveUILang(useOnboardingStore.getState().language);
+  const pool   = await loadNotifPool(slots.length).catch(() => [] as NotifContent[]);
+  let pi = 0;
+
   for (const slot of slots) {
     const id = `prayer_${slot.key}`;
     // Önce eskiyi iptal et
@@ -125,21 +165,12 @@ export async function schedulePrayerNotifications(
 
     if (!prefs.prayerEnabled[slot.key]) continue;
 
-    // Vaktin saati + dakikasını bugünden al
-    const now = new Date();
-    const trigger = new Date(slot.date);
-    // Eğer vakit geçtiyse yarına planla
-    if (trigger <= now) {
-      trigger.setDate(trigger.getDate() + 1);
-    }
+    const title = translate(uiLang, `prayer.${slot.key}`);
+    const body  = pool.length > 0 ? pool[pi++ % pool.length].body : '';
 
     await Notifications.scheduleNotificationAsync({
       identifier: id,
-      content: {
-        title: PRAYER_MESSAGES[slot.key]?.title ?? slot.name,
-        body: PRAYER_MESSAGES[slot.key]?.body ?? `Time for ${slot.name} prayer.`,
-        sound: false,
-      },
+      content: { title, body, sound: false },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: slot.date.getHours(),
@@ -149,21 +180,35 @@ export async function schedulePrayerNotifications(
   }
 }
 
-/** Saatlik ilham bildirimlerini planla (24 adet, her saat farklı içerik) */
-async function scheduleHourlyInspiration(enabled: boolean): Promise<void> {
+/**
+ * İlham bildirimlerini planla.
+ *  - 'hourly'  → 24 bildirim (her saat farklı içerik)
+ *  - 'every3h' → 6 bildirim (uyanık saatler, EVERY_3H_HOURS)
+ *  - 'off'     → hepsi iptal
+ */
+async function scheduleInspiration(freq: InspirationFrequency): Promise<void> {
   if (Platform.OS === 'web') return;
 
-  // Önce mevcut tüm saatlik bildirimleri iptal et
+  // Önce mevcut tüm ilham bildirimlerini iptal et (24 slot)
   for (let h = 0; h < 24; h++) {
     await Notifications.cancelScheduledNotificationAsync(`inspiration_${h}`).catch(() => {});
   }
-  if (!enabled) return;
+  if (freq === 'off') return;
 
   const granted = await requestPermission();
   if (!granted) return;
 
-  for (let h = 0; h < 24; h++) {
-    const msg = HOURLY_INSPIRATION[h];
+  const hours = freq === 'hourly'
+    ? Array.from({ length: 24 }, (_, h) => h)
+    : EVERY_3H_HOURS;
+
+  // Seçili dilde içerik havuzu — o dilde içerik yoksa hiç planlama.
+  const pool = await loadNotifPool(hours.length);
+  if (pool.length === 0) return;
+
+  for (let i = 0; i < hours.length; i++) {
+    const h = hours[i];
+    const msg = pool[i % pool.length];
     await Notifications.scheduleNotificationAsync({
       identifier: `inspiration_${h}`,
       content: { title: msg.title, body: msg.body, sound: false },
@@ -181,7 +226,7 @@ export async function applyAllNotifPrefs(
   prefs: NotifPrefs,
 ): Promise<void> {
   await schedulePrayerNotifications(slots, prefs);
-  await scheduleHourlyInspiration(prefs.dailyInspirationEnabled);
+  await scheduleInspiration(prefs.inspirationFrequency);
 }
 
 /**
@@ -194,6 +239,30 @@ export async function refreshScheduledNotifications(slots: PrayerSlot[]): Promis
   try {
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== 'granted') return;
+    const prefs = await loadNotifPrefs();
+    await applyAllNotifPrefs(slots, prefs);
+  } catch { /* sessiz geç */ }
+}
+
+/**
+ * Dil değişince çağrılır — namaz vakitlerini kendi hesaplar, izin verilmişse
+ * tüm bildirimleri YENİ dilde yeniden planlar. Slot parametresi gerektirmez.
+ */
+export async function rescheduleForLanguageChange(): Promise<void> {
+  if (Platform.OS === 'web') return;
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return;
+
+    // Namaz vakitlerini widget sync ile aynı kaynaktan hesapla
+    const { computeSlots, resolveLocation } = await import('./prayerTimes');
+    const { loadPrayerSettings, buildParams } = await import('./prayerSettings');
+    const settings = await loadPrayerSettings();
+    const loc      = await resolveLocation();
+    const params   = buildParams(settings, loc.countryCode);
+    const slots    = computeSlots(loc.latitude, loc.longitude, new Date(), params)
+      .filter((s) => s.key !== 'sunrise');
+
     const prefs = await loadNotifPrefs();
     await applyAllNotifPrefs(slots, prefs);
   } catch { /* sessiz geç */ }

@@ -1,4 +1,4 @@
-/**
+65/**
  * Noor — Supabase import script
  * Tüm content/ JSON'larını Supabase tablolarına yükler.
  *

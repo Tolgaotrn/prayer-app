@@ -63,13 +63,16 @@ export default function Feed() {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [showBanner,  setShowBanner]  = React.useState(true);
 
-  // Önceki dili takip et — değiştiyse cache'i atlayıp taze çek
-  const prevLangRef = React.useRef(lang);
+  // Önceki dili takip et — değiştiyse cache'i atlayıp taze çek.
+  // showArabic dahil: English↔Arabic ikisi de resolveLang='en' olduğundan
+  // tek başına `lang` değişimi yakalamaz.
+  const prevLangRef = React.useRef(`${lang}_${showArabic}`);
 
   // Veri yükle — lang veya topic değişince cache'i atla, taze çek
   React.useEffect(() => {
-    const langChanged = prevLangRef.current !== lang;
-    prevLangRef.current = lang;
+    const langKey = `${lang}_${showArabic}`;
+    const langChanged = prevLangRef.current !== langKey;
+    prevLangRef.current = langKey;
 
     setItems([]);
     setLoading(true);
@@ -77,7 +80,7 @@ export default function Feed() {
     const t = setTimeout(() => setShowBanner(false), 3200);
 
     let cancelled = false;
-    fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged)
+    fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged, showArabic)
       .then(data => {
         if (cancelled) return; // eski dil/istek sonucu yeni isteği ezmesin
         setItems(data);
@@ -90,7 +93,10 @@ export default function Feed() {
       });
 
     return () => { cancelled = true; clearTimeout(t); };
-  }, [lang, followedTopics.join(','), isPremium]);
+    // savedIds yalnızca Favorites konusunda feed içeriğini etkiler → sadece o durumda
+    // yeniden çek (aksi halde her kaydetme tüm feed'i sıfırlardı).
+  }, [lang, showArabic, followedTopics.join(','), isPremium,
+      followedTopics.includes('Favorites') ? savedIds.join(',') : '']);
 
   // Widget verisini her açılışta senkronize et (home-card'a girmese bile)
   React.useEffect(() => {
@@ -119,6 +125,10 @@ export default function Feed() {
         ]);
         if (cancelled) return;
         if (status !== 'granted' && !stored) {
+          // Otomatik öneriyi ömür boyu bir kez göster. Kullanıcı izin vermeden
+          // geri çıksa bile tekrar zorlamayız; sonradan namaz kartına dokununca
+          // konum kurulumu yine açılır.
+          await AsyncStorage.setItem(LOCATION_PROMPTED_KEY, '1');
           router.push('/location-setup');
         }
       } catch { /* yoksay */ }
@@ -176,9 +186,12 @@ export default function Feed() {
   const onShare = () => {
     if (!activeItem) return;
     haptic.medium();
-    Share.share({
-      message: `"${activeItem.translation}"\n\n— ${activeItem.reference}`,
-    }).catch(() => {});
+    // Arapça modda çeviri boş olur → Arapça metni paylaş. Diğer dillerde çeviriyi,
+    // (nadiren) boşsa Arapça'ya düş. Hiç metin yoksa paylaşma.
+    const body = (showArabic ? activeItem.arabic : activeItem.translation)
+      || activeItem.translation || activeItem.arabic;
+    if (!body?.trim()) return;
+    Share.share({ message: `"${body}"\n\n— ${activeItem.reference}` }).catch(() => {});
   };
 
   const onLike = () => {
@@ -208,15 +221,25 @@ export default function Feed() {
     );
   }
 
-  // Boş durum — özellikle "Favorites" seçili ama hiç kayıt yoksa
+  // Boş durum — iki senaryo:
+  //  • Sadece "Favorites" seçili ve hiç kayıt yok → kaydet ipucu
+  //  • Seçili konuların bu dilde içeriği yok → "içerik yok, güncelle" mesajı
   if (items.length === 0) {
+    const favoritesOnly =
+      followedTopics.length > 0 && followedTopics.every((tp) => tp === 'Favorites');
     return (
       <View style={[styles.root, { justifyContent: 'center', alignItems: 'center', padding: spacing.xl }]}>
         <StatusBar style="light" />
-        <Ionicons name="heart-outline" size={56} color={colors.gold.primary} />
-        <Text style={styles.emptyTitle}>{t('feed.noSavedTitle')}</Text>
+        <Ionicons
+          name={favoritesOnly ? 'heart-outline' : 'documents-outline'}
+          size={56}
+          color={colors.gold.primary}
+        />
+        <Text style={styles.emptyTitle}>
+          {favoritesOnly ? t('feed.noSavedTitle') : t('feed.noContentTitle')}
+        </Text>
         <Text style={styles.emptyBody}>
-          {t('feed.noSavedBody')}
+          {favoritesOnly ? t('feed.noSavedBody') : t('feed.noContentBody')}
         </Text>
         <Pressable
           style={styles.emptyBtn}
@@ -262,7 +285,10 @@ export default function Feed() {
         <CircleButton icon="home" onPress={() => { haptic.light(); router.push('/(tabs)/home-card'); }} label={t('feed.home')} />
         <View style={styles.topRight}>
           <CircleButton icon="notifications-outline" onPress={() => { haptic.light(); router.push('/notifications-settings'); }} label={t('feed.notifications')} />
-          <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }} label={t('feed.premium')} gold />
+          {/* Premium kullanıcıda crown gizlenir — zaten premium olana paywall önermenin anlamı yok. */}
+          {!isPremium && (
+            <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }} label={t('feed.premium')} gold />
+          )}
         </View>
       </View>
 
@@ -390,7 +416,13 @@ function FeedSlide({
       {!video && <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />}
       {/* Image sadece video tema değilse gösterilir */}
       {!video && (
-        <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} />
+        <Image
+          source={image}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={250}
+          cachePolicy="memory-disk"
+        />
       )}
       <LinearGradient
         colors={video

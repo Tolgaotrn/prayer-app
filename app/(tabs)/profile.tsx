@@ -14,6 +14,7 @@
 import React from 'react';
 import {
   Alert,
+  I18nManager,
   Linking,
   Platform,
   Pressable,
@@ -35,6 +36,7 @@ import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { ToggleSwitch } from '../../components/ui/ToggleSwitch';
 import { BackButton } from '../../components/ui/BackButton';
 import { colors, fonts, radii, spacing } from '../../constants/theme';
+import { PRIVACY_URL, TERMS_URL } from '../../constants/legal';
 import { getTheme } from '../../data/themes';
 import { useThemeColors } from '../../lib/useThemeColors';
 import { useT } from '../../lib/i18n';
@@ -56,7 +58,7 @@ export default function Profile() {
   const isPremium   = useAppStore((s) => s.isPremium);
   const darkMode    = useAppStore((s) => s.darkMode);
   const setDarkMode = useAppStore((s) => s.setDarkMode);
-  const setPremium  = useAppStore((s) => s.setPremium);
+  const applyRevenueCatPremium = useAppStore((s) => s.applyRevenueCatPremium);
   const savedCount  = useAppStore((s) => s.savedVerseIds.length);
   const themeId     = useOnboardingStore((s) => s.selectedTheme);
   const currentThemeName = getTheme(themeId).name;
@@ -67,7 +69,7 @@ export default function Profile() {
     haptic.select();
     try {
       const ok = await restoreRevenueCatPurchases();
-      setPremium(ok);
+      applyRevenueCatPremium(ok);
       Alert.alert(ok ? 'Purchases restored' : 'No purchase found');
     } catch {
       Alert.alert('Restore failed', 'Please try again in a moment.');
@@ -140,7 +142,7 @@ export default function Profile() {
                   <Text style={styles.premiumSub}>{t('profile.unlockSub')}</Text>
                 </View>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" />
+              <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={18} color="rgba(255,255,255,0.7)" />
             </Pressable>
           </Animated.View>
         )}
@@ -174,7 +176,7 @@ export default function Profile() {
             {/* Tema kısayolu */}
             <NavRow
               icon="color-palette-outline"
-              label="Theme"
+              label={t('profile.theme')}
               value={currentThemeName}
               tc={tc}
               onPress={() => { haptic.select(); router.push('/(tabs)/themes'); }}
@@ -219,27 +221,6 @@ export default function Profile() {
           </View>
         </Animated.View>
 
-        {/* ── REDEEM CODE ── */}
-        {!isPremium && (
-          <Animated.View entering={FadeInDown.delay(275).duration(400)}>
-            <Pressable
-              onPress={() => { haptic.select(); router.push('/promo-code'); }}
-              style={[styles.redeemRow, { backgroundColor: tc.cardBg, borderColor: tc.border }]}
-              accessibilityRole="button"
-              accessibilityLabel="Redeem promo code"
-            >
-              <View style={[styles.redeemIcon, { backgroundColor: tc.gold + '18' }]}>
-                <Ionicons name="gift-outline" size={18} color={tc.gold} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.redeemLabel, { color: tc.heading }]}>Redeem a Code</Text>
-                <Text style={[styles.redeemSub, { color: tc.muted }]}>Have a promo code? Unlock premium free</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={16} color={tc.muted} />
-            </Pressable>
-          </Animated.View>
-        )}
-
         {/* ── SUPPORT ── */}
         <Animated.View entering={FadeInDown.delay(300).duration(400)}>
           <SectionLabel label={t('profile.support')} tc={tc} />
@@ -263,7 +244,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('mailto:support@hudaapp.co?subject=Huda App Feedback').catch(() => {});
+                Linking.openURL('mailto:hudaquranwidgetapp@gmail.com?subject=Huda App Feedback').catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -271,7 +252,10 @@ export default function Profile() {
               icon="information-circle-outline"
               label={t('profile.about')}
               tc={tc}
-              onPress={() => { haptic.select(); }}
+              onPress={() => {
+                haptic.select();
+                Alert.alert('Huda', `${t('profile.tagline')}\n\n${t('profile.version')} ${APP_VERSION}`);
+              }}
             />
           </View>
         </Animated.View>
@@ -286,7 +270,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('https://hudaapp.co/privacy').catch(() => {});
+                Linking.openURL(PRIVACY_URL).catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -296,7 +280,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                Linking.openURL('https://hudaapp.co/terms').catch(() => {});
+                Linking.openURL(TERMS_URL).catch(() => {});
               }}
             />
             <Divider tc={tc} />
@@ -319,7 +303,7 @@ export default function Profile() {
             {t('profile.version')} {APP_VERSION}
           </Text>
           <Text style={[styles.tagline, { color: tc.muted }]}>
-            Daily Islamic reflection
+            {t('profile.tagline')}
           </Text>
         </Animated.View>
 
@@ -374,7 +358,7 @@ function NavRow({
         {value ? (
           <Text style={[styles.rowValue, { color: tc.muted }]} numberOfLines={1}>{value}</Text>
         ) : null}
-        <Ionicons name="chevron-forward" size={16} color={tc.muted} />
+        <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={16} color={tc.muted} />
       </View>
     </Pressable>
   );
@@ -500,14 +484,6 @@ const styles = StyleSheet.create({
 
   // Footer
   footer: { alignItems: 'center', paddingVertical: spacing.lg, gap: 6, marginTop: spacing.md },
-  redeemRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    borderRadius: radii.lg, borderWidth: 1,
-    padding: spacing.md, marginBottom: spacing.sm,
-  },
-  redeemIcon: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  redeemLabel: { fontFamily: fonts.sansSemibold, fontSize: 15 },
-  redeemSub: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1 },
   logoMark: {
     width: 40, height: 40, borderRadius: 20, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center', marginBottom: 4,

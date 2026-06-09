@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Updates from 'expo-updates';
 import { useFonts } from 'expo-font';
 import {
   PlayfairDisplay_400Regular,
@@ -22,6 +23,10 @@ import { PostHogProvider } from 'posthog-react-native';
 import { colors } from '../constants/theme';
 import { useConfigureRevenueCat } from '../lib/revenueCat';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { syncRTLOnStartup } from '../lib/rtl';
+import { useOnboardingStore } from '../stores/useOnboardingStore';
+import { Image as ExpoImage } from 'expo-image';
+import { allThemeImageURLs } from '../data/themes';
 
 const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 
@@ -29,6 +34,27 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   useConfigureRevenueCat();
+
+  // Açılışta RTL senkronizasyonu — Zustand getState() synchronous.
+  // Kayıtlı dil Arapça ama I18nManager LTR ise (önceki restart eksikse) düzelt.
+  useEffect(() => {
+    const storedLang = useOnboardingStore.getState().language;
+    const changed = syncRTLOnStartup(storedLang);
+    if (changed) {
+      // RTL durumu değişti → uygulamayı yeniden yükle (native layout düzelsin)
+      Updates.reloadAsync().catch(() => {});
+    }
+  }, []);
+
+  // TÜM tema görsellerini açılıştan kısa süre sonra arka planda (tam çözünürlük)
+  // disk cache'e indir → galeri/temalar her zaman kaliteli ve anında açılır,
+  // "tema inmiyor" sorunu biter. İlk içerik yüklemesiyle yarışmasın diye gecikmeli.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      ExpoImage.prefetch(allThemeImageURLs(), 'memory-disk').catch(() => {});
+    }, 2500);
+    return () => clearTimeout(id);
+  }, []);
 
   const [loaded, error] = useFonts({
     PlayfairDisplay_400Regular,
@@ -95,7 +121,7 @@ export default function RootLayout() {
   // init çökmesini önler. ErrorBoundary tüm ağacı sarar.
   return (
     <ErrorBoundary>
-      {POSTHOG_KEY ? (
+      {POSTHOG_KEY && Platform.OS !== 'web' ? (
         <PostHogProvider
           apiKey={POSTHOG_KEY}
           options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}

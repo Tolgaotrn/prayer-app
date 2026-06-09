@@ -12,7 +12,8 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+
+  I18nManager,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter, type Href } from 'expo-router';
@@ -55,13 +56,15 @@ export default function HomeHub() {
   const followedTopics = useAppStore((s) => s.followedTopics);
   const savedVerseIds = useAppStore((s) => s.savedVerseIds);
   const widgetThemeId = useAppStore((s) => s.widgetThemeId);
+  const homeContent   = useAppStore((s) => s.homeWidgetContent);
+  const lockContent   = useAppStore((s) => s.lockWidgetContent);
   const themeImageURL = resolveWidgetBgURL(widgetThemeId, selectedTheme);
 
   const nextSlot = prayer.slots.find((p) => p.key === prayer.nextKey);
 
   React.useEffect(() => {
-    syncWidget({ language: rawLang, streakDays, isPremium, followedTopics, savedVerseIds, themeImageURL });
-  }, [rawLang, streakDays, prayer.city, isPremium, widgetThemeId]);
+    syncWidget({ language: rawLang, streakDays, isPremium, followedTopics, savedVerseIds, themeImageURL, homeContent, lockContent });
+  }, [rawLang, streakDays, prayer.city, isPremium, widgetThemeId, homeContent, lockContent]);
 
   // Namaz vakitleri hazır olunca / değişince bildirimleri sessizce yeniden
   // planla — DAILY trigger'ların eski saate kilitlenip kaymasını önler.
@@ -84,12 +87,18 @@ export default function HomeHub() {
             <Text style={[styles.headerTitle, { color: tc.heading }]}>{t('home.today')}</Text>
             <Text style={[styles.headerDate, { color: tc.muted }]}>{dateStr}</Text>
           </View>
-          <View style={[styles.cityChip, { backgroundColor: tc.raisedBg }]}>
+          <Pressable
+            onPress={() => { if (!prayer.resolved) { haptic.select(); router.push('/location-setup'); } }}
+            disabled={prayer.resolved}
+            style={[styles.cityChip, { backgroundColor: tc.raisedBg }]}
+            accessibilityRole="button"
+            accessibilityLabel={prayer.resolved ? prayer.city : 'Set location'}
+          >
             <Ionicons name="location-outline" size={12} color={tc.gold} />
             <Text style={[styles.cityText, { color: tc.body }]}>
-              {prayer.loading ? '…' : prayer.city}
+              {prayer.loading && !prayer.resolved ? '…' : prayer.resolved ? prayer.city : 'Set location'}
             </Text>
-          </View>
+          </Pressable>
         </Animated.View>
 
         {/* ── PRAYER CARD ── */}
@@ -118,7 +127,7 @@ export default function HomeHub() {
               accessibilityLabel={t('common.all')}
             >
               <Text style={[styles.allTimesText, { color: tc.gold }]}>{t('common.all')}</Text>
-              <Ionicons name="chevron-forward" size={12} color={tc.gold} />
+              <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={12} color={tc.gold} />
             </Pressable>
           </View>
 

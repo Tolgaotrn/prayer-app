@@ -7,7 +7,8 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
+
+  I18nManager,} from 'react-native';
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -19,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { usePostHog } from 'posthog-react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { GoldButton } from '../components/ui/GoldButton';
 import { fonts, radii, spacing } from '../constants/theme';
@@ -39,12 +41,17 @@ type State = 'idle' | 'success' | 'error';
 
 export default function PromoCodeScreen() {
   const router = useRouter();
+  const posthog = usePostHog();
   const tc = useThemeColors();
   const redeemPromo = useAppStore((s) => s.redeemPromo);
   const isPremium = useAppStore((s) => s.isPremium);
 
   const [code, setCode] = React.useState('');
   const [status, setStatus] = React.useState<State>('idle');
+
+  React.useEffect(() => {
+    posthog?.capture('promo_code_viewed');
+  }, [posthog]);
   const shake = useSharedValue(0);
   const iconScale = useSharedValue(1);
 
@@ -62,11 +69,13 @@ export default function PromoCodeScreen() {
     haptic.medium();
 
     if (isPremium) {
+      posthog?.capture('promo_code_redeemed', { code: trimmed, status: 'already_premium' });
       setStatus('success');
       return;
     }
 
     if (PROMO_CODES.has(trimmed)) {
+      posthog?.capture('promo_code_redeemed', { code: trimmed, status: 'success' });
       redeemPromo();
       setStatus('success');
       iconScale.value = withSequence(
@@ -75,6 +84,7 @@ export default function PromoCodeScreen() {
       );
       haptic.success();
     } else {
+      posthog?.capture('promo_code_invalid', { code: trimmed });
       setStatus('error');
       shake.value = withSequence(
         withTiming(-10, { duration: 60 }),
@@ -101,7 +111,7 @@ export default function PromoCodeScreen() {
             accessibilityRole="button"
             accessibilityLabel="Go back"
           >
-            <Ionicons name="arrow-back" size={20} color={tc.heading} />
+            <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={20} color={tc.heading} />
           </Pressable>
         </View>
 

@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+
+  I18nManager,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -61,7 +62,7 @@ export default function SavedVerses() {
     <ScreenContainer padded={false}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: tc.cardBg }]} accessibilityRole="button" accessibilityLabel="Go back">
-          <Ionicons name="arrow-back" size={22} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>Saved Verses</Text>
         <View style={{ width: 40 }} />

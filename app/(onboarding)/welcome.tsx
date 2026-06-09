@@ -4,7 +4,9 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { LinearGradient } from 'expo-linear-gradient';
+import { usePostHog } from 'posthog-react-native';
 import { colors, fonts, spacing } from '../../constants/theme';
+import { PRIVACY_URL, TERMS_URL } from '../../constants/legal';
 
 const WELCOME_VIDEO_URL =
   'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0532.mp4';
@@ -13,7 +15,13 @@ const { width, height } = Dimensions.get('window');
 
 export default function Welcome() {
   const router = useRouter();
+  const posthog = usePostHog();
   const [btnVisible, setBtnVisible] = React.useState(false);
+
+  // Track onboarding start
+  React.useEffect(() => {
+    posthog?.capture('onboarding_started');
+  }, [posthog]);
 
   // Show button after 2.5 seconds
   React.useEffect(() => {
@@ -66,11 +74,11 @@ export default function Welcome() {
           </Animated.View>
 
           <View style={styles.legal}>
-            <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
+            <Pressable onPress={() => Linking.openURL(TERMS_URL).catch(() => {})}>
               <Text style={styles.legalLink}>Terms of Service</Text>
             </Pressable>
             <Text style={styles.legalSep}>&nbsp;and&nbsp;</Text>
-            <Pressable onPress={() => Linking.openURL('https://example.com').catch(() => {})}>
+            <Pressable onPress={() => Linking.openURL(PRIVACY_URL).catch(() => {})}>
               <Text style={styles.legalLink}>Privacy Policy</Text>
             </Pressable>
           </View>

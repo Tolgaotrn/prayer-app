@@ -1,10 +1,12 @@
 import React from 'react';
 import {
   Platform, Pressable, ScrollView, StyleSheet, Text, View,
-} from 'react-native';
+
+  I18nManager,} from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { usePostHog } from 'posthog-react-native';
 
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { ToggleSwitch } from '../components/ui/ToggleSwitch';
@@ -15,14 +17,21 @@ import { usePrayerTimes } from '../lib/prayerTimes';
 import { haptic } from '../lib/haptics';
 import {
   loadNotifPrefs, saveNotifPrefs, applyAllNotifPrefs,
-  requestPermission, NotifPrefs,
+  requestPermission, NotifPrefs, InspirationFrequency,
 } from '../lib/notifications';
+
+const INSPIRATION_OPTIONS: { key: InspirationFrequency; labelKey: string; subKey: string }[] = [
+  { key: 'off',     labelKey: 'rem.freqOff',     subKey: 'rem.freqOffSub' },
+  { key: 'every3h', labelKey: 'rem.freqEvery3h', subKey: 'rem.freqEvery3hSub' },
+  { key: 'hourly',  labelKey: 'rem.freqHourly',  subKey: 'rem.freqHourlySub' },
+];
 
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
 export default function NotificationsSettings() {
   const router   = useRouter();
+  const posthog  = usePostHog();
   const tc       = useThemeColors();
   const t        = useT();
   const prayer   = usePrayerTimes();
@@ -31,13 +40,18 @@ export default function NotificationsSettings() {
   const [permGranted, setPermGranted] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
+    posthog?.capture('notifications_settings_viewed');
     loadNotifPrefs().then(setPrefs);
     if (Platform.OS !== 'web') requestPermission().then(setPermGranted);
-  }, []);
+  }, [posthog]);
 
   const slotsUI = prayer.slots.filter((s) => s.key !== 'sunrise');
 
   const apply = React.useCallback(async (next: NotifPrefs) => {
+    posthog?.capture('notification_preferences_updated', {
+      dailyInspiration: next.inspirationFrequency,
+      prayerNotifications: Object.values(next.prayerEnabled).filter(Boolean).length,
+    });
     setPrefs(next);
     await saveNotifPrefs(next);
     if (Platform.OS !== 'web') {
@@ -45,7 +59,7 @@ export default function NotificationsSettings() {
       setPermGranted(granted);
       if (granted) await applyAllNotifPrefs(slotsUI, next);
     }
-  }, [slotsUI]);
+  }, [slotsUI, posthog]);
 
   const togglePrayer = (key: string) => {
     if (!prefs) return;
@@ -53,10 +67,10 @@ export default function NotificationsSettings() {
     apply({ ...prefs, prayerEnabled: { ...prefs.prayerEnabled, [key]: !prefs.prayerEnabled[key] } });
   };
 
-  const toggleInspiration = () => {
-    if (!prefs) return;
+  const setInspiration = (freq: InspirationFrequency) => {
+    if (!prefs || prefs.inspirationFrequency === freq) return;
     haptic.select();
-    apply({ ...prefs, dailyInspirationEnabled: !prefs.dailyInspirationEnabled });
+    apply({ ...prefs, inspirationFrequency: freq });
   };
 
   const allOn = prefs ? slotsUI.every((s) => prefs.prayerEnabled[s.key]) : false;
@@ -77,7 +91,7 @@ export default function NotificationsSettings() {
           style={[styles.backBtn, { backgroundColor: tc.cardBg }]}
           accessibilityRole="button" accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={22} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>{t('rem.title')}</Text>
         <View style={{ width: 40 }} />
@@ -143,35 +157,69 @@ export default function NotificationsSettings() {
           {t('rem.daily')}
         </Text>
         <Text style={[styles.sectionDesc, { color: tc.muted }]}>
-          Receive a different verse, hadith or reminder every hour throughout the day.
+          {t('rem.inspDesc')}
         </Text>
 
         <Animated.View
           entering={FadeInDown.delay(80).duration(300)}
-          style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border, marginTop: spacing.sm }]}
+          style={[styles.card, { backgroundColor: tc.cardBg, borderColor: tc.border, marginTop: spacing.sm, padding: spacing.md }]}
         >
-          <View style={styles.row}>
-            <View style={styles.rowLeft}>
-              <View style={[styles.iconCircle, { backgroundColor: tc.raisedBg }]}>
-                <Ionicons name="sparkles-outline" size={17} color={tc.gold} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.rowTitle, { color: tc.heading }]}>Daily Inspiration</Text>
-                <Text style={[styles.rowSub, { color: tc.muted }]}>
-                  {prefs?.dailyInspirationEnabled ? '1 notification per hour · 24 different messages' : 'Tap to enable hourly reminders'}
-                </Text>
-              </View>
+          <View style={styles.inspHead}>
+            <View style={[styles.iconCircle, { backgroundColor: tc.raisedBg }]}>
+              <Ionicons name="sparkles-outline" size={17} color={tc.gold} />
             </View>
-            <ToggleSwitch
-              value={prefs?.dailyInspirationEnabled ?? false}
-              onChange={toggleInspiration}
-              label="Daily Inspiration"
-            />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.rowTitle, { color: tc.heading }]}>{t('rem.inspTitle')}</Text>
+              <Text style={[styles.rowSub, { color: tc.muted }]}>
+                {prefs?.inspirationFrequency === 'hourly'
+                  ? t('rem.inspStatusHourly')
+                  : prefs?.inspirationFrequency === 'every3h'
+                    ? t('rem.inspStatusEvery3h')
+                    : t('rem.inspStatusOff')}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.inspSegment}>
+            {INSPIRATION_OPTIONS.map((opt) => {
+              const active = (prefs?.inspirationFrequency ?? 'off') === opt.key;
+              return (
+                <Pressable
+                  key={opt.key}
+                  onPress={() => setInspiration(opt.key)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
+                  style={[
+                    styles.inspSegBtn,
+                    {
+                      backgroundColor: active ? tc.gold : tc.raisedBg,
+                      borderColor: active ? tc.gold : tc.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.inspSegLabel, { color: active ? tc.onGold : tc.heading }]}>{t(opt.labelKey)}</Text>
+                  <Text style={[styles.inspSegSub, { color: active ? tc.onGold : tc.muted }]}>{t(opt.subKey)}</Text>
+                </Pressable>
+              );
+            })}
           </View>
         </Animated.View>
 
+        {!prayer.resolved && Platform.OS !== 'web' && (
+          <Pressable
+            style={[styles.permBanner, { backgroundColor: tc.gold + '1E', borderColor: tc.gold, marginTop: spacing.lg }]}
+            onPress={() => { haptic.select(); router.push('/location-setup'); }}
+            accessibilityRole="button"
+          >
+            <Ionicons name="location-outline" size={18} color={tc.gold} />
+            <Text style={[styles.permText, { color: tc.gold }]}>
+              {t('rem.setLocation')}
+            </Text>
+            <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={16} color={tc.gold} />
+          </Pressable>
+        )}
         <Text style={[styles.note, { color: tc.muted }]}>
-          {t('rem.note', { c: prayer.loading ? '…' : prayer.city })}
+          {t('rem.note', { c: prayer.resolved ? prayer.city : (prayer.loading ? '…' : 'your city') })}
           {Platform.OS === 'web' ? t('rem.webNote') : ''}
         </Text>
       </ScrollView>
@@ -223,4 +271,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.sans, fontSize: 12, lineHeight: 18,
     textAlign: 'center', marginTop: spacing.lg,
   },
+
+  inspHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: spacing.md },
+  inspSegment: { flexDirection: 'row', gap: 8 },
+  inspSegBtn: {
+    flex: 1, borderRadius: radii.md, borderWidth: 1.5,
+    paddingVertical: 10, alignItems: 'center', gap: 1,
+  },
+  inspSegLabel: { fontFamily: fonts.sansBold, fontSize: 14 },
+  inspSegSub: { fontFamily: fonts.sans, fontSize: 10.5 },
 });

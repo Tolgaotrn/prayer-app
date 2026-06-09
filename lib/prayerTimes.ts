@@ -50,6 +50,9 @@ export interface PrayerInfo {
   countryCode: string | null;
   coords: { latitude: number; longitude: number };
   loading: boolean;
+  /** Gerçek (cihaz/cache) konum çözüldü mü? false → İstanbul fallback'i,
+   *  UI bunu "Set location" olarak göstermeli (yanıltıcı şehir adı basmaz). */
+  resolved: boolean;
 }
 
 // Varsayılan: İstanbul (izin yoksa ve cache de yoksa)
@@ -160,7 +163,7 @@ export function countdownStr(from: Date, to: Date): string {
   return `${h}h ${m}m`;
 }
 
-type StoredLoc = { latitude: number; longitude: number; city: string; countryCode?: string | null };
+type StoredLoc = { latitude: number; longitude: number; city: string; countryCode?: string | null; resolved?: boolean };
 
 async function readCachedLocation(): Promise<StoredLoc | null> {
   try {
@@ -225,9 +228,15 @@ export async function resolveLocation(): Promise<StoredLoc> {
   //    ama burada da güvenli taban olarak kullanılır)
   const cached = await readCachedLocation();
   if (cached?.countryCode) _lastCountryCode = cached.countryCode;
+  // cache gerçek bir konumdur → resolved:true. Sadece FALLBACK resolved:false.
+  const cachedOr = (): StoredLoc =>
+    cached ? { ...cached, resolved: true } : { ...FALLBACK, resolved: false };
   try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') return cached ?? FALLBACK;
+    // İzni SADECE kontrol et — istek (dialog) burada açılmamalı. İzin kullanıcı
+    // aksiyonuyla (location-setup ekranı) alınır. Aksi halde widget sync / feed
+    // açılışında beklenmedik izin diyaloğu çıkardı.
+    const { status } = await Location.getForegroundPermissionsAsync();
+    if (status !== 'granted') return cachedOr();
 
     let pos: Location.LocationObject | null = null;
     try {
@@ -239,7 +248,7 @@ export async function resolveLocation(): Promise<StoredLoc> {
       // currentPosition asılırsa/başarısızsa son bilinen konum
       try { pos = await Location.getLastKnownPositionAsync(); } catch { /* yoksay */ }
     }
-    if (!pos) return cached ?? FALLBACK;
+    if (!pos) return cachedOr();
 
     let city = cached?.city || FALLBACK.city;
     let countryCode = cached?.countryCode ?? FALLBACK.countryCode;
@@ -257,12 +266,13 @@ export async function resolveLocation(): Promise<StoredLoc> {
       longitude: pos.coords.longitude,
       city,
       countryCode,
+      resolved: true,
     };
     _lastCountryCode = countryCode ?? _lastCountryCode;
     await writeCachedLocation(resolved);
     return resolved;
   } catch {
-    return cached ?? FALLBACK;
+    return cachedOr();
   }
 }
 
@@ -280,7 +290,7 @@ export function usePrayerTimes(): PrayerInfo {
       await loadPrayerSettings();
       const cached = await readCachedLocation();
       if (cached && !cancelled) {
-        setCoords(cached);
+        setCoords({ ...cached, resolved: true });
         if (cached.countryCode) _lastCountryCode = cached.countryCode;
       }
       const resolved = await resolveLocation();
@@ -343,6 +353,7 @@ export function usePrayerTimes(): PrayerInfo {
       countryCode: coords.countryCode ?? null,
       coords: { latitude: coords.latitude, longitude: coords.longitude },
       loading,
+      resolved: coords.resolved === true,
     };
     // tick → periyodik, settingsV → metot değişince yeniden hesapla
     // eslint-disable-next-line react-hooks/exhaustive-deps

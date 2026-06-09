@@ -90,10 +90,43 @@ export function useConfigureRevenueCat() {
 
 export async function getRevenueCatPackages() {
   const Purchases = await loadPurchases();
-  if (!Purchases) return [];
+  if (!Purchases) {
+    console.warn('[RC] Purchases yüklenemedi (web veya API key yok)');
+    return [];
+  }
 
-  const offerings = await Purchases.getOfferings();
-  return offerings.current?.availablePackages ?? [];
+  try {
+    const offerings = await Purchases.getOfferings();
+
+    // TANI: tüm offering'leri ve paketlerini logla — Xcode console'da görünür.
+    const allKeys = Object.keys(offerings.all);
+    console.log('[RC] offerings.all keys:', JSON.stringify(allKeys));
+    console.log('[RC] offerings.current id:', offerings.current?.identifier ?? 'NULL');
+    for (const [k, o] of Object.entries(offerings.all)) {
+      console.log(
+        `[RC] offering "${k}" → ${o.availablePackages.length} paket:`,
+        JSON.stringify(o.availablePackages.map((p) => p.product.identifier)),
+      );
+    }
+
+    // current = RevenueCat dashboard'da "current" işaretli offering.
+    // Fallback: tüm offering'ler içinde paket içeren ilkini dene.
+    const current = offerings.current
+      ?? Object.values(offerings.all).find((o) => o.availablePackages.length > 0)
+      ?? null;
+
+    const packages = current?.availablePackages ?? [];
+    if (packages.length === 0) {
+      console.warn(
+        '[RC] HİÇ paket yok. Sebep genelde: Apple Paid Apps Agreement aktif değil, ' +
+        'ürünler henüz StoreKit\'e yayılmadı (birkaç saat), veya cihazda Sandbox hesabı yok.',
+      );
+    }
+    return packages;
+  } catch (e) {
+    console.error('[RC] getOfferings hata:', e);
+    return [];
+  }
 }
 
 export async function purchaseRevenueCatPackage(pack: PurchasesPackage) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { I18nManager, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -119,11 +119,15 @@ function StepsList({ steps }: { steps: string[] }) {
 function BackgroundSelector({
   value,
   appThemeId,
+  isPremium,
   onChange,
+  onLockedPress,
 }: {
   value: number | null;
   appThemeId: number;
+  isPremium: boolean;
   onChange: (id: number | null) => void;
+  onLockedPress: () => void;
 }) {
   const tc = useThemeColors();
   const appTheme = getTheme(appThemeId);
@@ -131,24 +135,35 @@ function BackgroundSelector({
 
   const Tile = ({
     selected,
+    locked,
     onPress,
     label,
     children,
   }: {
     selected: boolean;
+    locked?: boolean;
     onPress: () => void;
     label: string;
     children: React.ReactNode;
   }) => (
     <Pressable
-      onPress={() => { haptic.select(); onPress(); }}
+      onPress={() => {
+        if (locked) { haptic.medium(); onLockedPress(); return; }
+        haptic.select();
+        onPress();
+      }}
       accessibilityRole="radio"
       accessibilityState={{ selected }}
-      accessibilityLabel={label}
+      accessibilityLabel={locked ? `${label} (Premium)` : label}
       style={styles.bgTileWrap}
     >
       <View style={[styles.bgTile, { borderColor: selected ? tc.gold : tc.border }]}>
         {children}
+        {locked && !selected && (
+          <View style={styles.bgLock}>
+            <Ionicons name="lock-closed" size={11} color="#fff" />
+          </View>
+        )}
         {selected && (
           <View style={[styles.bgCheck, { backgroundColor: tc.gold }]}>
             <Ionicons name="checkmark" size={12} color="#fff" />
@@ -163,17 +178,27 @@ function BackgroundSelector({
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.bgRow}>
-      {/* App teması */}
+      {/* App teması — her zaman serbest (içerik kilidini açmaz, sadece yansıtır) */}
       <Tile selected={value === null} onPress={() => onChange(null)} label="App theme">
         <Image source={{ uri: appTheme.image.uri }} style={styles.bgImg} contentFit="cover" transition={150} />
       </Tile>
 
-      {/* Temalar — video temalar (badge=Live) widget'ta çalışmaz, gizlenir */}
-      {themes.filter((th) => th.badge !== 'Live').map((th) => (
-        <Tile key={th.id} selected={value === th.id} onPress={() => onChange(th.id)} label={th.name}>
-          <Image source={{ uri: th.image.uri }} style={styles.bgImg} contentFit="cover" transition={150} />
-        </Tile>
-      ))}
+      {/* Temalar — video temalar (badge=Live) widget'ta çalışmaz, gizlenir.
+          home themes'teki gibi: free olmayan temalar premium kilitli. */}
+      {themes.filter((th) => th.badge !== 'Live').map((th) => {
+        const locked = !th.isFree && !isPremium;
+        return (
+          <Tile
+            key={th.id}
+            selected={value === th.id}
+            locked={locked}
+            onPress={() => onChange(th.id)}
+            label={th.name}
+          >
+            <Image source={{ uri: th.image.uri }} style={styles.bgImg} contentFit="cover" transition={150} />
+          </Tile>
+        );
+      })}
     </ScrollView>
   );
 }
@@ -203,7 +228,7 @@ export default function WidgetSettings() {
     haptic.medium();
     setSyncing(true);
     setSynced(false);
-    await syncWidget({ language, streakDays, force: true, followedTopics, isPremium, savedVerseIds, themeImageURL });
+    await syncWidget({ language, streakDays, force: true, followedTopics, isPremium, savedVerseIds, themeImageURL, homeContent, lockContent });
     setSyncing(false);
     setSynced(true);
     haptic.success();
@@ -220,7 +245,7 @@ export default function WidgetSettings() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={22} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>Widgets</Text>
         <View style={{ width: 40 }} />
@@ -310,7 +335,13 @@ export default function WidgetSettings() {
           Set a separate background for your widgets — independent of the app theme. Applies to all widgets.
         </Animated.Text>
         <Animated.View entering={FadeInDown.delay(280)}>
-          <BackgroundSelector value={widgetThemeId} appThemeId={selectedTheme} onChange={setWidgetThemeId} />
+          <BackgroundSelector
+            value={widgetThemeId}
+            appThemeId={selectedTheme}
+            isPremium={isPremium}
+            onChange={setWidgetThemeId}
+            onLockedPress={() => router.push('/(onboarding)/paywall')}
+          />
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(300)} style={{ marginTop: spacing.xl }}>
@@ -386,6 +417,13 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 4, right: 4,
     width: 18, height: 18, borderRadius: 9,
     alignItems: 'center', justifyContent: 'center',
+  },
+  bgLock: {
+    position: 'absolute', top: 4, right: 4,
+    width: 18, height: 18, borderRadius: 9,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)',
   },
   bgLabel: { fontFamily: fonts.sans, fontSize: 10, marginTop: 4, textAlign: 'center' },
 

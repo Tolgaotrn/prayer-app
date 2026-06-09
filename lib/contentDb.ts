@@ -16,7 +16,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
-import { verses as seedVerses } from '../data/verses';
+import { OFFLINE_CONTENT, type OfflineLang } from '../data/offlineContent';
 
 // ── Tipler ───────────────────────────────────────────────────
 export type Lang = 'en' | 'tr' | 'fr' | 'id';
@@ -41,6 +41,10 @@ export interface ThemeItem {
 
 // Ücretli olmayan konular — sadece General ve Favorites ücretsiz
 const FREE_TOPICS = new Set(['General', 'Favorites']);
+
+// Dua çevirisi SADECE bu dillerde mevcut (tr/fr yok). Diğer dillerde dualar
+// feed'e HİÇ katılmaz — İngilizce'ye düşürmek "tek dil" kuralını bozardı.
+const DUA_LANGS = new Set<Lang>(['en', 'id']);
 
 // UI topic label → Supabase topics[] tag
 const TOPIC_TAG_MAP: Record<string, string> = {
@@ -68,9 +72,61 @@ export function resolveLang(stored: string | undefined): Lang {
   return 'en';
 }
 
+// Kind-tabanlı topic → offline öğe türü eşlemesi
+const KIND_TOPIC: Record<string, FeedItem['kind']> = {
+  'Quran Verses':   'verse',
+  'Hadiths':        'hadith',
+  'Islamic Quotes': 'quote',
+};
+
+/**
+ * Çevrimdışı varsayılan içerik havuzu — internet + cache yokken kullanılır.
+ * SEÇİLİ dilde döner; o dilde metni olmayan öğe dahil edilmez (strict).
+ * Arapça modu arabic alanını (quote'lar otomatik dışlanır), diğer diller t[lang]'i kullanır.
+ * topics verilirse konuya göre süzer; yeterli içerik yoksa tüm havuza düşer (kaydırma garantisi).
+ */
+export function getOfflineFeedItems(
+  lang: Lang,
+  arabicOnly = false,
+  topics: string[] = [],
+): FeedItem[] {
+  // Tüm havuzu seçili dile çevir (içeriği olmayan elenir)
+  let pool: FeedItem[] = [];
+  for (const it of OFFLINE_CONTENT) {
+    const body = arabicOnly ? it.arabic : it.t[lang as OfflineLang];
+    if (!body || !body.trim()) continue;
+    pool.push({
+      id: it.id,
+      kind: it.kind,
+      arabic: it.arabic,
+      translation: arabicOnly ? '' : body,
+      reference: it.ref,
+      topics: it.topics,
+    });
+  }
+
+  const wantsGeneral =
+    topics.length === 0 || topics.includes('General') || topics.includes('Favorites');
+
+  if (!wantsGeneral) {
+    const dbTags = topics.map(t => TOPIC_TAG_MAP[t]).filter(Boolean);
+    const kinds  = topics.map(t => KIND_TOPIC[t]).filter(Boolean) as FeedItem['kind'][];
+    // Strict: SADECE seçili konuların içeriği. Yoksa BOŞ döner → feed "içerik yok"
+    // mesajını gösterir (full pool'a düşmek YOK — kullanıcı kuralı).
+    pool = pool.filter(
+      it =>
+        (kinds.length > 0 && kinds.includes(it.kind)) ||
+        (dbTags.length > 0 && it.topics.some(tg => dbTags.includes(tg))),
+    );
+  }
+
+  return pool;
+}
+
 // ── Cache ─────────────────────────────────────────────────────
 const TTL_MS = 24 * 60 * 60 * 1000;
-const KEY    = (k: string) => `huda_cache_${k}`;
+// v2: tr/fr feed'inden İngilizce dualar çıkarıldı → eski cache'i geçersiz kıl
+const KEY    = (k: string) => `huda_cache_v2_${k}`;
 
 async function readCache<T>(k: string): Promise<T | null> {
   try {
@@ -101,13 +157,14 @@ export async function fetchFeedItems(
   isPremium = false,
   savedIds: string[] = [],
   forceFresh = false,
+  arabicOnly = false,
 ): Promise<FeedItem[]> {
   // Premium olmayan kullanıcı sadece ücretsiz konulara erişebilir
   const effectiveTopics = isPremium
     ? followedTopics
     : followedTopics.filter(t => FREE_TOPICS.has(t));
 
-  const cacheId = `feed_${lang}_${limit}_${isPremium}_${effectiveTopics.sort().join(',')}_${savedIds.slice(0,5).join(',')}`;
+  const cacheId = `feed_${lang}_${limit}_${isPremium}_${arabicOnly ? 'ar_' : ''}${effectiveTopics.sort().join(',')}_${savedIds.slice(0,5).join(',')}`;
 
   // forceFresh: dil değişimi gibi durumlarda cache'i atla, doğrudan Supabase'den çek
   if (!forceFresh) {
@@ -119,7 +176,7 @@ export async function fetchFeedItems(
   const onlyFavorites = effectiveTopics.length === 1 && effectiveTopics[0] === 'Favorites';
 
   try {
-    const { items, ok } = await buildFeed(lang, limit, effectiveTopics, savedIds);
+    const { items, ok } = await buildFeed(lang, limit, effectiveTopics, savedIds, arabicOnly);
     if (items.length > 0 || onlyFavorites) {
       // Sadece TÜM sorgular başarılıysa cache'le — kısmi/eksik feed'i kalıcılaştırma
       if (ok) await writeCache(cacheId, items);
@@ -130,12 +187,8 @@ export async function fetchFeedItems(
   const stale = await staleCache<FeedItem[]>(cacheId);
   if (stale) return stale;
 
-  return seedVerses.map(v => ({
-    id: v.id, kind: 'verse' as const,
-    arabic: v.arabic, translation: v.translation,
-    reference: `${v.surah} · Ayah ${v.ayah}`,
-    topics: [v.category],
-  }));
+  // Son çare: çevrimdışı varsayılan içerik — SEÇİLİ dilde + konuya göre.
+  return shuffle(getOfflineFeedItems(lang, arabicOnly, effectiveTopics));
 }
 
 async function buildFeed(
@@ -143,6 +196,7 @@ async function buildFeed(
   limit: number,
   topics: string[],
   savedIds: string[],
+  arabicOnly = false,
 ): Promise<{ items: FeedItem[]; ok: boolean }> {
   // ok=false → en az bir sorgu hata döndü; çağıran kısmi sonucu CACHE'LEMEZ
   // (bozuk/eksik feed'in 24 saat servis edilmesini önler).
@@ -211,9 +265,9 @@ async function buildFeed(
   }
 
   // ── Duas ──
-  // TR/FR çevirisi yok → her zaman EN çek (EN + ID mevcut)
-  if (hasDuas) {
-    const duaLang = (lang === 'id') ? 'id' : 'en';
+  // Sadece çevirisi olan dillerde (en/id) feed'e katılır. tr/fr → atlanır.
+  if (hasDuas && DUA_LANGS.has(lang)) {
+    const duaLang = lang;
     promises.push(
       supabase
         .from('duas')
@@ -234,8 +288,8 @@ async function buildFeed(
     );
   }
 
-  // ── Quotes ──
-  if (hasQuotes) {
+  // ── Quotes ── (Arapça modda atlanır — quote'larda Arapça metin yok)
+  if (hasQuotes && !arabicOnly) {
     const quoteSlice = hasGeneral ? Math.ceil(limit * 0.30) : Math.ceil(limit * 0.3);
     promises.push(
       supabase
@@ -326,9 +380,9 @@ async function buildFeed(
         })
     );
 
-    // Dhikr topic için duas'ı da dahil et
-    if (dbTags.includes('dhikr')) {
-      const duaLang = lang === 'id' ? 'id' : 'en';
+    // Dhikr topic için duas'ı da dahil et (sadece çevirisi olan dillerde)
+    if (dbTags.includes('dhikr') && DUA_LANGS.has(lang)) {
+      const duaLang = lang;
       promises.push(
         supabase
           .from('duas')
@@ -357,7 +411,6 @@ async function buildFeed(
   // Bu yüzden tüm tablolarda ID ile ara. ID'ler UUID, her ID tek bir tabloya ait.
   if (savedIds.length > 0 && hasFavorites) {
     const ids = savedIds.slice(0, 200);
-    const dl = (lang === 'id') ? 'id' : 'en'; // duas TR/FR yok
 
     promises.push(
       supabase
@@ -397,11 +450,12 @@ async function buildFeed(
         })
     );
 
-    promises.push(
+    // Kaydedilen dualar sadece çevirisi olan dilde gösterilir (tr/fr → gizli).
+    if (DUA_LANGS.has(lang)) promises.push(
       supabase
         .from('duas')
         .select('id, arabic, occasion, category, dua_translations!inner(text)')
-        .eq('dua_translations.language', dl)
+        .eq('dua_translations.language', lang)
         .in('id', ids)
         .then(({ data, error }) => {
           if (error) ok = false;
@@ -438,8 +492,20 @@ async function buildFeed(
 
   await Promise.all(promises);
 
+  // Strict dil kuralı — TÜM diller: seçili dilde metni olmayan içerik akmaz.
+  // Arapça → arabic alanı dolu olmalı (quote vb. dışlanır).
+  // Diğer diller → çeviri dolu olmalı (başka dile düşme yok).
+  const filtered = results.filter(r =>
+    arabicOnly ? r.arabic.trim().length > 0 : r.translation.trim().length > 0,
+  );
+
+  // id-bazlı dedupe — General + konu sorguları eşzamanlı çalıştığından aynı
+  // ayet/hadis iki yoldan eklenebilir (guard'lı path'ler yarış nedeniyle kaçırabilir).
+  const seen = new Set<string>();
+  const unique = filtered.filter(r => (seen.has(r.id) ? false : seen.add(r.id) && true));
+
   // Karıştır ve limit uygula
-  return { items: shuffle(results).slice(0, limit), ok };
+  return { items: shuffle(unique).slice(0, limit), ok };
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -486,6 +552,90 @@ export async function fetchDailyVerse(lang: Lang = 'en'): Promise<FeedItem | nul
     await writeCache(key, item);
     return item;
   } catch { return null; }
+}
+
+// ── Tek içerik (id ile) ───────────────────────────────────────
+/**
+ * Bir içeriği id ile çeker — verse/hadith/dua/quote/99-name hepsinde arar.
+ * ID'ler tablo başına benzersiz olduğundan ilk eşleşen tablo döner.
+ * Supabase erişilemezse offline havuzdan (OFFLINE_CONTENT) düşer.
+ * Kayıtlı içerik detayında (saved-verses → /verse/[id]) kullanılır.
+ */
+export async function fetchItemById(
+  id: string,
+  lang: Lang = 'en',
+): Promise<FeedItem | null> {
+  try {
+    // verses
+    {
+      const { data } = await supabase
+        .from('verses')
+        .select('id, arabic, surah_name, ayah, topics, verse_translations!inner(text)')
+        .eq('verse_translations.language', lang)
+        .eq('id', id)
+        .maybeSingle();
+      if (data) {
+        const v = data as any;
+        return { id: v.id, kind: 'verse', arabic: v.arabic,
+          translation: v.verse_translations[0]?.text ?? '',
+          reference: `${v.surah_name} · Ayah ${v.ayah}`, topics: v.topics ?? [] };
+      }
+    }
+    // hadiths
+    {
+      const { data } = await supabase
+        .from('hadiths')
+        .select('id, arabic, collection_name, reference, topics, hadith_translations!inner(text)')
+        .eq('hadith_translations.language', lang)
+        .eq('id', id)
+        .maybeSingle();
+      if (data) {
+        const h = data as any;
+        return { id: h.id, kind: 'hadith', arabic: h.arabic,
+          translation: h.hadith_translations[0]?.text ?? '',
+          reference: `${h.collection_name ?? 'Hadith'} ${h.reference ?? ''}`.trim(),
+          topics: h.topics ?? [] };
+      }
+    }
+    // duas
+    {
+      const { data } = await supabase
+        .from('duas')
+        .select('id, arabic, occasion, category, dua_translations!inner(text)')
+        .eq('dua_translations.language', lang)
+        .eq('id', id)
+        .maybeSingle();
+      if (data) {
+        const d = data as any;
+        return { id: d.id, kind: 'dua', arabic: d.arabic,
+          translation: d.dua_translations[0]?.text ?? '',
+          reference: d.occasion ?? 'Dua', topics: [d.category ?? 'dua'] };
+      }
+    }
+    // quotes
+    {
+      const { data } = await supabase
+        .from('quotes')
+        .select('id, author, topics, quote_translations!inner(text)')
+        .eq('quote_translations.language', lang)
+        .eq('id', id)
+        .maybeSingle();
+      if (data) {
+        const q = data as any;
+        return { id: q.id, kind: 'quote', arabic: '',
+          translation: q.quote_translations[0]?.text ?? '',
+          reference: q.author ?? 'Islamic Quote', topics: q.topics ?? [] };
+      }
+    }
+  } catch { /* offline'a düş */ }
+
+  // Offline havuz fallback (id eşleşmesi)
+  const off = OFFLINE_CONTENT.find(it => it.id === id);
+  if (off) {
+    return { id: off.id, kind: off.kind, arabic: off.arabic,
+      translation: off.t[lang as OfflineLang] ?? '', reference: off.ref, topics: off.topics };
+  }
+  return null;
 }
 
 // ── Temalar ───────────────────────────────────────────────────

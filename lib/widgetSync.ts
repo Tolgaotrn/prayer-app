@@ -87,6 +87,8 @@ export async function syncWidget(opts: {
   isPremium?:      boolean;
   savedVerseIds?:  string[];
   themeImageURL?:  string;
+  homeContent?:    string; // 'auto'|'prayer'|'verse'|'hadith'|'quote'|'streak'
+  lockContent?:    string;
 }): Promise<void> {
   const bridge = getBridge();
   if (!bridge) return;
@@ -95,7 +97,8 @@ export async function syncWidget(opts: {
   if (!opts.force && now - _lastSync < 60_000) return;
   _lastSync = now;
 
-  const lang    = resolveLang(opts.language);
+  const lang       = resolveLang(opts.language);
+  const arabicOnly = opts.language === 'Arabic';
   const topics  = opts.followedTopics ?? ['General'];
   const premium = opts.isPremium      ?? false;
   const saved   = opts.savedVerseIds  ?? [];
@@ -136,14 +139,15 @@ export async function syncWidget(opts: {
 
   try {
     const [rawItems, w] = await Promise.all([
-      fetchFeedItems(lang, 10, topics, premium, saved, false).catch(() => []),
+      fetchFeedItems(lang, 10, topics, premium, saved, false, arabicOnly).catch(() => []),
       fetchWeather(lat, lon).catch(() => null),
     ]);
     feedItems = rawItems.slice(0, 10).map((item: any) => ({
       id:     item.id,
       kind:   item.kind,
       arabic: item.arabic ?? '',
-      text:   item.translation ?? item.text ?? '',
+      // Arapça modunda İngilizce çeviri widget'a sızmasın → sadece Arapça
+      text:   arabicOnly ? '' : (item.translation ?? item.text ?? ''),
       meta:   item.reference ?? item.source ?? item.author ?? '',
     }));
     weather = w;
@@ -158,6 +162,10 @@ export async function syncWidget(opts: {
     tomorrowFajr:  tomorrowFajrOut,
     streakDays:    opts.streakDays,
     themeImageURL: opts.themeImageURL ?? null,
+    // Widget içerik tercihleri — Swift Provider 'auto' dışındaki seçimi
+    // ilgili feed item'ına göre göstermeli (rebuild gerekir).
+    homeContent:   opts.homeContent ?? 'auto',
+    lockContent:   opts.lockContent ?? 'verse',
     updatedAt:     Math.floor(Date.now() / 1000),
   };
 

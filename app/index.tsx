@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import { Redirect } from 'expo-router';
 import { useOnboardingStore } from '../stores/useOnboardingStore';
+import { useAppStore } from '../stores/useAppStore';
 import { colors } from '../constants/theme';
 
 export default function Index() {
@@ -11,28 +12,40 @@ export default function Index() {
   const progress = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
-    // Progress animasyonu — 1.2sn içinde 0→0.85, sonra hydration tamamlayınca 1.0
+    // Progress animasyonu yalnızca KOZMETİK — gate kararı buna BAĞLI DEĞİL.
+    // (Eskiden setHydrated, .start() callback'ine bağlıydı; callback web'de
+    //  tetiklenmeyince uygulama splash'ta kalıcı takılıyordu → launch hang.)
     Animated.timing(progress, {
-      toValue: 0.85,
+      toValue: 1,
       duration: 1200,
       useNativeDriver: false,
     }).start();
 
-    const store = useOnboardingStore.persist;
-    const finish = () => {
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => setHydrated(true));
+    // Hem onboarding (gate kararı) hem app store (premium/streak/saves) hydrate
+    // olmadan feed'e geçmeyiz → ilk frame'de yanlış premium/streak flash'ı olmaz.
+    const onb = useOnboardingStore.persist;
+    const app = useAppStore.persist;
+
+    let onbDone = onb.hasHydrated();
+    let appDone = app.hasHydrated();
+    let finished = false;
+    const maybeFinish = () => {
+      if (!finished && onbDone && appDone) {
+        finished = true;
+        setHydrated(true);
+      }
     };
 
-    if (store.hasHydrated()) {
-      finish();
-      return;
-    }
-    const unsub = store.onFinishHydration(finish);
-    return () => unsub();
+    const unsubs: Array<() => void> = [];
+    if (!onbDone) unsubs.push(onb.onFinishHydration(() => { onbDone = true; maybeFinish(); }));
+    if (!appDone) unsubs.push(app.onFinishHydration(() => { appDone = true; maybeFinish(); }));
+    maybeFinish();
+
+    // Güvenlik ağı: hydration sinyali herhangi bir sebeple gelmezse bile
+    // uygulama 3sn sonra mutlaka açılır — asla splash'ta kalıcı takılmaz.
+    const safety = setTimeout(() => { onbDone = true; appDone = true; maybeFinish(); }, 3000);
+
+    return () => { clearTimeout(safety); unsubs.forEach((u) => u()); };
   }, []);
 
   if (hydrated) {

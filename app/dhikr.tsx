@@ -7,7 +7,8 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
+
+  I18nManager,} from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import Animated, {
   useAnimatedProps,
@@ -207,7 +208,7 @@ export default function DhikrScreen() {
           style={[styles.headerBtn, { backgroundColor: tc.cardBg }]}
           accessibilityRole="button" accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={20} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={20} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>{t('tasbih.title')}</Text>
         <Pressable

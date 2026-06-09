@@ -11,7 +11,7 @@
  * twilight açıları (Diyanet/ISNA/Umm al-Qura …) ülke kodundan otomatik seçilir.
  */
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { I18nManager, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
@@ -109,7 +109,7 @@ export default function PrayerTimesScreen() {
           style={[styles.backBtn, { backgroundColor: tc.cardBg }]}
           accessibilityRole="button" accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={22} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>{t('pt.title')}</Text>
         <View style={{ width: 40 }} />
@@ -124,12 +124,19 @@ export default function PrayerTimesScreen() {
             style={styles.hero}
           >
             <View style={styles.heroTopRow}>
-              <View style={styles.heroChip}>
-                <Ionicons name="location" size={13} color="#FFFFFF" />
+              <Pressable
+                onPress={() => { if (!prayer.resolved) { haptic.select(); router.push('/location-setup'); } }}
+                disabled={prayer.resolved}
+                style={styles.heroChip}
+                accessibilityRole="button"
+                accessibilityLabel={prayer.resolved ? prayer.city : 'Set location'}
+              >
+                <Ionicons name={prayer.resolved ? 'location' : 'location-outline'} size={13} color="#FFFFFF" />
                 <Text style={styles.heroChipText} numberOfLines={1}>
-                  {prayer.loading && !prayer.city ? '…' : prayer.city}
+                  {prayer.loading && !prayer.resolved ? '…' : prayer.resolved ? prayer.city : 'Set location'}
                 </Text>
-              </View>
+                {!prayer.resolved && <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={12} color="rgba(255,255,255,0.8)" />}
+              </Pressable>
               {weather && (
                 <Animated.View entering={FadeIn.duration(400)} style={styles.heroChip}>
                   <Ionicons name={weather.icon} size={14} color="#FFFFFF" />
@@ -288,7 +295,7 @@ export default function PrayerTimesScreen() {
         >
           <Ionicons name="notifications-outline" size={18} color={tc.gold} />
           <Text style={[styles.notifText, { color: tc.heading }]}>{t('pt.setReminders')}</Text>
-          <Ionicons name="chevron-forward" size={16} color={tc.muted} style={{ marginLeft: 'auto' }} />
+          <Ionicons name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'} size={16} color={tc.muted} style={{ marginLeft: 'auto' }} />
         </Pressable>
       </ScrollView>
     </ScreenContainer>

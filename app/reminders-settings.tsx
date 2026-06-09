@@ -1,8 +1,9 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { I18nManager, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { usePostHog } from 'posthog-react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { Stepper } from '../components/ui/Stepper';
 import { RangeSlider } from '../components/ui/RangeSlider';
@@ -15,12 +16,17 @@ import { haptic } from '../lib/haptics';
 
 export default function RemindersSettings() {
   const router = useRouter();
+  const posthog = usePostHog();
   const tc = useThemeColors();
 
   const reminderCount = useOnboardingStore((s) => s.reminderCount);
   const reminderStart = useOnboardingStore((s) => s.reminderStart);
   const reminderEnd   = useOnboardingStore((s) => s.reminderEnd);
   const set = useOnboardingStore((s) => s.set);
+
+  React.useEffect(() => {
+    posthog?.capture('reminders_settings_viewed');
+  }, [posthog]);
 
   // "HH:MM" → dakika sayısına çevir
   function toMin(hhmm: string | undefined, fallback: number): number {
@@ -41,6 +47,11 @@ export default function RemindersSettings() {
 
   const onSave = () => {
     haptic.success();
+    posthog?.capture('reminders_settings_updated', {
+      count,
+      start: toHHMM(startMin),
+      end: toHHMM(endMin),
+    });
     set('reminderCount', count);
     set('reminderStart', toHHMM(startMin));
     set('reminderEnd',   toHHMM(endMin));
@@ -59,7 +70,7 @@ export default function RemindersSettings() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={22} color={tc.heading} />
+          <Ionicons name={I18nManager.isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={tc.heading} />
         </Pressable>
         <Text style={[styles.title, { color: tc.heading }]}>Reminders</Text>
         <View style={{ width: 40 }} />

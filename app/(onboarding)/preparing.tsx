@@ -2,11 +2,17 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { Crescent } from '../../components/anim/Crescent';
 import { SparkleField } from '../../components/anim/Sparkles';
 import { fonts, spacing } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
+import { allThemeImageURLs } from '../../data/themes';
+
+// Kullanıcı bu ekrandayken TÜM tema görselleri (tam çözünürlük) arka planda iner
+// → theme-select'e gelince hepsi cache'de, anında ve kaliteli açılır.
+Image.prefetch(allThemeImageURLs(), 'memory-disk');
 
 const { width, height } = Dimensions.get('window');
 
