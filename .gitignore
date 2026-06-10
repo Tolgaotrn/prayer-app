@@ -22,6 +22,9 @@ expo-env.d.ts
 *.rar
 *.zip
 
+# App Store Connect API key (never commit)
+*.p8
+
 # Local AI/editor tool configs (not app code)
 .claude/
 .codex/

@@ -30,9 +30,11 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "tolgamurat1110.com@icloud.com",
         "appleTeamId": "M72UZZY834",
-        "ascAppId": "6777079990"
+        "ascAppId": "6777079990",
+        "ascApiKeyPath": "./asc-api-key.p8",
+        "ascApiKeyId": "YP6V9W6MGF",
+        "ascApiKeyIssuerId": "9e0d392e-42c7-4d30-ae0c-1cb8c4880828"
       }
     }
   }
