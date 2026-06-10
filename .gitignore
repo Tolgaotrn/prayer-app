@@ -21,3 +21,8 @@ expo-env.d.ts
 # Junk archives (never bundle into the app)
 *.rar
 *.zip
+
+# Local AI/editor tool configs (not app code)
+.claude/
+.codex/
+docs/superpowers/
