@@ -516,6 +516,29 @@ async function buildFeed(
           });
         })
     );
+
+    // Reflections (Daily Wisdom) — ayrı tabloda, favorilerde de aranmalı.
+    // Aksi halde beğenilen Daily Wisdom öğesi Favorites'te görünmezdi.
+    const reflLang = arabicOnly ? 'ar' : lang;
+    promises.push(
+      supabase
+        .from('reflections')
+        .select('id, text')
+        .eq('language', reflLang)
+        .in('id', ids)
+        .then(({ data, error }) => {
+          if (error) ok = false;
+          (data ?? []).forEach((r: any) => {
+            const txt = r.text ?? '';
+            if (!results.find((x) => x.id === r.id)) results.push({
+              id: r.id, kind: 'quote',
+              arabic: arabicOnly ? txt : '',
+              translation: arabicOnly ? '' : txt,
+              reference: '', topics: ['Reflections'],
+            });
+          });
+        })
+    );
   }
 
   // allSettled: tek bir sorgunun reddedilmesi (ağ hatası) tüm feed'i düşürmesin.

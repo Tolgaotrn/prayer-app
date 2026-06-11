@@ -231,7 +231,7 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                const appId = '6746878697';
+                const appId = '6777079990';
                 // Önce native mağaza şeması; açılmazsa https fallback (iOS bunu da
                 // App Store uygulamasına yönlendirir). Eski itunes.apple.com host'u
                 // artık boş dönüyordu → apps.apple.com kullan.
