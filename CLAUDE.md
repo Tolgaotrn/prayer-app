@@ -3,6 +3,16 @@
 
 ---
 
+## Uygulama Durumu
+
+**🟢 CANLI — App Store'da yayında** (Haziran 2026)
+- Bundle: `com.tolgaoturan.huda`
+- EAS slug: `noor` (Expo Dashboard proje adı — uygulama adı Huda)
+- App fiyatı: **Free** (gelir IAP aboneliklerinden)
+- Abonelik planları: Annual (-65%) / Monthly / Weekly — RevenueCat ile yönetilir
+
+---
+
 ## Tolga ile çalışma kuralları
 
 - Kısa ve net konuş. Uzun açıklama yapma.
@@ -32,8 +42,8 @@ eas build --profile development --platform ios  # Swift değişikliklerinde
 
 **Web test (console):**
 ```javascript
-localStorage.setItem('noor-onboarding', JSON.stringify({
-  state: { name: 'Tolga', isCompleted: true, selectedTheme: 1, language: 'Turkish' }, version: 0
+localStorage.setItem('huda-onboarding', JSON.stringify({
+  state: { name: 'Tolga', isCompleted: true, selectedTheme: 2, language: 'Turkish' }, version: 1
 }));
 localStorage.setItem('huda-app', JSON.stringify({
   state: { savedVerseIds: [], streakDays: 7, isPremium: true,
@@ -65,6 +75,8 @@ location.reload();
 | Konum | expo-location | ~19.0.8 |
 | Namaz vakti | adhan | ^4.4.3 |
 | Supabase | @supabase/supabase-js | ^2.x |
+| RevenueCat | react-native-purchases | — |
+| Analytics | posthog-react-native | — |
 | RN | react-native | 0.81.5 |
 
 **Kritik babel notu:** `babel.config.js`'de inline `transformImportMeta` plugin var (zustand devtools `import.meta` → web'de hata veriyordu). `react-native-reanimated/plugin` daima en sona gelir.
@@ -76,7 +88,7 @@ location.reload();
 ```
 islam-app/
 ├── app/
-│   ├── _layout.tsx               ← Root stack + fonts + GestureHandler
+│   ├── _layout.tsx               ← Root stack + fonts + GestureHandler + PostHog + RevenueCat + RTL sync
 │   ├── index.tsx                 ← Gate: isCompleted → feed, değilse → welcome
 │   │
 │   ├── (onboarding)/             ← GÜNCEL AKIŞ (aşağıda detay)
@@ -90,17 +102,17 @@ islam-app/
 │   │   ├── home-pref.tsx         ← multi-select → language'a gider
 │   │   ├── language.tsx          ← → preparing'e gider
 │   │   ├── preparing.tsx         ← SparkleField + auto-advance
-│   │   ├── streak-intro.tsx      ← Tesbih (prayer beads) animasyonu — Crescent KALDIRILDI
+│   │   ├── streak-intro.tsx      ← Tesbih ring animasyonu (33 bead, dönen, altın) — Crescent KALDIRILDI
 │   │   ├── reminders.tsx         ← Stepper + RangeSlider + bildirim izni
 │   │   ├── theme-select.tsx      ← Gerçek fotoğraf grid
-│   │   └── paywall.tsx           ← 3 plan (Annual/Monthly/Weekly), complete() çağırır
+│   │   └── paywall.tsx           ← 3 plan (Annual/Monthly/Weekly), RevenueCat, complete() çağırır
 │   │   [ORPHAN — akışta değil]: feeling.tsx, usage.tsx, notifications.tsx, translation.tsx
 │   │
 │   ├── (tabs)/
 │   │   ├── _layout.tsx           ← tabBar: () => null — alt bar YOK
 │   │   ├── feed.tsx              ← ANA SAYFA: immersive feed, çift-tık kaydet, swipe
 │   │   ├── home-card.tsx         ← "Today" hub: namaz kartı + apps grid
-│   │   ├── themes.tsx            ← 3-kolon galeri
+│   │   ├── themes.tsx            ← 3-kolon galeri (38 tema)
 │   │   ├── profile.tsx           ← Identity + premium + quick actions + settings + redeem
 │   │   └── settings.tsx          ← ORPHAN (hiçbir yere bağlı değil, silinebilir)
 │   │
@@ -114,8 +126,9 @@ islam-app/
 │   ├── reminders-settings.tsx    ← Stepper + RangeSlider
 │   ├── language-settings.tsx     ← Dil seçimi
 │   ├── name-settings.tsx         ← İsim düzenleme
-│   ├── widget-settings.tsx       ← Home/Lock sekmeli, içerik seçici grid ★YENİ
-│   ├── promo-code.tsx            ← Promo kodu → bedava premium ★YENİ
+│   ├── widget-settings.tsx       ← Home/Lock sekmeli, içerik seçici grid + background seçici
+│   ├── widget-studio.tsx         ← Widget studio ekranı
+│   ├── promo-code.tsx            ← Promo kodu → bedava premium
 │   ├── location-setup.tsx        ← Premium konum ekranı — izin red → inline banner
 │   ├── special-offer.tsx         ← "7 days free" — onboarding dışı
 │   └── categories.tsx            ← BottomSheet + 4 tile
@@ -127,8 +140,11 @@ islam-app/
 │   │   ├── Crescent.tsx          ← RadialRays + StarTrails da burada
 │   │   └── GlowArch.tsx          ← faith-intro'da kullanılıyor
 │   ├── icons/AppGlyphs.tsx       ← SVG duotone glyph: mosque/compass/beads/bell/widget/lockscreen
+│   ├── onboarding/
+│   │   └── SelectScreen.tsx      ← Onboarding seçim ekranı base component
 │   ├── ui/
 │   │   ├── GoldButton.tsx        ← shimmer animasyonu, disabled: taupe renk
+│   │   ├── GhostButton.tsx
 │   │   ├── OptionRow.tsx         ← check/radio variant, scale transform YOK
 │   │   ├── IconGridCard.tsx      ← useThemeColors bağlı
 │   │   ├── VerseCard.tsx
@@ -137,15 +153,20 @@ islam-app/
 │   │   ├── Stepper.tsx
 │   │   ├── ToggleSwitch.tsx
 │   │   ├── BackButton.tsx
-│   │   └── ProgressDots.tsx
+│   │   ├── ProgressDots.tsx
+│   │   ├── ThemeTile.tsx
+│   │   ├── NotifPreview.tsx
+│   │   └── NotifShowcase.tsx
+│   ├── ErrorBoundary.tsx         ← Tüm ağacı sarar
 │   └── layout/
 │       ├── ScreenContainer.tsx
 │       ├── OnboardingShell.tsx
+│       ├── FloatingTabBar.tsx
 │       └── BottomSheet.tsx
 │
 ├── stores/
-│   ├── useOnboardingStore.ts     ← key: 'noor-onboarding'
-│   └── useAppStore.ts            ← key: 'huda-app' ★ homeWidgetContent + lockWidgetContent eklendi
+│   ├── useOnboardingStore.ts     ← key: 'huda-onboarding'
+│   └── useAppStore.ts            ← key: 'huda-app'
 │
 ├── lib/
 │   ├── useThemeColors.ts         ← TÜM ekranlar bunu kullanır
@@ -153,23 +174,29 @@ islam-app/
 │   ├── supabase.ts               ← anon key (service_role SADECE tools/'da)
 │   ├── contentDb.ts              ← offline-first: cache→Supabase→stale→seed
 │   ├── prayerTimes.ts            ← usePrayerTimes() + computeSlots + resolveLocation
-│   ├── widgetSync.ts             ← iOS widget sync: feed items + weather + prayers ★GÜNCELLENDİ
+│   ├── prayerSettings.ts         ← Namaz hesap ayarları
+│   ├── widgetSync.ts             ← iOS widget sync: feed items + weather + prayers
 │   ├── notifications.ts          ← schedulePrayerNotifications + scheduleDailyVerse
+│   ├── revenueCat.ts             ← useConfigureRevenueCat() + satın alma fonksiyonları
+│   ├── weather.ts                ← Open-Meteo hava durumu
+│   ├── hijri.ts                  ← Hicri takvim dönüşümü
+│   ├── rtl.ts                    ← syncRTLOnStartup — Arapça dil RTL düzeni
+│   ├── useRTL.ts                 ← RTL hook
 │   ├── haptics.ts
 │   └── cities.ts                 ← offline şehir listesi (location-setup için)
 │
 ├── targets/widget/               ← iOS WidgetKit (EAS build gerekir)
-│   ├── NoorWidgetBundle.swift    ← 8 widget tanımı ★YENİ
-│   ├── NoorWidgetData.swift      ← HudaWidgetData + FeedItemData + WeatherData ★YENİ
-│   ├── Provider.swift            ← StaticConfiguration provider ★YENİ
-│   ├── AppIntent.swift           ← NextItemIntent / PrevItemIntent / LikeItemIntent ★YENİ
-│   └── Views.swift               ← 8 widget görünümü ★YENİ
+│   ├── NoorWidgetBundle.swift    ← 9 widget tanımı
+│   ├── NoorWidgetData.swift      ← HudaWidgetData + FeedItemData + WeatherData + DhikrState
+│   ├── Provider.swift            ← StaticConfiguration provider + ImageIO downsample
+│   ├── AppIntent.swift           ← Next/Prev/Like/DhikrTap/DhikrReset intents
+│   └── Views.swift               ← 9 widget görünümü
 │
 ├── data/
 │   ├── types.ts
 │   ├── verses.ts                 ← ~52 seed (offline fallback)
 │   ├── duas.ts, hadiths.ts, quotes.ts
-│   └── themes.ts                 ← 9 tema, Supabase Storage URL'leri
+│   └── themes.ts                 ← 38 tema, Supabase Storage URL'leri
 │
 └── tools/
     ├── import-hadith.mjs
@@ -219,14 +246,15 @@ welcome → attribution → name → age → faith-intro
   → /notifications-settings
   → /name-settings
   → /language-settings
-  → /promo-code        ★YENİ — promo kodu girişi
+  → /promo-code        — promo kodu girişi
   → paywall
 
 /dhikr                 Tesbih sayacı + custom dhikr ekleme modalı
 /qibla                 SVG pusula
 /prayer-times          Tam namaz takvimi
-/widget-settings       ★YENİ — Home/Lock sekmeli widget içerik seçici
-/promo-code            ★YENİ — bedava premium kodu
+/widget-settings       Home/Lock sekmeli widget içerik seçici + background seçici
+/widget-studio         Widget studio
+/promo-code            Bedava premium kodu
 /location-setup        Premium tasarımlı konum ekranı
 /special-offer         "7 days free" (onboarding dışı, router.push ile)
 ```
@@ -235,7 +263,7 @@ welcome → attribution → name → age → faith-intro
 
 ## State Yönetimi
 
-### useOnboardingStore — `'noor-onboarding'`
+### useOnboardingStore — `'huda-onboarding'`
 ```typescript
 name, age, intentions[], feeling, quranRelation,
 contentTypes[], contentStyle[], usage[], homePreference[],
@@ -255,13 +283,16 @@ streakDays, lastOpenDate,
 isPremium, darkMode,
 currentVerseIndex,
 followedTopics[],          // default: ['General']
-homeWidgetContent,         // ★YENİ: 'auto'|'prayer'|'verse'|'hadith'|'quote'|'streak'
-lockWidgetContent,         // ★YENİ: default 'verse'
+homeWidgetContent,         // 'auto'|'prayer'|'verse'|'hadith'|'quote'|'streak'
+lockWidgetContent,         // default 'verse'
+widgetThemeId,             // null=app teması, 0=minimal, diğer=tema id
+dhikrTotal, dhikrToday, dhikrTodayDate,
 
 toggleSave(verse) | isSaved(id) | registerOpen()
 setPremium(v) | setDarkMode(v)
 toggleFollowTopic(topic) | isFollowed(topic)
-setHomeWidgetContent(t) | setLockWidgetContent(t)  // ★YENİ
+setHomeWidgetContent(t) | setLockWidgetContent(t)
+addDhikr(count) | absorbDhikrTotal(n)
 ```
 
 ---
@@ -300,6 +331,16 @@ text:   #F5F0E1 (heading), #C3C9DE (body), #828BAD (muted)
 
 ---
 
+## RevenueCat
+
+`lib/revenueCat.ts` — `useConfigureRevenueCat()` _layout.tsx'te çağrılır.
+- Abonelik planları: Annual / Monthly / Weekly
+- `paywall.tsx` RevenueCat purchase fonksiyonlarını kullanır
+- `setPremium(true/false)` useAppStore'a yansır
+- Restore Purchase → profile'dan
+
+---
+
 ## Supabase
 
 **URL:** `https://hvxrsscrsqdbfewpmfhl.supabase.co`
@@ -324,7 +365,6 @@ themes              id, name, image_url, gradient[], badge, is_free, is_active, 
 
 **Tema görselleri:** Supabase Storage `themes` bucket (public).
 `BASE = https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/themes/`
-Dosyalar: midnight.jpg, night-mosque.png, sunset-arch.png, interior.png, sunrise-court.jpg, serene-arch.jpg, quran-light.jpg, bird-sunset.jpg, kaaba.png
 
 ---
 
@@ -360,6 +400,9 @@ t('profile.savedCount', { n: 3 })         // → '3 saved'
 
 **resolveLang:** 'Turkish'→'tr', 'French'→'fr', 'Indonesian'→'id', 'Arabic'→'en', diğer→'en'
 
+**RTL:** `lib/rtl.ts` → `syncRTLOnStartup(lang)` — Arapça seçilince I18nManager.forceRTL(true) + reload.
+`lib/useRTL.ts` — ekranlarda RTL durumunu okumak için.
+
 **Feed Arapça kuralı (MUTUALLY EXCLUSIVE):**
 - `language === 'Arabic'` → SADECE Arapça göster
 - Diğer diller → SADECE çeviri göster (Arapça yok)
@@ -373,6 +416,8 @@ Altta "CHOOSE DHIKR" + "+ Custom" butonlu yatay kaydırmalı seçici.
 - Seçili tile: koyu arka plan (dark modda lacivert, krem modda koyu kahve)
 - **+ Custom modal:** Arapça (opsiyonel), isim, hedef sayı → listeye ekler, otomatik seçer
 - 5 varsayılan: SubhanAllah×33, Alhamdulillah×33, Allahu Akbar×34, La ilaha illallah×100, Astaghfirullah×100
+- `useFocusEffect` ile widget'taki çekimleri absorb, her tap shared'a yazar
+- Stat satırı: rounds (oturum) · today · all time (kalıcı)
 
 ---
 
@@ -394,12 +439,12 @@ Her sekmede içerik seçici grid:
 - "Apply & refresh widget" → `syncWidget` çağırır
 - Her sekmenin kendi "How to add" adımları var
 
-**Widget background seçici ★YENİ** (global, sekme bağımsız):
+**Widget background seçici** (global, sekme bağımsız):
 - `useAppStore.widgetThemeId`: `null`=app teması izle, `0`=minimal (görsel yok → gradient), diğer=tema id
 - `resolveWidgetBgURL(widgetThemeId, selectedTheme)` (data/themes.ts) → widget bg URL'si
 - App teması + Minimal + tüm temalar yatay thumbnail grid
-- home-card.tsx ve widget-settings.tsx artık bu helper ile `themeImageURL` çözer
-- Widget arka planı artık uygulama temasından BAĞIMSIZ
+- home-card.tsx ve widget-settings.tsx bu helper ile `themeImageURL` çözer
+- Widget arka planı uygulama temasından BAĞIMSIZ
 
 ---
 
@@ -416,13 +461,21 @@ Her sekmede içerik seçici grid:
 > ⚠️ Expo Go'da ÇALIŞMAZ. Her Swift değişikliği EAS rebuild gerektirir.
 > `eas build --profile development --platform ios`
 
+**Bundle ID'ler — ASLA değiştirme:**
+| Target | Bundle Identifier |
+|---|---|
+| Ana uygulama | `com.tolgaoturan.huda` |
+| Widget target | `com.tolgaoturan.huda.widget` |
+
+**EAS:** slug=`noor` (Expo Dashboard proje adı), uygulama adı Huda'dır — karıştırma.
+
 **App Group:** `group.com.tolgaoturan.huda`
 **UserDefaults key:** `hudaWidgetData`
 **Feed index key:** `hudaFeedIndex`
 **Liked key:** `hudaWidgetLiked`
-**Dhikr key:** `hudaDhikr` ★YENİ — app + widget ortak tesbih sayacı
+**Dhikr key:** `hudaDhikr` — app + widget ortak tesbih sayacı
 
-### 9 Widget (NoorWidgetBundle.swift)
+### 10 Widget (NoorWidgetBundle.swift)
 
 | # | Kind | Boyut | İçerik |
 |---|---|---|---|
@@ -434,7 +487,8 @@ Her sekmede içerik seçici grid:
 | 6 | `HudaPrayerTimes` | Large | Tam takvim + altta günün ayeti |
 | 7 | `HudaWeather` | Medium | Sol: hava durumu, Sağ: namaz tablosu |
 | 8 | `HudaStreak` | Small | Streak sayısı |
-| 9 | `HudaDhikr` | Small | ★YENİ Tesbih sayacı — tıkla say, hedefte (33) tur tamamla, döngü |
+| 9 | `HudaDhikr` | Small | Tesbih sayacı — tıkla say, hedefte (33) tur tamamla, döngü |
+| 10 | `HudaVerseLock` | Lock (Rect+Inline) | Günün ayeti — kilit ekranı, arka plansız (accessory tinted) |
 
 **Widget gallery'de açıklama (2. başlık) KALDIRILDI** — sadece `.configurationDisplayName`, `.description` yok.
 
@@ -444,20 +498,20 @@ Her sekmede içerik seçici grid:
 - `NextItemIntent` — feedIndex++ → widget reload
 - `PrevItemIntent` — feedIndex-- → widget reload
 - `LikeItemIntent` — item ID'yi `hudaWidgetLiked`'a yazar
-- `DhikrTapIntent` ★YENİ — `hudaDhikr` count++ → hedefte rounds++, count=0; total++ → reload
-- `DhikrResetIntent` ★YENİ — count/rounds=0 (total korunur)
+- `DhikrTapIntent` — `hudaDhikr` count++ → hedefte rounds++, count=0; total++ → reload
+- `DhikrResetIntent` — count/rounds=0 (total korunur)
 
 ### widgetSync.ts
 ```typescript
 syncWidget({
   language, streakDays, force?,
-  followedTopics,   // ★YENİ — topic filtresi
-  isPremium,        // ★YENİ — premium kontrol
-  savedVerseIds,    // ★YENİ — favorites için
+  followedTopics,   // topic filtresi
+  isPremium,        // premium kontrol
+  savedVerseIds,    // favorites için
 })
 ```
 - `fetchFeedItems` ile 10 item çeker (topic + premium aware)
-- Open-Meteo API'den hava durumu (ücretsiz, API key yok)
+- Open-Meteo API'den hava durumu (ücretsiz, API key yok) — `lib/weather.ts`
 - 60sn debounce, `force:true` ile atlanır
 - `home-card.tsx`'den çağrılır: açılışta + dil/streak/şehir/premium değişince
 
@@ -488,6 +542,7 @@ syncWidget({
 - `getCurrentPositionAsync` 8sn timeout + `getLastKnownPositionAsync` fallback
 - Fallback: İstanbul
 - `computeSlots / resolveLocation` → widget sync de kullanır (tek kaynak)
+- `lib/prayerSettings.ts` → hesap metodu ayarları
 
 ---
 
@@ -514,7 +569,7 @@ syncWidget({
 ← Profile
 ├── Identity card (avatar initials + name + plan badge + streak pill)
 ├── Premium banner → paywall  [sadece free user]
-├── Redeem a Code → /promo-code  [sadece free user] ★YENİ
+├── Redeem a Code → /promo-code  [sadece free user]
 ├── Quick Actions: Saved Verses · Reminders
 ├── Appearance: Theme → /themes | Dark Mode toggle
 ├── Account: Name → /name-settings | Language → /language-settings
@@ -544,6 +599,18 @@ syncWidget({
 
 ---
 
+## Temalar (data/themes.ts)
+
+38 tema — `backgroundThemes` dizisi. ID 1-38.
+- **Free:** Sunset Arch (2), Grand Interior (3), Bird's Eye Dusk (7)
+- **Live (video):** Living Light I (9), Living Light II (10)
+- **New badge:** ID 11-38 (Desert Prayer, Blue Night, Golden Arabesque, Iznik Birds, Forest Prayer, Golden Mosque, Kaaba Aerial, Al-Madinah, Ortaköy Sunset, White Dome, Iznik Tulips, Sheikh Zayed Grand, Ottoman Courtyard, Topkapi Corridor, Persian Dome, Ottoman Sunrise, Cedar Forest Light, Wadi Rum (new-theme-1.png)... Riad Fountain, vb.)
+- `DEFAULT_THEME_ID = 2` (Sunset Arch)
+- `sortedThemes()` → Free → Live → New → düz sıralama
+- `resolveWidgetBgURL(widgetThemeId, appThemeId)` → widget bg URL
+
+---
+
 ## Sonraki Adımlar
 
 - **Supabase Auth:** Kullanıcı hesabı, streak sync, cross-device
@@ -553,6 +620,7 @@ syncWidget({
 - **themes.tsx:** Hâlâ lokal `data/themes.ts` kullanıyor → `fetchThemes()` Supabase'e geçirilecek
 - **`settings.tsx` (tabs):** Orphan — silinebilir
 - **`translation.tsx`:** Orphan — silinebilir
+- **`feeling.tsx`, `usage.tsx`:** Orphan — silinebilir
 
 ---
 

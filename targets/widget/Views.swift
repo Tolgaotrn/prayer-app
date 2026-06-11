@@ -805,3 +805,47 @@ struct AccessoryPrayerRectangular: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
+
+// ── Günün ayeti (kilit ekranı, arka plansız) ─────────────────────
+
+struct AccessoryVerseRectangular: View {
+    var entry: HudaEntry
+    var body: some View {
+        let item = entry.data.currentFeedItem()
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 4) {
+                Image(systemName: "book.fill").font(.system(size: 10))
+                Text(item.meta.isEmpty ? "Verse of the Day" : item.meta)
+                    .font(.system(size: 11, weight: .bold))
+                    .lineLimit(1)
+            }
+            Text(item.text)
+                .font(.system(size: 13, weight: .medium))
+                .lineLimit(3)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct AccessoryVerseInline: View {
+    var entry: HudaEntry
+    var body: some View {
+        let item = entry.data.currentFeedItem()
+        Label(item.text, systemImage: "book.fill")
+            .lineLimit(1)
+    }
+}
+
+struct VerseLockView: View {
+    @Environment(\.widgetFamily) private var family
+    var entry: HudaEntry
+    var body: some View {
+        switch family {
+        case .accessoryInline:
+            AccessoryVerseInline(entry: entry)
+        default:
+            AccessoryVerseRectangular(entry: entry)
+        }
+    }
+}

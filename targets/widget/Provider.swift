@@ -89,8 +89,11 @@ enum ThemeImageCache {
                 kCGImageSourceCreateThumbnailWithTransform: true,
                 kCGImageSourceThumbnailMaxPixelSize: maxPixel,
             ]
-            guard let cg = CGImageSourceCreateThumbnailAtIndex(src, 0, opts as CFDictionary) else { return nil }
-            return UIImage(cgImage: cg)
+            if let cg = CGImageSourceCreateThumbnailAtIndex(src, 0, opts as CFDictionary) {
+                return UIImage(cgImage: cg)
+            }
+            // Thumbnail üretilemezse (bazı PNG'lerde olur) tam görsele düş —
+            // küçük widget en azından arka planı göstersin, beyaz kalmasın.
         }
 
         guard let data = try? Data(contentsOf: file) else { return nil }

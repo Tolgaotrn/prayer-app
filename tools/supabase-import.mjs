@@ -17,8 +17,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 // ── Credentials ──────────────────────────────────────────────
-const SUPABASE_URL      = 'https://hvxrsscrsqdbfewpmfhl.supabase.co';
-const SUPABASE_SERVICE  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2eHJzc2Nyc3FkYmZld3BtZmhsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDE1MjY1OSwiZXhwIjoyMDk1NzI4NjU5fQ.MQ_aQEeB0LorHRq180K5nnXk8REyNJoSx_JVi-iDjP8';
+// service_role anahtarı RLS'i bypass eder → ASLA koda gömme, ASLA commit'leme.
+// Ortam değişkeninden oku:  SUPABASE_SERVICE_ROLE=... node tools/supabase-import.mjs
+const SUPABASE_URL      = process.env.SUPABASE_URL || 'https://hvxrsscrsqdbfewpmfhl.supabase.co';
+const SUPABASE_SERVICE  = process.env.SUPABASE_SERVICE_ROLE;
+
+if (!SUPABASE_SERVICE) {
+  console.error('✗ SUPABASE_SERVICE_ROLE ortam değişkeni gerekli.');
+  console.error('  Kullanım: SUPABASE_SERVICE_ROLE=<key> node tools/supabase-import.mjs');
+  process.exit(1);
+}
 
 const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE, {
   auth: { persistSession: false },
@@ -228,6 +236,37 @@ async function importQuotes() {
   }
 }
 
+// Reflections (özlü/manevi sözler) → KENDİ tablosu. Sadece General feed'i besler,
+// başka hiçbir konuya/tabloya sızmaz. Her dilin kendi native seti (çeviri değil).
+// content/reflections/<lang>.json = [{id, text}]
+const REFL_LANGS = ['tr', 'en', 'fr', 'id', 'ar'];
+async function importReflections() {
+  console.log('\n── Reflections (General özlü sözler) ──');
+  const rows = [];
+  for (const lang of REFL_LANGS) {
+    let arr;
+    try { arr = await readJson(`content/reflections/${lang}.json`); }
+    catch { continue; }
+    for (const it of arr) {
+      rows.push({ id: it.id, language: lang, text: it.text, topics: ['Reflections'] });
+    }
+    console.log(`  · ${lang}: ${arr.length} satır`);
+  }
+  if (!rows.length) { console.log('  ⚠ reflection dosyası yok, atlandı'); return; }
+
+  // Orphan temizleme — dosyada olmayan eski satırları sil
+  const keepIds = new Set(rows.map(r => r.id));
+  const { data: existing, error: selErr } = await sb.from('reflections').select('id');
+  if (selErr) { console.log('  ⚠ reflections tablosu okunamadı (schema çalıştırıldı mı?):', selErr.message); return; }
+  const orphans = (existing ?? []).map(r => r.id).filter(id => !keepIds.has(id));
+  for (let i = 0; i < orphans.length; i += 100) {
+    await sb.from('reflections').delete().in('id', orphans.slice(i, i + 100));
+  }
+  if (orphans.length) console.log(`  🗑  reflections: ${orphans.length} eski kayıt temizlendi`);
+
+  await upsert('reflections', rows);
+}
+
 async function importAsmaulHusna() {
   console.log('\n── Asmaul Husna (99 Names) ──');
   let base;
@@ -318,6 +357,7 @@ async function main() {
   await run('hadiths',      importHadiths);
   await run('duas',         importDuas);
   await run('quotes',       importQuotes);
+  await run('reflections',  importReflections);
   await run('asmaul-husna', importAsmaulHusna);
   await run('themes',       importThemes);
 

@@ -110,6 +110,18 @@ create table if not exists quote_translations (
   foreign key (id) references quotes(id) on delete cascade
 );
 
+-- ── REFLECTIONS (General feed özlü/manevi sözler) ───────────
+-- İZOLE: sadece General feed'ini besler, başka konuya/tabloya sızmaz.
+-- Her satır TEK dile ait (çeviri linki yok) → her dilin kendi native seti.
+create table if not exists reflections (
+  id          text primary key,
+  language    text not null,
+  text        text not null,
+  topics      text[] default array['Reflections'],
+  created_at  timestamptz default now()
+);
+create index if not exists reflections_lang_idx on reflections(language);
+
 -- ── THEMES ──────────────────────────────────────────────────
 create table if not exists themes (
   id           int  primary key,
@@ -158,6 +170,7 @@ alter table themes              enable row level security;
 
 alter table asmaul_husna              enable row level security;
 alter table asmaul_husna_translations enable row level security;
+alter table reflections               enable row level security;
 
 -- Herkes okuyabilir (anon dahil)
 create policy "public read" on verses                     for select using (true);
@@ -171,3 +184,4 @@ create policy "public read" on quote_translations         for select using (true
 create policy "public read" on themes                     for select using (true);
 create policy "public read" on asmaul_husna               for select using (true);
 create policy "public read" on asmaul_husna_translations  for select using (true);
+create policy "public read" on reflections                for select using (true);

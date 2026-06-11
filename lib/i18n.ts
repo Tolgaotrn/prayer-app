@@ -202,7 +202,7 @@ const en: Dict = {
   'topics.bannerTitle': 'Access all topics',
   'topics.bannerSub': 'Follow topics to personalise your daily feed',
 
-  'topic.General': 'General',
+  'topic.General': 'Daily Wisdom',
   'topic.Favorites': 'Favorites',
   'topic.99 Names of Allah': '99 Names of Allah',
   'topic.Quran Verses': 'Quran Verses',
@@ -222,7 +222,7 @@ const en: Dict = {
   'topic.Inner Peace': 'Inner Peace',
   'topic.Love of Allah': 'Love of Allah',
 
-  'topicsub.General': 'A mix of verses & hadith',
+  'topicsub.General': 'Curated Islamic wisdom for the day',
   'topicsub.Favorites': 'Your saved content',
   'topicsub.99 Names of Allah': 'Al-Asmaul Husna',
   'topicsub.Quran Verses': 'Daily ayahs from the Quran',
@@ -447,7 +447,7 @@ const tr: Dict = {
   'topic.Inner Peace': 'İç Huzur',
   'topic.Love of Allah': 'Allah Sevgisi',
 
-  'topicsub.General': 'Ayet, hadis ve alıntı karışımı',
+  'topicsub.General': 'Günün İslami hikmeti',
   'topicsub.Favorites': 'Kaydettiğin içerikler',
   'topicsub.99 Names of Allah': 'El-Esmaül Hüsna',
   'topicsub.Quran Verses': "Kur'an'dan günlük ayetler",
@@ -652,7 +652,7 @@ const fr: Dict = {
   'topics.bannerTitle': 'Acceder a tous les sujets',
   'topics.bannerSub': 'Suivez des sujets pour personnaliser votre fil',
 
-  'topic.General': 'General',
+  'topic.General': 'Daily Wisdom',
   'topic.Favorites': 'Favoris',
   'topic.99 Names of Allah': "99 Noms d'Allah",
   'topic.Quran Verses': 'Versets du Coran',
@@ -672,7 +672,7 @@ const fr: Dict = {
   'topic.Inner Peace': 'Paix interieure',
   'topic.Love of Allah': "Amour d'Allah",
 
-  'topicsub.General': 'Un melange de versets et hadiths',
+  'topicsub.General': 'Sagesse islamique du jour',
   'topicsub.Favorites': 'Votre contenu enregistre',
   'topicsub.99 Names of Allah': 'Al-Asmaul Husna',
   'topicsub.Quran Verses': 'Versets quotidiens',
@@ -858,7 +858,7 @@ const id: Dict = {
   'topic.Inner Peace': 'Ketenangan Batin',
   'topic.Love of Allah': 'Cinta kepada Allah',
 
-  'topicsub.General': 'Campuran ayat & hadis',
+  'topicsub.General': 'Hikmah Islam pilihan hari ini',
   'topicsub.Favorites': 'Konten yang Anda simpan',
   'topicsub.99 Names of Allah': 'Al-Asmaul Husna',
   'topicsub.Quran Verses': 'Ayat harian dari Quran',
@@ -1049,7 +1049,7 @@ const ar: Dict = {
   'topic.Inner Peace': 'السكينة',
   'topic.Love of Allah': 'محبة الله',
 
-  'topicsub.General': 'مزيج من الآيات والأحاديث',
+  'topicsub.General': 'حكمة إسلامية يومية مختارة',
   'topicsub.Favorites': 'المحتوى الذي حفظته',
   'topicsub.99 Names of Allah': 'الأسماء الحسنى',
   'topicsub.Quran Verses': 'آيات يومية من القرآن',

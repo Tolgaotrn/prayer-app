@@ -102,6 +102,36 @@ struct HudaWidgetData: Codable {
     var themeImageURL: String?
     var updatedAt:     Double
 
+    init(
+        feedItems: [FeedItemData], weather: WeatherData?, city: String,
+        prayers: [PrayerEntryData], tomorrowFajr: PrayerEntryData?,
+        streakDays: Int, themeImageURL: String?, updatedAt: Double
+    ) {
+        self.feedItems = feedItems
+        self.weather = weather
+        self.city = city
+        self.prayers = prayers
+        self.tomorrowFajr = tomorrowFajr
+        self.streakDays = streakDays
+        self.themeImageURL = themeImageURL
+        self.updatedAt = updatedAt
+    }
+
+    // MARK: Dayanıklı decode — tek bir eksik/yanlış alan tüm payload'ı
+    // (ve themeImageURL'i) düşürmesin. Aksi halde widget .placeholder'a
+    // (themeImageURL: nil) düşer ve arka plan beyaz kalır.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        feedItems     = (try? c.decodeIfPresent([FeedItemData].self, forKey: .feedItems)) ?? []
+        weather       = (try? c.decodeIfPresent(WeatherData.self, forKey: .weather)) ?? nil
+        city          = (try? c.decodeIfPresent(String.self, forKey: .city)) ?? "Istanbul"
+        prayers       = (try? c.decodeIfPresent([PrayerEntryData].self, forKey: .prayers)) ?? []
+        tomorrowFajr  = (try? c.decodeIfPresent(PrayerEntryData.self, forKey: .tomorrowFajr)) ?? nil
+        streakDays    = (try? c.decodeIfPresent(Int.self, forKey: .streakDays)) ?? 0
+        themeImageURL = (try? c.decodeIfPresent(String.self, forKey: .themeImageURL)) ?? nil
+        updatedAt     = (try? c.decodeIfPresent(Double.self, forKey: .updatedAt)) ?? 0
+    }
+
     // MARK: Placeholder
     static var placeholder: HudaWidgetData {
         HudaWidgetData(

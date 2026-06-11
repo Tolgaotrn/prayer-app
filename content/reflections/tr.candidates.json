@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "lang": "tr",
+    "status": "candidates — Tolga vet onayı bekliyor",
+    "display": "GENERAL'da ATIFSIZ gösterilir (author yok). author/source yalnızca telif/provenance kontrolü için.",
+    "focus": "DİNİ odak şart — Allah, iman, kalp, tevekkül, tövbe, rahmet, ölüm/ahiret",
+    "rules": "tek cümle · ≤120 karakter · İslami uygun · diğer dinlerin sembolü YASAK · klasik isimler (kamu malı) tercih",
+    "target": "dil başına ~75-100 vetli satır"
+  },
+  "items": [
+    { "text": "İlim, kendini bilmektir.", "author": "Yunus Emre", "pd": true },
+    { "text": "Muhakkak ki Allah, sabredenlerle beraberdir.", "author": "anonim", "pd": true },
+    { "text": "Kimde sevgi varsa, Allah'ın tecellisi ondadır.", "author": "Mevlânâ", "pd": true },
+    { "text": "Hakk'ın rahmeti, bizim günahlarımızdan büyüktür.", "author": "Muhyiddin Arabî", "pd": true },
+    { "text": "Ölüm, yaratılanın Yaratan'a kavuşmasıdır.", "author": "Mevlânâ", "pd": true },
+    { "text": "Sen insana ulaşmadan Allah'ı nasıl arıyorsun?", "author": "Muhammed İkbal", "pd": true },
+    { "text": "Kalbi her an Allah ile tutmak; işte gerçek huzur.", "author": "Cüneyd-i Bağdâdî", "pd": true },
+    { "text": "Kalbi bir an Allah'tan boş bırakmak, büyük felakettir.", "author": "Osman bin Merzûk", "pd": true },
+    { "text": "İnsan, Rabbini bildiği kadar kemâle erer.", "author": "Abdülkerîm Cîlî", "pd": true },
+    { "text": "Tövbe, kalbin yeniden filizlenmesidir.", "author": "Alâüddevle Semnânî", "pd": true },
+    { "text": "Mârifet, kendi aczini itiraf etmekle başlar.", "author": "Ebû Saîd bin el-Arabî", "pd": true },
+    { "text": "Hâl, sözle ele geçmez; yaşanır.", "author": "Abdülkâdir Geylânî", "pd": true },
+    { "text": "Kalp, bedende bir hükümdar gibidir.", "author": "İmam Birgivî", "pd": true },
+    { "text": "Nefsin boş isteklerine uymamak, yolun başıdır.", "author": "Abdullah bin Mürteiş", "pd": true },
+    { "text": "Sabır, sıdk ve safâ; kalbin yapraklarıdır.", "author": "Alâüddevle Semnânî", "pd": true },
+    { "text": "Aklın atacağı son adım, kendi aczini anlamasıdır.", "author": "anonim", "pd": false }
+  ]
+}

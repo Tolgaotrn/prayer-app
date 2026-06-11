@@ -88,8 +88,7 @@ export default function HomeHub() {
             <Text style={[styles.headerDate, { color: tc.muted }]}>{dateStr}</Text>
           </View>
           <Pressable
-            onPress={() => { if (!prayer.resolved) { haptic.select(); router.push('/location-setup'); } }}
-            disabled={prayer.resolved}
+            onPress={() => { haptic.select(); router.push('/location-setup'); }}
             style={[styles.cityChip, { backgroundColor: tc.raisedBg }]}
             accessibilityRole="button"
             accessibilityLabel={prayer.resolved ? prayer.city : 'Set location'}

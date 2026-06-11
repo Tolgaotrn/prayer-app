@@ -231,10 +231,19 @@ export default function Profile() {
               tc={tc}
               onPress={() => {
                 haptic.select();
-                const url = Platform.OS === 'ios'
-                  ? 'itms-apps://itunes.apple.com/app/id6746878697?action=write-review'
+                const appId = '6746878697';
+                // Önce native mağaza şeması; açılmazsa https fallback (iOS bunu da
+                // App Store uygulamasına yönlendirir). Eski itunes.apple.com host'u
+                // artık boş dönüyordu → apps.apple.com kullan.
+                const primary = Platform.OS === 'ios'
+                  ? `itms-apps://apps.apple.com/app/id${appId}?action=write-review`
                   : 'market://details?id=com.tolgaoturan.huda';
-                Linking.openURL(url).catch(() => {});
+                const fallback = Platform.OS === 'ios'
+                  ? `https://apps.apple.com/app/id${appId}?action=write-review`
+                  : 'https://play.google.com/store/apps/details?id=com.tolgaoturan.huda';
+                Linking.openURL(primary).catch(() =>
+                  Linking.openURL(fallback).catch(() => {}),
+                );
               }}
             />
             <Divider tc={tc} />

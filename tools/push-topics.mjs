@@ -17,7 +17,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 const SUPABASE_URL     = 'https://hvxrsscrsqdbfewpmfhl.supabase.co';
-const SUPABASE_SERVICE  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2eHJzc2Nyc3FkYmZld3BtZmhsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDE1MjY1OSwiZXhwIjoyMDk1NzI4NjU5fQ.MQ_aQEeB0LorHRq180K5nnXk8REyNJoSx_JVi-iDjP8';
+const SUPABASE_SERVICE  = process.env.SUPABASE_SERVICE_ROLE;
+if (!SUPABASE_SERVICE) { console.error('✗ SUPABASE_SERVICE_ROLE env gerekli'); process.exit(1); }
 
 const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE, { auth: { persistSession: false } });
 

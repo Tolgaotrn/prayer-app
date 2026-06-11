@@ -213,6 +213,34 @@ async function buildFeed(
   const specificTopics = topics.filter(t => TOPIC_TAG_MAP[t]);
   const dbTags = specificTopics.map(t => TOPIC_TAG_MAP[t]);
 
+  // ── General → Reflections (özlü/manevi sözler) ile DEĞİŞTİR ──
+  // Saf General (General veya topic yok) iken: o dilde yeterli reflection
+  // varsa General SADECE bunları gösterir. Yoksa graceful → klasik karışıma düşer.
+  if (hasGeneral && topics.filter(t => t !== 'Favorites').length <= 1) {
+    const reflLang = arabicOnly ? 'ar' : lang;
+    const { data, error } = await supabase
+      .from('reflections')
+      .select('id, text')
+      .eq('language', reflLang)
+      .limit(300);
+    if (error) ok = false;
+    const refl: FeedItem[] = (data ?? [])
+      .map((r: any) => {
+        const txt = r.text ?? '';
+        return {
+          id: r.id, kind: 'quote' as const,
+          arabic: arabicOnly ? txt : '',
+          translation: arabicOnly ? '' : txt,
+          reference: '', topics: ['Reflections'],
+        };
+      })
+      .filter((r) => (arabicOnly ? r.arabic : r.translation));
+    if (refl.length >= 8) {
+      return { items: shuffle(refl).slice(0, limit), ok };
+    }
+    // yetersiz reflection → aşağıdaki klasik General karışımına düş
+  }
+
   const promises: PromiseLike<void>[] = [];
   const results: FeedItem[] = [];
 
@@ -490,7 +518,10 @@ async function buildFeed(
     );
   }
 
-  await Promise.all(promises);
+  // allSettled: tek bir sorgunun reddedilmesi (ağ hatası) tüm feed'i düşürmesin.
+  // Reddedilen sorgu → ok=false (kısmi sonuç cache'lenmez), ama eldeki sonuçlar korunur.
+  const settled = await Promise.allSettled(promises);
+  if (settled.some(s => s.status === 'rejected')) ok = false;
 
   // Strict dil kuralı — TÜM diller: seçili dilde metni olmayan içerik akmaz.
   // Arapça → arabic alanı dolu olmalı (quote vb. dışlanır).

@@ -111,8 +111,9 @@ export default function DhikrScreen() {
       } else {
         pushShared(dhikrs[idx], count, rounds);
       }
+      // dhikrs deps'te: custom dhikr eklendikten sonra findIndex güncel listede arar
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [dhikrs]),
   );
 
   const selectDhikr = (i: number) => {

@@ -69,10 +69,15 @@ async function loadNotifPool(minCount: number): Promise<NotifContent[]> {
   const lang       = resolveLang(rawLang);
   const app        = useAppStore.getState();
 
+  // Bildirimler DAİMA SADECE General (reflections) içeriğinden gelir —
+  // kullanıcının takip ettiği diğer konulardan bağımsız. ['General'] feed'i
+  // buildFeed'de reflection havuzuna düşer.
+  const NOTIF_TOPICS = ['General'];
+
   let items = await fetchFeedItems(
     lang,
     Math.max(minCount, 30),
-    app.followedTopics,
+    NOTIF_TOPICS,
     app.isPremium,
     app.savedVerseIds,
     false,
@@ -81,7 +86,7 @@ async function loadNotifPool(minCount: number): Promise<NotifContent[]> {
 
   // DB + cache boşsa (internet yok, ilk açılış) → çevrimdışı varsayılan içerik.
   // Böylece bildirimler her dilde offline da seçili dilde çalışır.
-  if (items.length === 0) items = getOfflineFeedItems(lang, arabicOnly, app.followedTopics);
+  if (items.length === 0) items = getOfflineFeedItems(lang, arabicOnly, NOTIF_TOPICS);
 
   const pool: NotifContent[] = [];
   for (const it of items) {

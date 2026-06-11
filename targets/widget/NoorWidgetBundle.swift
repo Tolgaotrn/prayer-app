@@ -15,6 +15,7 @@ struct HudaWidgetBundle: WidgetBundle {
         HudaWeatherWidget()
         HudaStreakWidget()
         HudaDhikrWidget()
+        HudaVerseLockWidget()
     }
 }
 
@@ -150,5 +151,20 @@ struct HudaDhikrWidget: Widget {
         }
         .configurationDisplayName("Dhikr Counter")
         .supportedFamilies([.systemSmall])
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 10 · Verse of the Day — kilit ekranı, arka plansız (accessory)
+// ─────────────────────────────────────────────────────────────────
+
+struct HudaVerseLockWidget: Widget {
+    let kind = "HudaVerseLock"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: HudaProvider()) { entry in
+            VerseLockView(entry: entry)
+        }
+        .configurationDisplayName("Verse of the Day")
+        .supportedFamilies([.accessoryRectangular, .accessoryInline])
     }
 }

@@ -70,6 +70,12 @@ export function useConfigureRevenueCat() {
         };
 
         Purchases.addCustomerInfoUpdateListener(listener);
+        // Cleanup configure() resolve olmadan çalıştıysa (hızlı unmount) listener
+        // hiç temizlenmezdi → leak. Burada anında geri al.
+        if (!mounted) {
+          Purchases.removeCustomerInfoUpdateListener(listener);
+          return undefined;
+        }
         return () => Purchases.removeCustomerInfoUpdateListener(listener);
       } catch (error) {
         console.warn('RevenueCat configure failed', error);

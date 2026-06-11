@@ -160,8 +160,8 @@ export async function syncWidget(opts: {
     city,
     prayers,
     tomorrowFajr:  tomorrowFajrOut,
-    streakDays:    opts.streakDays,
-    themeImageURL: opts.themeImageURL ?? null,
+    streakDays:    opts.streakDays ?? 0,
+    themeImageURL: opts.themeImageURL || null,
     // Widget içerik tercihleri — Swift Provider 'auto' dışındaki seçimi
     // ilgili feed item'ına göre göstermeli (rebuild gerekir).
     homeContent:   opts.homeContent ?? 'auto',
