@@ -124,7 +124,17 @@ export default function RootLayout() {
       {POSTHOG_KEY && Platform.OS !== 'web' ? (
         <PostHogProvider
           apiKey={POSTHOG_KEY}
-          options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}
+          options={{
+            host: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+            captureAppLifecycleEvents: true, // app açıldı/güncellendi (PII yok)
+          }}
+          // Privacy-temiz autocapture: sadece ekran ADI.
+          // captureTouches=false → dokunulan metin/içerik yakalanmaz (PII yok),
+          // event listesi de temiz kalır. Session replay yok, tracking yok.
+          autocapture={{
+            captureScreens: true,
+            captureTouches: false,
+          }}
         >
           {tree}
         </PostHogProvider>

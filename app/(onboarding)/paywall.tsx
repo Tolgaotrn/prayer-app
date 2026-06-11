@@ -96,6 +96,18 @@ export default function Paywall() {
     } else {
       posthog?.capture('premium_purchase_skipped');
     }
+    // Anonim super property'ler — TÜM sonraki event'lere eklenir. PII yok:
+    // sadece kaynak + dil (kimlik değil). identify() kullanmıyoruz → privacy
+    // manifest'iyle (NSPrivacyTracking=false, kimliğe bağlı veri yok) çelişmez.
+    const ob = useOnboardingStore.getState();
+    posthog?.register({
+      signup_source: ob.attribution ?? 'unknown',
+      app_language: ob.language ?? 'unknown',
+    });
+    posthog?.capture('onboarding_completed', {
+      signup_source: ob.attribution ?? 'unknown',
+      premium,
+    });
     complete();
     router.replace('/(tabs)/feed');
   };
