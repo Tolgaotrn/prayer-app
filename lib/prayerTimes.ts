@@ -163,7 +163,19 @@ export function countdownStr(from: Date, to: Date): string {
   return `${h}h ${m}m`;
 }
 
-type StoredLoc = { latitude: number; longitude: number; city: string; countryCode?: string | null; resolved?: boolean };
+type StoredLoc = { latitude: number; longitude: number; city: string; countryCode?: string | null; resolved?: boolean; manual?: boolean };
+
+// ── Konum değişimi pub/sub ──────────────────────────────────────────
+// usePrayerTimes mount'ta bir kez çözüyor; manuel şehir seçimi sonrası
+// (hook zaten mount'tayken) yeniden okuması için sinyal gerekir.
+const _locListeners = new Set<() => void>();
+function notifyLocationChange(): void {
+  _locListeners.forEach((cb) => { try { cb(); } catch { /* yoksay */ } });
+}
+export function subscribeLocation(cb: () => void): () => void {
+  _locListeners.add(cb);
+  return () => { _locListeners.delete(cb); };
+}
 
 async function readCachedLocation(): Promise<StoredLoc | null> {
   try {
@@ -200,13 +212,17 @@ export async function getLocationPermissionStatus(): Promise<'granted' | 'denied
 export async function enableDeviceLocation(): Promise<boolean> {
   const { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== 'granted') return false;
-  await resolveLocation(); // konumu çözüp cache'ler
+  await resolveLocation({ ignoreManual: true }); // GPS'i manuel seçimin önüne al
+  notifyLocationChange();
   return true;
 }
 
-/** Kullanıcının seçtiği şehri manuel konum olarak kaydet. */
+/** Kullanıcının seçtiği şehri manuel konum olarak kaydet.
+ *  manual:true → resolveLocation bunu GPS ile EZMEZ (kullanıcı bilerek seçti). */
 export async function setManualLocation(loc: StoredLoc): Promise<void> {
-  await writeCachedLocation(loc);
+  await writeCachedLocation({ ...loc, resolved: true, manual: true });
+  _lastCountryCode = loc.countryCode ?? _lastCountryCode;
+  notifyLocationChange();
 }
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -223,7 +239,7 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
  * En güncel konumu çözer (izin → currentPosition → lastKnown → cache → fallback).
  * Widget senkronu da bunu kullanabilsin diye hook dışında da export edilir.
  */
-export async function resolveLocation(): Promise<StoredLoc> {
+export async function resolveLocation(opts?: { ignoreManual?: boolean }): Promise<StoredLoc> {
   // 1) Önce cache (anında bir değer dönsün diye çağıran taraf zaten cache okur,
   //    ama burada da güvenli taban olarak kullanılır)
   const cached = await readCachedLocation();
@@ -231,6 +247,9 @@ export async function resolveLocation(): Promise<StoredLoc> {
   // cache gerçek bir konumdur → resolved:true. Sadece FALLBACK resolved:false.
   const cachedOr = (): StoredLoc =>
     cached ? { ...cached, resolved: true } : { ...FALLBACK, resolved: false };
+
+  // Manuel seçilmiş şehir GPS ile ezilmez (enableDeviceLocation hariç).
+  if (cached?.manual && !opts?.ignoreManual) return { ...cached, resolved: true };
   try {
     // İzni SADECE kontrol et — istek (dialog) burada açılmamalı. İzin kullanıcı
     // aksiyonuyla (location-setup ekranı) alınır. Aksi halde widget sync / feed
@@ -304,6 +323,18 @@ export function usePrayerTimes(): PrayerInfo {
 
   // Ayar (hesaplama metodu) değişimine abone ol
   React.useEffect(() => subscribePrayerSettings(() => setSettingsV((v) => v + 1)), []);
+
+  // Konum değişimine abone ol — manuel şehir seçimi sonrası cache'i yeniden oku.
+  // (mount effect tekrar çalışmadığından, sinyal olmadan eski şehir kalırdı.)
+  React.useEffect(() => subscribeLocation(() => {
+    (async () => {
+      const cached = await readCachedLocation();
+      if (cached) {
+        setCoords({ ...cached, resolved: true });
+        if (cached.countryCode) _lastCountryCode = cached.countryCode;
+      }
+    })();
+  }), []);
 
   // Her 30 sn geri sayımı/ilerlemeyi güncelle
   React.useEffect(() => {
