@@ -479,12 +479,14 @@ function FeedSlide({
           )
         )}
 
-        {/* Referans */}
-        <View style={styles.refRow}>
-          <RefLine active={active} />
-          <Text style={styles.reference}>{item.reference}</Text>
-          <RefLine active={active} />
-        </View>
+        {/* Referans — author/kaynak yoksa (ör. Daily Wisdom) çizgileri gösterme */}
+        {item.reference?.trim() ? (
+          <View style={styles.refRow}>
+            <RefLine active={active} />
+            <Text style={styles.reference}>{item.reference}</Text>
+            <RefLine active={active} />
+          </View>
+        ) : null}
       </View>
     </View>
     </GestureDetector>
