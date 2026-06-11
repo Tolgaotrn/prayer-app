@@ -311,7 +311,12 @@ export function resolveWidgetBgURL(
 ): string | undefined {
   if (widgetThemeId === 0) return undefined; // minimal — düz gradient
   const id = widgetThemeId ?? appThemeId;
-  return backgroundThemes.find((t) => t.id === id)?.image.uri;
+  // Geçersiz/seçilmemiş tema (ör. ilk açılış, selectedTheme undefined) →
+  // Sunset Arch (DEFAULT_THEME_ID) varsayılanına düş, beyaz/boş kalmasın.
+  return (
+    backgroundThemes.find((t) => t.id === id) ??
+    backgroundThemes.find((t) => t.id === DEFAULT_THEME_ID)
+  )?.image.uri;
 }
 
 export function getTheme(id: number): BackgroundTheme {

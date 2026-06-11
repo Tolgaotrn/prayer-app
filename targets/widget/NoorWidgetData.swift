@@ -204,6 +204,14 @@ struct HudaWidgetData: Codable {
         return feedItems[idx]
     }
 
+    // Günün ayeti — tarihe bağlı deterministik seçim. Her gün farklı, gün içinde sabit.
+    // Kilit ekranı widget'ı bunu kullanır (feedIndex'ten bağımsız, ←→ navigasyonu etkilemez).
+    func verseOfTheDay(on date: Date) -> FeedItemData {
+        guard !feedItems.isEmpty else { return HudaWidgetData.placeholder.feedItems[0] }
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
+        return feedItems[day % feedItems.count]
+    }
+
     func nextPrayer(after date: Date) -> PrayerEntryData? {
         let now      = date.timeIntervalSince1970
         let upcoming = prayers.filter { $0.epoch > now }.sorted { $0.epoch < $1.epoch }

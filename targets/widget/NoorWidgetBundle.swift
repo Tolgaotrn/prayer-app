@@ -75,7 +75,7 @@ struct HudaNextPrayerWidget: Widget {
             NextPrayerSmallView(entry: entry)
         }
         .configurationDisplayName("Next Prayer")
-        .supportedFamilies([.systemSmall, .accessoryInline, .accessoryCircular, .accessoryRectangular])
+        .supportedFamilies([.systemSmall])
     }
 }
 

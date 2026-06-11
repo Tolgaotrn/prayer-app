@@ -811,28 +811,22 @@ struct AccessoryPrayerRectangular: View {
 struct AccessoryVerseRectangular: View {
     var entry: HudaEntry
     var body: some View {
-        let item = entry.data.currentFeedItem()
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 4) {
-                Image(systemName: "book.fill").font(.system(size: 10))
-                Text(item.meta.isEmpty ? "Verse of the Day" : item.meta)
-                    .font(.system(size: 11, weight: .bold))
-                    .lineLimit(1)
-            }
-            Text(item.text)
-                .font(.system(size: 13, weight: .medium))
-                .lineLimit(3)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        let item = entry.data.verseOfTheDay(on: entry.date)
+        // Sadece sözün kendisi — ikon yok, başlık yok, referans yok.
+        Text(item.text)
+            .font(.system(size: 14, weight: .medium))
+            .lineLimit(4)
+            .minimumScaleFactor(0.6)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 }
 
 struct AccessoryVerseInline: View {
     var entry: HudaEntry
     var body: some View {
-        let item = entry.data.currentFeedItem()
-        Label(item.text, systemImage: "book.fill")
+        let item = entry.data.verseOfTheDay(on: entry.date)
+        // Inline: sadece metin, ikon yok.
+        Text(item.text)
             .lineLimit(1)
     }
 }
