@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Huda',
   slug: 'noor',
-  version: '1.0.3',
+  version: '1.0.4',
   orientation: 'portrait',
   scheme: 'huda',
   icon: './assets/icons/icon.png',
