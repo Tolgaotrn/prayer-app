@@ -16,6 +16,7 @@ import { fonts, radii } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
+import { nextOnboardingRoute } from '../../lib/onboardingFlow';
 
 export default function NameScreen() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function NameScreen() {
   const onContinue = () => {
     Keyboard.dismiss();
     useOnboardingStore.getState().set('name', name.trim());
-    router.push('/(onboarding)/age');
+    router.push(nextOnboardingRoute('name', useOnboardingStore.getState().flowVariant));
   };
 
   return (

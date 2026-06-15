@@ -8,11 +8,18 @@ import { GlowArch } from '../../components/anim/GlowArch';
 import { fonts, spacing } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
+import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { nextOnboardingRoute } from '../../lib/onboardingFlow';
 
 export default function FaithIntro() {
   const router = useRouter();
   const tc = useThemeColors();
+  const variant = useOnboardingStore((s) => s.flowVariant);
   useOnboardingTracking('faith_intro');
+  // Kısa akışta faith-intro'dan sonra soru ekranı yok → alt yazıyı uyarla.
+  const subtitle = variant === 'short'
+    ? 'A moment to center your heart before we begin.'
+    : 'A few gentle questions help us shape a path that meets you where you are.';
   return (
     <ScreenContainer
       backgroundImage={require('../../assets/themes/serene-arch.jpg')}
@@ -26,11 +33,11 @@ export default function FaithIntro() {
           Let's talk about your faith journey
         </Animated.Text>
         <Animated.Text entering={FadeInDown.delay(420)} style={[styles.subtitle, { color: tc.muted }]}>
-          A few gentle questions help us shape a path that meets you where you are.
+          {subtitle}
         </Animated.Text>
       </View>
       <View style={styles.footer}>
-        <GoldButton label="Continue" onPress={() => router.push('/(onboarding)/intention')} />
+        <GoldButton label="Continue" onPress={() => router.push(nextOnboardingRoute('faith-intro', useOnboardingStore.getState().flowVariant))} />
       </View>
     </ScreenContainer>
   );

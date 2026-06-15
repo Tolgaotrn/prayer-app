@@ -4,24 +4,43 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { LinearGradient } from 'expo-linear-gradient';
-import { usePostHog } from 'posthog-react-native';
+import { usePostHog, useFeatureFlag } from 'posthog-react-native';
 import { colors, fonts, spacing } from '../../constants/theme';
 import { PRIVACY_URL, TERMS_URL } from '../../constants/legal';
+import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { firstOnboardingRoute, type FlowVariant } from '../../lib/onboardingFlow';
 
 const WELCOME_VIDEO_URL =
   'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0532.mp4';
 
 const { width, height } = Dimensions.get('window');
 
+// 🧪 TEST: A/B akışını elle denemek için 'short' veya 'control' yaz.
+// Canlıya çıkmadan ÖNCE mutlaka null'a geri al → flag devreye girsin.
+const FORCE_VARIANT: FlowVariant | null = null;
+
 export default function Welcome() {
   const router = useRouter();
   const posthog = usePostHog();
   const [btnVisible, setBtnVisible] = React.useState(false);
 
-  // Track onboarding start
+  // A/B test: onboarding-short flag → kısa akış. 'test' variant = short.
+  const flag = useFeatureFlag('onboarding-short');
+  const variant: FlowVariant =
+    FORCE_VARIANT ?? (flag === 'test' || flag === true ? 'short' : 'control');
+
+  // Variant'ı store'a yaz → sonraki ekranlar (name, faith-intro) buradan okur.
+  React.useEffect(() => {
+    useOnboardingStore.getState().set('flowVariant', variant);
+  }, [variant]);
+
+  // Track onboarding start + atanan variant (analiz için).
   React.useEffect(() => {
     posthog?.capture('onboarding_started');
   }, [posthog]);
+  React.useEffect(() => {
+    posthog?.capture('onboarding_variant_assigned', { variant });
+  }, [posthog, variant]);
 
   // Show button after 2.5 seconds
   React.useEffect(() => {
@@ -66,7 +85,7 @@ export default function Welcome() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Begin Your Journey"
-              onPress={() => router.push('/(onboarding)/attribution')}
+              onPress={() => router.push(firstOnboardingRoute(variant))}
               style={({ pressed }) => [styles.btn, pressed && { opacity: 0.88 }]}
             >
               <Text style={styles.btnText}>Begin Your Journey</Text>

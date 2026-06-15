@@ -19,6 +19,8 @@ interface OnboardingState {
   selectedTheme: number;
   attribution: string;
   isCompleted: boolean;
+  /** A/B test: 'control' = tam 14 ekran, 'short' = soru ekranları atlanır. */
+  flowVariant: 'control' | 'short';
 }
 
 interface OnboardingActions {
@@ -48,6 +50,7 @@ const initial: OnboardingState = {
   selectedTheme: 2, // Sunset Arch (free) — Midnight Crescent kaldırıldı
   attribution: '',
   isCompleted: false,
+  flowVariant: 'control',
 };
 
 export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
