@@ -7,6 +7,7 @@ import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { IconGridCard } from '../../components/ui/IconGridCard';
 import { colors, spacing } from '../../constants/theme';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 const ITEMS: { icon: keyof typeof Ionicons.glyphMap; title: string; subtitle: string }[] = [
   { icon: 'book', title: 'Quran Verses', subtitle: 'Daily ayat' },
@@ -19,6 +20,7 @@ const ITEMS: { icon: keyof typeof Ionicons.glyphMap; title: string; subtitle: st
 
 export default function ContentSelect() {
   const router = useRouter();
+  useOnboardingTracking('content_select');
   const selected = useOnboardingStore((s) => s.contentTypes);
   const toggle = useOnboardingStore((s) => s.toggleArrayItem);
 

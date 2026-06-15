@@ -16,12 +16,14 @@ import { useT } from '../lib/i18n';
 import { haptic } from '../lib/haptics';
 import { clearContentCache } from '../lib/contentDb';
 import { rescheduleForLanguageChange } from '../lib/notifications';
-import { applyRTL } from '../lib/rtl';
+import { applyRTL, isRTLLanguage } from '../lib/rtl';
 import * as Updates from 'expo-updates';
 
 const LANGS = [
   { flag: '🇬🇧', label: 'English' },
   { flag: '🇹🇷', label: 'Turkish' },
+  { flag: '🇩🇪', label: 'German' },
+  { flag: '🇵🇰', label: 'Urdu' },
   { flag: '🇫🇷', label: 'French' },
   { flag: '🇮🇩', label: 'Indonesian' },
   { flag: '🇸🇦', label: 'Arabic' },
@@ -62,16 +64,16 @@ export default function LanguageSettings() {
 
         <View style={{ marginTop: spacing.md }}>
           <GoldButton
-            label="Save Language"
+            label={t('lang.save')}
             onPress={async () => {
               haptic.success();
               await clearContentCache();
               set('language', selected);
               rescheduleForLanguageChange();
 
-              // RTL değişimi: Arapça ↔ diğer diller arasında geçişte
-              // I18nManager'ı güncelle ve uygulamayı yeniden yükle.
-              const rtlChanged = applyRTL(selected === 'Arabic');
+              // RTL değişimi: RTL diller (Arapça/Urduca) ↔ diğer diller arasında
+              // geçişte I18nManager'ı güncelle ve uygulamayı yeniden yükle.
+              const rtlChanged = applyRTL(isRTLLanguage(selected));
               if (rtlChanged) {
                 // Kısa gecikme: store'a yazılma fırsatı tanı
                 await new Promise((r) => setTimeout(r, 80));

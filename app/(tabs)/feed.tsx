@@ -27,6 +27,7 @@ import { ArabicText } from '../../components/arabic/ArabicText';
 import { StreakWidget } from '../../components/ui/StreakWidget';
 import { colors, fonts, radii, spacing } from '../../constants/theme';
 import { getTheme } from '../../data/themes';
+import { localThemeSource } from '../../data/themeAssets';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
@@ -39,6 +40,16 @@ import { getLocationPermissionStatus, hasStoredLocation } from '../../lib/prayer
 import { LOCATION_PROMPTED_KEY } from '../location-setup';
 
 const { height: SCREEN_H, width: SCREEN_W } = Dimensions.get('window');
+
+/* ── Free kullanıcı upsell slide'ı ──
+   Her ~9 kartta bir gerçek bir premium içeriğin blur'lu önizlemesi + CTA.
+   Feed sonunda end-card varyantı ("ücretsiz içeriğin sonu"). */
+type UpsellItem = { id: string; upsell: true; teaser: FeedItem | null; endCard?: boolean };
+type Slide = FeedItem | UpsellItem;
+const UPSELL_EVERY = 9;
+function isUpsell(s: Slide): s is UpsellItem {
+  return (s as UpsellItem).upsell === true;
+}
 
 export default function Feed() {
   const router  = useRouter();
@@ -136,8 +147,23 @@ export default function Feed() {
     return () => { cancelled = true; };
   }, []);
 
-  const activeItem = items[activeIndex] ?? items[0];
-  const isSaved    = activeItem ? savedIds.includes(activeItem.id) : false;
+  // Free kullanıcıda araya upsell kartları serpilir; premium'da feed olduğu gibi.
+  const slides = React.useMemo<Slide[]>(() => {
+    if (isPremium || items.length === 0) return items;
+    const out: Slide[] = [];
+    items.forEach((it, i) => {
+      out.push(it);
+      if ((i + 1) % UPSELL_EVERY === 0 && i < items.length - 1) {
+        out.push({ id: `upsell-${i}`, upsell: true, teaser: items[(i + 3) % items.length] });
+      }
+    });
+    out.push({ id: 'upsell-end', upsell: true, teaser: null, endCard: true });
+    return out;
+  }, [items, isPremium]);
+
+  const activeSlide = slides[activeIndex] ?? slides[0];
+  const activeItem  = activeSlide && !isUpsell(activeSlide) ? activeSlide : null;
+  const isSaved     = activeItem ? savedIds.includes(activeItem.id) : false;
 
   const onViewable = React.useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const first = viewableItems[0];
@@ -169,18 +195,30 @@ export default function Feed() {
   }, [savedIds, likeItem]);
 
   const renderItem = React.useCallback(
-    ({ item, index }: { item: FeedItem; index: number }) => (
-      <FeedSlide
-        item={item}
-        active={index === activeIndex}
-        image={theme.image}
-        gradient={theme.gradient}
-        video={theme.video}
-        showArabic={showArabic}
-        onDoubleLike={onDoubleLike}
-      />
+    ({ item, index }: { item: Slide; index: number }) => (
+      isUpsell(item) ? (
+        <UpsellSlide
+          teaser={item.teaser}
+          endCard={item.endCard}
+          image={theme.image}
+          gradient={theme.gradient}
+          video={theme.video}
+          t={t}
+          onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall?source=feed_interstitial'); }}
+        />
+      ) : (
+        <FeedSlide
+          item={item}
+          active={index === activeIndex}
+          image={theme.image}
+          gradient={theme.gradient}
+          video={theme.video}
+          showArabic={showArabic}
+          onDoubleLike={onDoubleLike}
+        />
+      )
     ),
-    [activeIndex, theme.image, theme.gradient, theme.video, showArabic, onDoubleLike],
+    [activeIndex, theme.image, theme.gradient, theme.video, showArabic, onDoubleLike, t, router],
   );
 
   const onShare = () => {
@@ -269,7 +307,7 @@ export default function Feed() {
         />
       )}
       <FlatList
-        data={items}
+        data={slides}
         keyExtractor={(v) => v.id}
         renderItem={renderItem}
         pagingEnabled
@@ -287,7 +325,7 @@ export default function Feed() {
           <CircleButton icon="notifications-outline" onPress={() => { haptic.light(); router.push('/notifications-settings'); }} label={t('feed.notifications')} />
           {/* Premium kullanıcıda crown gizlenir — zaten premium olana paywall önermenin anlamı yok. */}
           {!isPremium && (
-            <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }} label={t('feed.premium')} gold />
+            <CircleButton icon="crown-outline" onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall?source=feed_crown'); }} label={t('feed.premium')} gold />
           )}
         </View>
       </View>
@@ -417,7 +455,7 @@ function FeedSlide({
       {/* Image sadece video tema değilse gösterilir */}
       {!video && (
         <Image
-          source={image}
+          source={localThemeSource(image)}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={250}
@@ -465,7 +503,7 @@ function FeedSlide({
               adjustsFontSizeToFit
               minimumFontScale={0.55}
             >
-              "{item.translation}"
+              {item.translation}
             </Animated.Text>
           ) : (
             <Text
@@ -474,7 +512,7 @@ function FeedSlide({
               adjustsFontSizeToFit
               minimumFontScale={0.55}
             >
-              "{item.translation}"
+              {item.translation}
             </Text>
           )
         )}
@@ -490,6 +528,63 @@ function FeedSlide({
       </View>
     </View>
     </GestureDetector>
+  );
+}
+
+/* ── Upsell slide — blur'lu premium önizleme + paywall CTA ── */
+function UpsellSlide({
+  teaser, endCard, image, gradient, video, t, onPress,
+}: {
+  teaser: FeedItem | null;
+  endCard?: boolean;
+  image: { uri: string };
+  gradient: readonly [string, string, ...string[]];
+  video?: { uri: string };
+  t: ReturnType<typeof useT>;
+  onPress: () => void;
+}) {
+  return (
+    <View style={styles.slide}>
+      {!video && <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />}
+      {!video && (
+        <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} cachePolicy="memory-disk" />
+      )}
+      <LinearGradient
+        colors={['rgba(7,10,20,0.55)', 'rgba(7,10,20,0.35)', 'rgba(7,10,20,0.65)', 'rgba(7,10,20,0.94)']}
+        locations={[0, 0.35, 0.62, 1]}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <View style={styles.slideContent}>
+        {/* Gerçek premium içeriğin blur'lu önizlemesi */}
+        {teaser && !endCard ? (
+          <View style={styles.upsellPreview}>
+            <Text style={[styles.translation, styles.translationLarge]} numberOfLines={5}>
+              {teaser.translation || teaser.arabic}
+            </Text>
+            <BlurView intensity={28} tint="dark" style={StyleSheet.absoluteFill} />
+          </View>
+        ) : null}
+
+        <View style={styles.upsellLock}>
+          <Ionicons name="lock-closed" size={26} color={colors.gold.bright} />
+        </View>
+        <Text style={styles.upsellTitle}>
+          {endCard ? t('upsell.end') : t('upsell.title')}
+        </Text>
+        <Text style={styles.upsellSub}>{t('upsell.sub')}</Text>
+
+        <Pressable
+          onPress={onPress}
+          accessibilityRole="button"
+          accessibilityLabel={t('upsell.cta')}
+          style={styles.upsellBtn}
+        >
+          <Ionicons name="sparkles" size={16} color={colors.bg.midnight} />
+          <Text style={styles.upsellBtnText}>{t('upsell.cta')}</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
@@ -602,6 +697,35 @@ const styles = StyleSheet.create({
     gap: spacing.sm, marginTop: spacing.xl,
   },
   refLine: { width: 28, height: 1, backgroundColor: 'rgba(212,175,55,0.5)' },
+
+  upsellPreview: {
+    width: '100%', borderRadius: radii.lg, overflow: 'hidden',
+    paddingVertical: spacing.lg, paddingHorizontal: spacing.md,
+    marginBottom: spacing.xl,
+  },
+  upsellLock: {
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: 'rgba(212,175,55,0.18)',
+    borderWidth: 1, borderColor: 'rgba(212,175,55,0.5)',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  upsellTitle: {
+    fontFamily: fonts.serifBold, fontSize: 24, lineHeight: 34,
+    color: colors.text.heading, textAlign: 'center',
+  },
+  upsellSub: {
+    fontFamily: fonts.sans, fontSize: 14, lineHeight: 20,
+    color: 'rgba(245,240,225,0.8)', textAlign: 'center',
+    marginTop: spacing.sm, maxWidth: 300,
+  },
+  upsellBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: colors.gold.primary,
+    paddingHorizontal: spacing.xl, paddingVertical: 14,
+    borderRadius: radii.pill, marginTop: spacing.xl,
+  },
+  upsellBtnText: { fontFamily: fonts.sansBold, fontSize: 15, color: colors.bg.midnight },
 
   heartBurst: {
     position: 'absolute',

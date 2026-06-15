@@ -23,7 +23,7 @@ import { fonts, radii, spacing } from '../constants/theme';
 import { useThemeColors } from '../lib/useThemeColors';
 import { useT, useLocaleTag } from '../lib/i18n';
 import { usePrayerTimes } from '../lib/prayerTimes';
-import { useWeather } from '../lib/weather';
+import { useWeather, weatherLabelKey } from '../lib/weather';
 import { gregorianToHijri, formatHijri } from '../lib/hijri';
 import {
   getSettingsSnapshot, savePrayerSettings, subscribePrayerSettings,
@@ -140,7 +140,7 @@ export default function PrayerTimesScreen() {
               {weather && (
                 <Animated.View entering={FadeIn.duration(400)} style={styles.heroChip}>
                   <Ionicons name={weather.icon} size={14} color="#FFFFFF" />
-                  <Text style={styles.heroChipText}>{weather.tempC}°  ·  {weather.label}</Text>
+                  <Text style={styles.heroChipText}>{weather.tempC}°  ·  {t(weatherLabelKey(weather.code, weather.isDay))}</Text>
                 </Animated.View>
               )}
             </View>

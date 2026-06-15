@@ -13,6 +13,8 @@ import { clearContentCache } from '../../lib/contentDb';
 const LANGS = [
   { flag: '🇬🇧', label: 'English', recommended: true },
   { flag: '🇹🇷', label: 'Turkish' },
+  { flag: '🇩🇪', label: 'German' },
+  { flag: '🇵🇰', label: 'Urdu' },
   { flag: '🇫🇷', label: 'French' },
   { flag: '🇮🇩', label: 'Indonesian' },
   { flag: '🇸🇦', label: 'Arabic' },

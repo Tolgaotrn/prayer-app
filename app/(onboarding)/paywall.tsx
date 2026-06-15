@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePostHog } from 'posthog-react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { GoldButton } from '../../components/ui/GoldButton';
@@ -18,6 +18,7 @@ import {
   restoreRevenueCatPurchases,
   type PurchasesPackage,
 } from '../../lib/revenueCat';
+import { scheduleTrialEndReminder } from '../../lib/notifications';
 
 // ─── Fiyat fallback'leri — StoreKit/RevenueCat yüklenene kadar gösterilir ────
 // Gerçek fiyat & trial DAİMA selectedPackage.product'tan okunur (Apple uyumu).
@@ -72,29 +73,42 @@ export default function Paywall() {
   const router = useRouter();
   const posthog = usePostHog();
   const tc = useThemeColors();
+  // Paywall'a hangi noktadan gelindi — funnel analizi için (default: onboarding akışı)
+  const { source } = useLocalSearchParams<{ source?: string }>();
+  const src = typeof source === 'string' && source ? source : 'onboarding';
   const complete = useOnboardingStore((s) => s.complete);
   const applyRevenueCatPremium = useAppStore((s) => s.applyRevenueCatPremium);
-  const [plan, setPlan] = React.useState<Plan>('monthly');
+  // Annual default — trial + en iyi fiyat kombinasyonu en yüksek dönüşümü verir
+  const [plan, setPlan] = React.useState<Plan>('annual');
   const [packages, setPackages] = React.useState<PurchasesPackage[]>([]);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
+  // X butonu 2.5 sn gecikmeli görünür — kullanıcı önce teklifi görsün
+  const [closable, setClosable] = React.useState(false);
+  const viewedAtRef = React.useRef(Date.now());
 
   useEffect(() => {
-    posthog?.capture('premium_purchase_viewed');
+    posthog?.capture('premium_purchase_viewed', { source: src });
+    viewedAtRef.current = Date.now();
+    const t = setTimeout(() => setClosable(true), 2500);
     getRevenueCatPackages()
       .then(setPackages)
       .catch((error) => console.warn('RevenueCat offerings failed', error));
-  }, [posthog]);
+    return () => clearTimeout(t);
+  }, [posthog, src]);
 
   const finish = (premium: boolean) => {
     if (premium) {
-      posthog?.capture('premium_purchase_completed', { plan });
+      posthog?.capture('premium_purchase_completed', { plan, source: src });
       // SADECE gerçek satın alma/restore başarısında yükselt. Kapatma/skip
       // (premium=false) premium'u ASLA düşürmemeli — RC ile ödeme yapmış bir
       // kullanıcı paywall'ı kapatınca premium'unu kaybetmesin. Downgrade'in tek
       // kaynağı RC listener/getCustomerInfo'dur (useConfigureRevenueCat).
       applyRevenueCatPremium(true);
     } else {
-      posthog?.capture('premium_purchase_skipped');
+      posthog?.capture('premium_purchase_skipped', {
+        source: src,
+        seconds_on_screen: Math.round((Date.now() - viewedAtRef.current) / 1000),
+      });
     }
     // Anonim super property'ler — TÜM sonraki event'lere eklenir. PII yok:
     // sadece kaynak + dil (kimlik değil). identify() kullanmıyoruz → privacy
@@ -109,6 +123,9 @@ export default function Paywall() {
       premium,
     });
     complete();
+    // Special offer tetiği ŞİMDİLİK DEVRE DIŞI (Tolga kararı 2026-06).
+    // Ekran (special-offer.tsx) ve altyapı (lib/monetization) duruyor —
+    // tekrar açmak için skip'te isOfferSeen/markOfferSeen yönlendirmesini geri ekle.
     router.replace('/(tabs)/feed');
   };
 
@@ -160,12 +177,17 @@ export default function Paywall() {
     }
     try {
       setIsPurchasing(true);
-      posthog?.capture('premium_purchase_initiated', { plan });
+      posthog?.capture('premium_purchase_initiated', { plan, source: src });
       const ok = await purchaseRevenueCatPackage(selectedPackage);
+      if (ok && trialDays > 0) {
+        posthog?.capture('trial_started', { plan, trial_days: trialDays, source: src });
+        // "Trial yarın bitiyor" yerel bildirimi — güven artırır, iptal/refund azaltır
+        scheduleTrialEndReminder(trialDays).catch(() => {});
+      }
       finish(ok);
     } catch (error: any) {
       if (!error?.userCancelled) {
-        posthog?.capture('premium_purchase_failed', { plan, error: error?.message });
+        posthog?.capture('premium_purchase_failed', { plan, error: error?.message, source: src });
         Alert.alert('Purchase failed', 'Please try again in a moment.');
       }
     } finally {
@@ -188,15 +210,18 @@ export default function Paywall() {
 
   return (
     <ScreenContainer>
-      <Pressable
-        accessibilityLabel="Close"
-        accessibilityRole="button"
-        hitSlop={12}
-        style={styles.close}
-        onPress={() => { haptic.light(); finish(false); }}
-      >
-        <Ionicons name="close" size={24} color={tc.muted} />
-      </Pressable>
+      {closable && (
+        <Animated.View entering={FadeIn.duration(400)} style={styles.close}>
+          <Pressable
+            accessibilityLabel="Close"
+            accessibilityRole="button"
+            hitSlop={12}
+            onPress={() => { haptic.light(); finish(false); }}
+          >
+            <Ionicons name="close" size={24} color={tc.muted} />
+          </Pressable>
+        </Animated.View>
+      )}
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <Animated.Text entering={FadeInDown.delay(60)} style={[styles.title, { color: tc.heading }]}>
@@ -250,6 +275,15 @@ export default function Paywall() {
       </ScrollView>
 
       <View style={styles.footer}>
+        {/* Sosyal kanıt — gerçek dışı sayı YOK, sadece yıldız + genel ifade */}
+        <View style={styles.proofRow}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Ionicons key={i} name="star" size={13} color={tc.gold} />
+          ))}
+          <Text style={[styles.proofText, { color: tc.muted }]}>
+            Loved by Muslims around the world
+          </Text>
+        </View>
         <View style={styles.plansRow}>
           <PlanCard
             tc={tc}
@@ -258,7 +292,7 @@ export default function Paywall() {
             name="Monthly"
             price={monthlyPrice}
             unit="/month"
-            onPress={() => { haptic.select(); posthog?.capture('premium_plan_selected', { plan: 'monthly' }); setPlan('monthly'); }}
+            onPress={() => { haptic.select(); posthog?.capture('premium_plan_selected', { plan: 'monthly', source: src }); setPlan('monthly'); }}
           />
           <PlanCard
             tc={tc}
@@ -268,7 +302,7 @@ export default function Paywall() {
             price={annualTotal}
             unit="/year"
             subPrice={`${annualPerMonth}/month`}
-            onPress={() => { haptic.select(); posthog?.capture('premium_plan_selected', { plan: 'annual' }); setPlan('annual'); }}
+            onPress={() => { haptic.select(); posthog?.capture('premium_plan_selected', { plan: 'annual', source: src }); setPlan('annual'); }}
           />
         </View>
 
@@ -449,6 +483,11 @@ const styles = StyleSheet.create({
   },
   badgeText: { fontFamily: fonts.sansBold, fontSize: 10, letterSpacing: 0.5 },
 
+  proofRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 3, marginBottom: spacing.sm,
+  },
+  proofText: { fontFamily: fonts.sansMedium, fontSize: 12, marginLeft: 6 },
   assure: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, marginBottom: spacing.sm },
   assureText: { fontFamily: fonts.sansSemibold, fontSize: 14 },
   subPrice: { fontFamily: fonts.sansMedium, fontSize: 14, textAlign: 'center', marginTop: spacing.sm },

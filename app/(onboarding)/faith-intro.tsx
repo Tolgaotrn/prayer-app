@@ -7,10 +7,12 @@ import { GoldButton } from '../../components/ui/GoldButton';
 import { GlowArch } from '../../components/anim/GlowArch';
 import { fonts, spacing } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 export default function FaithIntro() {
   const router = useRouter();
   const tc = useThemeColors();
+  useOnboardingTracking('faith_intro');
   return (
     <ScreenContainer
       backgroundImage={require('../../assets/themes/serene-arch.jpg')}

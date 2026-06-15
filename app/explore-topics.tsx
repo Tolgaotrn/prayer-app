@@ -12,11 +12,16 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { StreakWidget } from '../components/ui/StreakWidget';
-import { fonts, radii, spacing } from '../constants/theme';
+import { BottomSheet } from '../components/layout/BottomSheet';
+import { GoldButton } from '../components/ui/GoldButton';
+import { ArabicText } from '../components/arabic/ArabicText';
+import { colors, fonts, radii, spacing } from '../constants/theme';
 import { useThemeColors } from '../lib/useThemeColors';
 import { useT } from '../lib/i18n';
 import { useAppStore } from '../stores/useAppStore';
+import { useOnboardingStore } from '../stores/useOnboardingStore';
 import { haptic } from '../lib/haptics';
+import { fetchFeedItems, resolveLang, type FeedItem } from '../lib/contentDb';
 
 type Topic = { label: string; icon: string; labelKey: string; subKey: string; free?: boolean };
 type Section = { titleKey: string; topics: Topic[] };
@@ -78,10 +83,26 @@ export default function ExploreTopics() {
   const followedTopics    = useAppStore((s) => s.followedTopics);
   const toggleFollowTopic = useAppStore((s) => s.toggleFollowTopic);
   const streakDays        = useAppStore((s) => s.streakDays);
+  const rawLang           = useOnboardingStore((s) => s.language);
   const [query, setQuery] = useState('');
 
+  // Kilitli topic önizleme — direkt paywall yerine örnek içerikli half-sheet
+  const [previewTopic, setPreviewTopic] = useState<Topic | null>(null);
+  const [sample, setSample] = useState<FeedItem | null>(null);
+
   const onTopic = (label: string, locked: boolean) => {
-    if (locked) { haptic.medium(); router.push('/(onboarding)/paywall'); return; }
+    if (locked) {
+      haptic.medium();
+      const topic = ALL_TOPICS.find((tp) => tp.label === label) ?? null;
+      setSample(null);
+      setPreviewTopic(topic);
+      // Sheet açıkken o konudan 1 örnek içerik yükle (premium bypass — sadece tadımlık)
+      const arabicOnly = rawLang === 'Arabic';
+      fetchFeedItems(resolveLang(rawLang), 5, [label], true, [], false, arabicOnly)
+        .then((items) => setSample(items[0] ?? null))
+        .catch(() => {});
+      return;
+    }
     haptic.select();
     toggleFollowTopic(label);
   };
@@ -123,7 +144,7 @@ export default function ExploreTopics() {
           <Animated.View entering={FadeInDown.duration(380)}>
             <Pressable
               style={[styles.banner, { backgroundColor: tc.gold }]}
-              onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }}
+              onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall?source=topics_banner'); }}
               accessibilityRole="button"
             >
               <View style={{ flex: 1 }}>
@@ -269,6 +290,46 @@ export default function ExploreTopics() {
           </>
         )}
       </ScrollView>
+
+      {/* Kilitli topic önizleme sheet'i — örnek içerik + paywall CTA */}
+      {previewTopic && (
+        <BottomSheet onClose={() => setPreviewTopic(null)} height={0.56}>
+          <View style={styles.sheetBody}>
+            <View style={styles.sheetIconWrap}>
+              <Ionicons name={previewTopic.icon as any} size={26} color={colors.gold.bright} />
+            </View>
+            <Text style={styles.sheetTitle}>{t(previewTopic.labelKey)}</Text>
+
+            {sample ? (
+              <View style={styles.sheetSample}>
+                {rawLang === 'Arabic' && sample.arabic ? (
+                  <ArabicText size={20} numberOfLines={4}>{sample.arabic}</ArabicText>
+                ) : (
+                  <Text style={styles.sheetSampleText} numberOfLines={5}>
+                    {sample.translation || sample.arabic}
+                  </Text>
+                )}
+                {sample.reference ? (
+                  <Text style={styles.sheetSampleRef}>{sample.reference}</Text>
+                ) : null}
+              </View>
+            ) : (
+              <Text style={styles.sheetSub}>{t('upsell.sub')}</Text>
+            )}
+
+            <View style={{ marginTop: 'auto', gap: spacing.sm }}>
+              <GoldButton
+                label={t('upsell.cta')}
+                onPress={() => {
+                  haptic.medium();
+                  setPreviewTopic(null);
+                  router.push('/(onboarding)/paywall?source=locked_topic');
+                }}
+              />
+            </View>
+          </View>
+        </BottomSheet>
+      )}
     </ScreenContainer>
   );
 }
@@ -368,4 +429,35 @@ const styles = StyleSheet.create({
   topicSubtitle: { fontFamily: fonts.sans, fontSize: 12, marginTop: 1, opacity: 0.85 },
   freeBadge: { borderRadius: radii.pill, borderWidth: 1, paddingHorizontal: 8, paddingVertical: 2 },
   freeBadgeText: { fontFamily: fonts.sansSemibold, fontSize: 10 },
+
+  // Kilitli topic önizleme sheet'i (BottomSheet koyu zeminli — sabit renkler)
+  sheetBody: { flex: 1, alignItems: 'center', paddingTop: spacing.sm },
+  sheetIconWrap: {
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: 'rgba(212,175,55,0.16)',
+    borderWidth: 1, borderColor: 'rgba(212,175,55,0.45)',
+    alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm,
+  },
+  sheetTitle: {
+    fontFamily: fonts.serifBold, fontSize: 22, lineHeight: 32,
+    color: colors.text.heading, textAlign: 'center',
+  },
+  sheetSub: {
+    fontFamily: fonts.sans, fontSize: 14, lineHeight: 21,
+    color: 'rgba(245,240,225,0.75)', textAlign: 'center', marginTop: spacing.md,
+  },
+  sheetSample: {
+    width: '100%', borderRadius: radii.lg,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: 'rgba(212,175,55,0.25)',
+    padding: spacing.md, marginTop: spacing.md,
+  },
+  sheetSampleText: {
+    fontFamily: fonts.serif, fontSize: 16, lineHeight: 26,
+    color: 'rgba(245,240,225,0.92)', textAlign: 'center',
+  },
+  sheetSampleRef: {
+    fontFamily: fonts.sansMedium, fontSize: 12, color: colors.gold.bright,
+    textAlign: 'center', marginTop: spacing.sm,
+  },
 });

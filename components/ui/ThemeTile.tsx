@@ -8,6 +8,7 @@ import { VideoView, useVideoPlayer } from 'expo-video';
 import { colors, fonts, radii } from '../../constants/theme';
 import { haptic } from '../../lib/haptics';
 import type { BackgroundTheme } from '../../data/themes';
+import { localThemeThumb } from '../../data/themeAssets';
 
 interface ThemeTileProps {
   theme: BackgroundTheme;
@@ -61,12 +62,12 @@ export function ThemeTile({
           <LiveVideoThumb uri={theme.video.uri} />
         ) : (
           <Image
-            source={theme.image}
+            source={localThemeThumb(theme.image)}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
             transition={200}
             cachePolicy="memory-disk"
-            priority="high"
+            recyclingKey={String(theme.id)}
             placeholder={{ blurhash: 'L37nIw00~q9F4n%MD%xu00~q-;%M' }}
           />
         )}

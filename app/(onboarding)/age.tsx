@@ -7,11 +7,13 @@ import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { OptionRow } from '../../components/ui/OptionRow';
 import { colors } from '../../constants/theme';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 const OPTIONS = ['Under 18', '18 – 25', '26 – 35', '36 – 50', '50+'];
 
 export default function AgeScreen() {
   const router = useRouter();
+  useOnboardingTracking('age');
   const age = useOnboardingStore((s) => s.age);
   const set = useOnboardingStore((s) => s.set);
 

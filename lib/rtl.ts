@@ -12,20 +12,27 @@
 
 import { I18nManager } from 'react-native';
 
-/** Seçilen dile göre RTL'yi ayarla. Değişim olduysa true döner. */
-export function applyRTL(isArabic: boolean): boolean {
-  const changed = I18nManager.isRTL !== isArabic;
-  I18nManager.allowRTL(isArabic);
-  I18nManager.forceRTL(isArabic);
+// Sağdan-sola yazılan diller. Arapça + Urduca aynı layout davranışını paylaşır.
+const RTL_LANGUAGES = new Set(['Arabic', 'Urdu']);
+
+/** Onboarding dil etiketi RTL mi? (Arabic/Urdu) */
+export function isRTLLanguage(storedLanguage: string | undefined): boolean {
+  return storedLanguage ? RTL_LANGUAGES.has(storedLanguage) : false;
+}
+
+/** İstenen RTL durumunu uygula. Değişim olduysa true döner. */
+export function applyRTL(rtl: boolean): boolean {
+  const changed = I18nManager.isRTL !== rtl;
+  I18nManager.allowRTL(rtl);
+  I18nManager.forceRTL(rtl);
   return changed;
 }
 
 /**
  * Uygulama açılışında çağrılır. Kayıtlı dil ile mevcut I18nManager
- * durumu tutarsızsa (örn. önceki oturumda Arapça seçilip restart
+ * durumu tutarsızsa (örn. önceki oturumda Arapça/Urduca seçilip restart
  * yapılmadıysa) RTL'yi düzeltir. Değişim olduysa true döner.
  */
 export function syncRTLOnStartup(storedLanguage: string | undefined): boolean {
-  const isArabic = storedLanguage === 'Arabic';
-  return applyRTL(isArabic);
+  return applyRTL(isRTLLanguage(storedLanguage));
 }

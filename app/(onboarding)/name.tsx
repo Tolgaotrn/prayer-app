@@ -15,10 +15,12 @@ import { Star } from '../../components/anim/Sparkles';
 import { fonts, radii } from '../../constants/theme';
 import { useThemeColors } from '../../lib/useThemeColors';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 export default function NameScreen() {
   const router = useRouter();
   const tc = useThemeColors();
+  useOnboardingTracking('name');
   // Read the persisted value once; keep typing in local state so the whole
   // shell does NOT re-render on every keystroke (that was stealing focus).
   const initialName = React.useRef(useOnboardingStore.getState().name).current;

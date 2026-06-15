@@ -2,8 +2,10 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { SelectScreen } from '../../components/onboarding/SelectScreen';
 import { colors } from '../../constants/theme';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 export default function HomePref() {
+  useOnboardingTracking('home_pref');
   return (
     <SelectScreen
       step={5}

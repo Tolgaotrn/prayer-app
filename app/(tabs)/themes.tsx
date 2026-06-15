@@ -75,7 +75,7 @@ export default function Themes() {
           {data.map((t, i) => (
             <Animated.View
               key={t.id}
-              entering={FadeInDown.delay(i * 50).duration(420)}
+              entering={FadeInDown.delay(Math.min(i, 8) * 35).duration(380)}
               style={styles.cell}
             >
               <ThemeTile
@@ -85,7 +85,7 @@ export default function Themes() {
                 aspectRatio={0.58}
                 isPremium={isPremium}
                 onPress={() => set('selectedTheme', t.id)}
-                onLockedPress={() => router.push('/(onboarding)/paywall')}
+                onLockedPress={() => router.push('/(onboarding)/paywall?source=locked_theme')}
               />
             </Animated.View>
           ))}

@@ -25,8 +25,6 @@ import { useConfigureRevenueCat } from '../lib/revenueCat';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { syncRTLOnStartup } from '../lib/rtl';
 import { useOnboardingStore } from '../stores/useOnboardingStore';
-import { Image as ExpoImage } from 'expo-image';
-import { allThemeImageURLs } from '../data/themes';
 
 const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY;
 
@@ -46,15 +44,9 @@ export default function RootLayout() {
     }
   }, []);
 
-  // TÜM tema görsellerini açılıştan kısa süre sonra arka planda (tam çözünürlük)
-  // disk cache'e indir → galeri/temalar her zaman kaliteli ve anında açılır,
-  // "tema inmiyor" sorunu biter. İlk içerik yüklemesiyle yarışmasın diye gecikmeli.
-  useEffect(() => {
-    const id = setTimeout(() => {
-      ExpoImage.prefetch(allThemeImageURLs(), 'memory-disk').catch(() => {});
-    }, 2500);
-    return () => clearTimeout(id);
-  }, []);
+  // Tema görselleri artık uygulama bundle'ına gömülü (data/themeAssets.ts) →
+  // açılışta Supabase'den prefetch GEREKMEZ. Eskiden burada tüm temalar
+  // indiriliyordu, cached-egress'i patlatıyordu; kaldırıldı.
 
   const [loaded, error] = useFonts({
     PlayfairDisplay_400Regular,
@@ -104,7 +96,7 @@ export default function RootLayout() {
               <Stack.Screen name="reminders-settings" />
               <Stack.Screen name="language-settings" />
               <Stack.Screen name="widget-settings" />
-              <Stack.Screen name="promo-code" />
+              <Stack.Screen name="special-offer" options={{ animation: 'slide_from_bottom' }} />
               <Stack.Screen name="qibla" />
               <Stack.Screen name="dhikr" />
               <Stack.Screen name="notifications-settings" />

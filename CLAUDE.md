@@ -128,9 +128,8 @@ islam-app/
 │   ├── name-settings.tsx         ← İsim düzenleme
 │   ├── widget-settings.tsx       ← Home/Lock sekmeli, içerik seçici grid + background seçici
 │   ├── widget-studio.tsx         ← Widget studio ekranı
-│   ├── promo-code.tsx            ← Promo kodu → bedava premium
 │   ├── location-setup.tsx        ← Premium konum ekranı — izin red → inline banner
-│   ├── special-offer.tsx         ← "7 days free" — onboarding dışı
+│   ├── special-offer.tsx         ← İndirimli yıllık teklif — TETİKLERİ DEVRE DIŞI (Tolga kararı)
 │   └── categories.tsx            ← BottomSheet + 4 tile
 │
 ├── components/
@@ -246,7 +245,6 @@ welcome → attribution → name → age → faith-intro
   → /notifications-settings
   → /name-settings
   → /language-settings
-  → /promo-code        — promo kodu girişi
   → paywall
 
 /dhikr                 Tesbih sayacı + custom dhikr ekleme modalı
@@ -254,9 +252,8 @@ welcome → attribution → name → age → faith-intro
 /prayer-times          Tam namaz takvimi
 /widget-settings       Home/Lock sekmeli widget içerik seçici + background seçici
 /widget-studio         Widget studio
-/promo-code            Bedava premium kodu
 /location-setup        Premium tasarımlı konum ekranı
-/special-offer         "7 days free" (onboarding dışı, router.push ile)
+/special-offer         İndirimli yıllık teklif — tetikler DEVRE DIŞI (ekran duruyor, paywall.tsx + monetization.ts'te yorumlu)
 ```
 
 ---
@@ -421,12 +418,22 @@ Altta "CHOOSE DHIKR" + "+ Custom" butonlu yatay kaydırmalı seçici.
 
 ---
 
-## promo-code.tsx — Bedava Premium
+## Monetizasyon Akışı (lib/monetization.ts)
 
-**Geçerli kodlar:** `NOOR2025`, `BISMILLAH`, `RAMADAN2025`, `HUDA2025`, `PREMIUM`
-- Doğru kod → `setPremium(true)` → success state + checkmark animasyonu
-- Yanlış kod → shake animasyonu + "Invalid code" hatası
-- Profile ekranında "Redeem a Code" satırı (sadece free kullanıcılara görünür)
+- **Promo kod sistemi KALDIRILDI** (sızıntı riski). `promoUnlocked` alanı store'da
+  duruyor — geçmişte redeem etmiş kullanıcılar premium kalır, yeni redeem yolu yok.
+- **Paywall**: Annual default seçili, X butonu 2.5 sn gecikmeli, tüm girişler
+  `?source=` paramı taşır (onboarding/feed_crown/profile/locked_topic/locked_theme/
+  widget/topics_banner/feed_interstitial/second_open/special_offer).
+- **special-offer.tsx**: TETİKLERİ DEVRE DIŞI (Tolga kararı 2026-06). Ekran + altyapı
+  duruyor; açmak için paywall.tsx skip'i ve monetization.ts registerSession'daki
+  yorum satırlarını geri al. RevenueCat `winback` offering, 24h sayaç hazır.
+- **index.tsx gate**: `registerSession()` — free kullanıcıda 2. açılışta paywall bir kez daha.
+- **Feed interstitial**: free kullanıcıda her 9 kartta bir blur'lu premium teaser +
+  feed sonunda end-card (feed.tsx `UpsellSlide`).
+- **Kilitli topic**: explore-topics'te direkt paywall yerine örnek içerikli BottomSheet.
+- **Trial bildirimi**: `scheduleTrialEndReminder()` — trial bitmeden 1 gün önce 11:00.
+- PostHog: `trial_started`, `special_offer_*` eventleri eklendi.
 
 ---
 
@@ -593,9 +600,8 @@ syncWidget({
 
 | Ekran | Amaç | Açılış |
 |---|---|---|
-| `/(onboarding)/paywall.tsx` | Onboarding sonu — 3 plan (Annual -65%/Monthly/Weekly) | onboarding akışı |
-| `/special-offer.tsx` | Ara teklif — "7 days free" | `router.push('/special-offer')` |
-| `/promo-code.tsx` | Promo kodu → bedava premium | profile'dan |
+| `/(onboarding)/paywall.tsx` | Onboarding sonu — Annual default, gecikmeli X, `?source=` | onboarding akışı + tüm kilit noktaları |
+| `/special-offer.tsx` | İndirimli yıllık (winback) + 24h sayaç | paywall skip + 3. açılış (`registerSession`) |
 
 ---
 

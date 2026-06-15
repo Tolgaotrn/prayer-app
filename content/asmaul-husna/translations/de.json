@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "de",
+    "meaning": "Der Allerbarmer",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "de",
+    "meaning": "Der Barmherzige",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "de",
+    "meaning": "Der König / Der ewige Herrscher",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "de",
+    "meaning": "Der Heilige / Der Reinste",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "de",
+    "meaning": "Die Quelle des Friedens",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "de",
+    "meaning": "Der Spender des Glaubens",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "de",
+    "meaning": "Der Beschützer / Wächter",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "de",
+    "meaning": "Der Allmächtige / Der Erhabene",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "de",
+    "meaning": "Der Bezwinger",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "de",
+    "meaning": "Der Höchste an Größe",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "de",
+    "meaning": "Der Schöpfer",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "de",
+    "meaning": "Der Erschaffer / Der Ordnende",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "de",
+    "meaning": "Der Former der Schönheit",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "de",
+    "meaning": "Der Allvergebende",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "de",
+    "meaning": "Der Allbezwinger",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "de",
+    "meaning": "Der Geber von allem",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "de",
+    "meaning": "Der Versorger",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "de",
+    "meaning": "Der Öffner",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "de",
+    "meaning": "Der Allwissende",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "de",
+    "meaning": "Der Zusammenziehende",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "de",
+    "meaning": "Der Ausbreitende",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "de",
+    "meaning": "Der Erniedrigende",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "de",
+    "meaning": "Der Erhöhende",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "de",
+    "meaning": "Der Ehre Verleihende",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "de",
+    "meaning": "Der Demütigende",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "de",
+    "meaning": "Der Allhörende",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "de",
+    "meaning": "Der Allsehende",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "de",
+    "meaning": "Der Richter",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "de",
+    "meaning": "Der Gerechte",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "de",
+    "meaning": "Der Feinfühlige",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "de",
+    "meaning": "Der Allkundige",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "de",
+    "meaning": "Der Nachsichtige",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "de",
+    "meaning": "Der Gewaltige",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "de",
+    "meaning": "Der große Vergeber",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "de",
+    "meaning": "Der Belohner der Dankbarkeit",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "de",
+    "meaning": "Der Höchste",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "de",
+    "meaning": "Der Größte",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "de",
+    "meaning": "Der Bewahrer",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "de",
+    "meaning": "Der Ernährer",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "de",
+    "meaning": "Der Abrechnende",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "de",
+    "meaning": "Der Majestätische",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "de",
+    "meaning": "Der Großzügige",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "de",
+    "meaning": "Der Wachsame",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "de",
+    "meaning": "Der Erhörer der Gebete",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "de",
+    "meaning": "Der Allumfassende",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "de",
+    "meaning": "Der Allweise",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "de",
+    "meaning": "Der Liebevolle",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "de",
+    "meaning": "Der Ruhmreiche",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "de",
+    "meaning": "Der Auferwecker",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "de",
+    "meaning": "Der Zeuge",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "de",
+    "meaning": "Die Wahrheit",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "de",
+    "meaning": "Der Sachwalter",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "de",
+    "meaning": "Besitzer aller Kraft",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "de",
+    "meaning": "Der Standhafte",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "de",
+    "meaning": "Der Beschützer / Der Freund",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "de",
+    "meaning": "Der Gepriesene",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "de",
+    "meaning": "Der Erfasser",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "de",
+    "meaning": "Der Urheber",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "de",
+    "meaning": "Der Wiederherstellende",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "de",
+    "meaning": "Der Lebensspender",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "de",
+    "meaning": "Der Todbringer",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "de",
+    "meaning": "Der Ewig Lebende",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "de",
+    "meaning": "Der aus sich selbst Bestehende",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "de",
+    "meaning": "Der Findende",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "de",
+    "meaning": "Der Edle",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "de",
+    "meaning": "Der Einzige",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "de",
+    "meaning": "Der Eine",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "de",
+    "meaning": "Der ewig Begehrte",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "de",
+    "meaning": "Der Fähige",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "de",
+    "meaning": "Der Bestimmer aller Macht",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "de",
+    "meaning": "Der Beförderer",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "de",
+    "meaning": "Der Verzögerer",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "de",
+    "meaning": "Der Erste",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "de",
+    "meaning": "Der Letzte",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "de",
+    "meaning": "Der Offenkundige",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "de",
+    "meaning": "Der Verborgene",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "de",
+    "meaning": "Der Regierende",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "de",
+    "meaning": "Der Erhabenste",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "de",
+    "meaning": "Der Wohltäter",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "de",
+    "meaning": "Der Reue Annehmende",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "de",
+    "meaning": "Der Rächer",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "de",
+    "meaning": "Der Verzeihende",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "de",
+    "meaning": "Der Gnädige",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "de",
+    "meaning": "Der Herrscher über alles Königreich",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "de",
+    "meaning": "Besitzer von Majestät und Ehre",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "de",
+    "meaning": "Der Ausgleichende",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "de",
+    "meaning": "Der Versammelnde",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "de",
+    "meaning": "Der Unbedürftige",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "de",
+    "meaning": "Der Bereichernde",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "de",
+    "meaning": "Der Schützer vor Schaden",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "de",
+    "meaning": "Der Schöpfer des Schädlichen",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "de",
+    "meaning": "Der Nutzenbringende",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "de",
+    "meaning": "Das Licht",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "de",
+    "meaning": "Der Rechtleitende",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "de",
+    "meaning": "Der Schöpferische",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "de",
+    "meaning": "Der Ewige",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "de",
+    "meaning": "Der Erbe",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "de",
+    "meaning": "Der weise Führer",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "de",
+    "meaning": "Der Geduldige",
+    "description": ""
+  }
+]

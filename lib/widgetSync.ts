@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 import { computeSlots, resolveLocation } from './prayerTimes';
 import { loadPrayerSettings, buildParams } from './prayerSettings';
 import { fetchFeedItems, resolveLang } from './contentDb';
+import { translate, resolveUILang, type UILang } from './i18n';
 
 const APP_GROUP = 'group.com.tolgaoturan.huda';
 const DATA_KEY  = 'hudaWidgetData';
@@ -43,17 +44,18 @@ const WMO_SYMBOL: Record<number, string> = {
   95: 'cloud.bolt.rain.fill', 96: 'cloud.bolt.rain.fill', 99: 'cloud.bolt.rain.fill',
 };
 
-const WMO_CONDITION: Record<number, string> = {
-  0: 'Clear', 1: 'Mostly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
-  45: 'Foggy', 48: 'Icy Fog',
-  51: 'Light Drizzle', 53: 'Drizzle', 55: 'Heavy Drizzle',
-  61: 'Light Rain', 63: 'Rain', 65: 'Heavy Rain',
-  71: 'Light Snow', 73: 'Snow', 75: 'Heavy Snow',
-  80: 'Showers', 81: 'Rain Showers', 82: 'Heavy Showers',
-  95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Severe Storm',
+// WMO kodu → i18n anahtarı (widget'ta da çeviri görünsün diye)
+const WMO_CONDITION_KEY: Record<number, string> = {
+  0: 'weather.clear', 1: 'weather.clear', 2: 'weather.partlyCloudy', 3: 'weather.overcast',
+  45: 'weather.fog', 48: 'weather.fog',
+  51: 'weather.drizzle', 53: 'weather.drizzle', 55: 'weather.drizzle',
+  61: 'weather.rain', 63: 'weather.rain', 65: 'weather.rain',
+  71: 'weather.snow', 73: 'weather.snow', 75: 'weather.snow',
+  80: 'weather.showers', 81: 'weather.showers', 82: 'weather.showers',
+  95: 'weather.thunderstorm', 96: 'weather.thunderstorm', 99: 'weather.thunderstorm',
 };
 
-async function fetchWeather(lat: number, lon: number): Promise<{
+async function fetchWeather(lat: number, lon: number, uiLang: UILang): Promise<{
   temp: string; condition: string; sfSymbol: string; high: string; low: string
 } | null> {
   try {
@@ -69,7 +71,7 @@ async function fetchWeather(lat: number, lon: number): Promise<{
       temp:      `${temp}°`,
       high:      `${high}°`,
       low:       `${low}°`,
-      condition: WMO_CONDITION[code] ?? 'Clear',
+      condition: translate(uiLang, WMO_CONDITION_KEY[code] ?? 'weather.clear'),
       sfSymbol:  WMO_SYMBOL[code]    ?? 'sun.max.fill',
     };
   } catch { return null; }
@@ -98,6 +100,7 @@ export async function syncWidget(opts: {
   _lastSync = now;
 
   const lang       = resolveLang(opts.language);
+  const uiLang     = resolveUILang(opts.language);
   const arabicOnly = opts.language === 'Arabic';
   const topics  = opts.followedTopics ?? ['General'];
   const premium = opts.isPremium      ?? false;
@@ -140,7 +143,7 @@ export async function syncWidget(opts: {
   try {
     const [rawItems, w] = await Promise.all([
       fetchFeedItems(lang, 10, topics, premium, saved, false, arabicOnly).catch(() => []),
-      fetchWeather(lat, lon).catch(() => null),
+      fetchWeather(lat, lon, uiLang).catch(() => null),
     ]);
     feedItems = rawItems.slice(0, 10).map((item: any) => ({
       id:     item.id,

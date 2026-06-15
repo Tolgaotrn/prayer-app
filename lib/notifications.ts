@@ -272,3 +272,34 @@ export async function rescheduleForLanguageChange(): Promise<void> {
     await applyAllNotifPrefs(slots, prefs);
   } catch { /* sessiz geç */ }
 }
+
+const TRIAL_REMINDER_ID = 'huda_trial_end_reminder';
+
+/**
+ * Trial başlarken çağrılır — trial bitmeden 1 gün önce saat 11:00'de tek
+ * seferlik "denemen yarın bitiyor" bildirimi planlar. Güven artırır,
+ * habersiz ücretlendirme hissini ve refund/iptalleri azaltır.
+ */
+export async function scheduleTrialEndReminder(trialDays: number): Promise<void> {
+  if (Platform.OS === 'web' || trialDays < 2) return;
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') return;
+
+    const uiLang = resolveUILang(useOnboardingStore.getState().language);
+    const when = new Date();
+    when.setDate(when.getDate() + (trialDays - 1));
+    when.setHours(11, 0, 0, 0);
+    if (when.getTime() <= Date.now()) return;
+
+    await Notifications.cancelScheduledNotificationAsync(TRIAL_REMINDER_ID).catch(() => {});
+    await Notifications.scheduleNotificationAsync({
+      identifier: TRIAL_REMINDER_ID,
+      content: {
+        title: translate(uiLang, 'trial.endTitle'),
+        body: translate(uiLang, 'trial.endBody'),
+      },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: when },
+    });
+  } catch { /* sessiz geç */ }
+}

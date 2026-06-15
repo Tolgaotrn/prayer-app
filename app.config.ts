@@ -18,6 +18,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: '#F2EDE4',
   },
   assetBundlePatterns: ['**/*'],
+  locales: {
+    en: './locales/en.json',
+    tr: './locales/tr.json',
+    fr: './locales/fr.json',
+    id: './locales/id.json',
+    ar: './locales/ar.json',
+    de: './locales/de.json',
+    ur: './locales/ur.json',
+  },
   ios: {
     supportsTablet: false,
     bundleIdentifier: 'com.tolgaoturan.huda',

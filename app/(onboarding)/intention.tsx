@@ -1,7 +1,9 @@
 import React from 'react';
 import { SelectScreen } from '../../components/onboarding/SelectScreen';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 export default function Intention() {
+  useOnboardingTracking('intention');
   return (
     <SelectScreen
       step={2}

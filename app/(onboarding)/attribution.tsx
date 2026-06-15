@@ -3,9 +3,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SelectScreen } from '../../components/onboarding/SelectScreen';
 import { colors } from '../../constants/theme';
+import { useOnboardingTracking } from '../../lib/useOnboardingTracking';
 
 export default function Attribution() {
   const router = useRouter();
+  useOnboardingTracking('attribution');
   return (
     <SelectScreen
       step={5}

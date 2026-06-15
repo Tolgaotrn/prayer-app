@@ -1,0 +1,596 @@
+[
+  {
+    "id": "asma_001",
+    "language": "ur",
+    "meaning": "بے حد رحم کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_002",
+    "language": "ur",
+    "meaning": "نہایت مہربان",
+    "description": ""
+  },
+  {
+    "id": "asma_003",
+    "language": "ur",
+    "meaning": "بادشاہ، حقیقی مالک",
+    "description": ""
+  },
+  {
+    "id": "asma_004",
+    "language": "ur",
+    "meaning": "نہایت پاک",
+    "description": ""
+  },
+  {
+    "id": "asma_005",
+    "language": "ur",
+    "meaning": "سلامتی کا سرچشمہ",
+    "description": ""
+  },
+  {
+    "id": "asma_006",
+    "language": "ur",
+    "meaning": "امن اور ایمان دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_007",
+    "language": "ur",
+    "meaning": "نگہبان، محافظ",
+    "description": ""
+  },
+  {
+    "id": "asma_008",
+    "language": "ur",
+    "meaning": "سب پر غالب، عزت والا",
+    "description": ""
+  },
+  {
+    "id": "asma_009",
+    "language": "ur",
+    "meaning": "زبردست، جبر کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_010",
+    "language": "ur",
+    "meaning": "سب سے بڑا، کبریائی والا",
+    "description": ""
+  },
+  {
+    "id": "asma_011",
+    "language": "ur",
+    "meaning": "پیدا کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_012",
+    "language": "ur",
+    "meaning": "ٹھیک بنانے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_013",
+    "language": "ur",
+    "meaning": "صورت گری کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_014",
+    "language": "ur",
+    "meaning": "بہت بخشنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_015",
+    "language": "ur",
+    "meaning": "سخت پکڑنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_016",
+    "language": "ur",
+    "meaning": "سب کچھ عطا کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_017",
+    "language": "ur",
+    "meaning": "روزی دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_018",
+    "language": "ur",
+    "meaning": "کھولنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_019",
+    "language": "ur",
+    "meaning": "سب کچھ جاننے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_020",
+    "language": "ur",
+    "meaning": "روک لینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_021",
+    "language": "ur",
+    "meaning": "کشادگی دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_022",
+    "language": "ur",
+    "meaning": "پست کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_023",
+    "language": "ur",
+    "meaning": "بلند کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_024",
+    "language": "ur",
+    "meaning": "عزت دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_025",
+    "language": "ur",
+    "meaning": "ذلت دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_026",
+    "language": "ur",
+    "meaning": "سب کچھ سننے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_027",
+    "language": "ur",
+    "meaning": "سب کچھ دیکھنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_028",
+    "language": "ur",
+    "meaning": "فیصلہ کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_029",
+    "language": "ur",
+    "meaning": "انصاف کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_030",
+    "language": "ur",
+    "meaning": "باریک بین، مہربان",
+    "description": ""
+  },
+  {
+    "id": "asma_031",
+    "language": "ur",
+    "meaning": "سب سے باخبر",
+    "description": ""
+  },
+  {
+    "id": "asma_032",
+    "language": "ur",
+    "meaning": "بردبار، حلم والا",
+    "description": ""
+  },
+  {
+    "id": "asma_033",
+    "language": "ur",
+    "meaning": "بہت عظمت والا",
+    "description": ""
+  },
+  {
+    "id": "asma_034",
+    "language": "ur",
+    "meaning": "بہت بخشنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_035",
+    "language": "ur",
+    "meaning": "شکر قبول کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_036",
+    "language": "ur",
+    "meaning": "سب سے بلند",
+    "description": ""
+  },
+  {
+    "id": "asma_037",
+    "language": "ur",
+    "meaning": "سب سے بڑا",
+    "description": ""
+  },
+  {
+    "id": "asma_038",
+    "language": "ur",
+    "meaning": "حفاظت کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_039",
+    "language": "ur",
+    "meaning": "پرورش کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_040",
+    "language": "ur",
+    "meaning": "حساب لینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_041",
+    "language": "ur",
+    "meaning": "جلال والا",
+    "description": ""
+  },
+  {
+    "id": "asma_042",
+    "language": "ur",
+    "meaning": "بہت کرم کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_043",
+    "language": "ur",
+    "meaning": "نگرانی کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_044",
+    "language": "ur",
+    "meaning": "دعا قبول کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_045",
+    "language": "ur",
+    "meaning": "وسعت والا",
+    "description": ""
+  },
+  {
+    "id": "asma_046",
+    "language": "ur",
+    "meaning": "کامل حکمت والا",
+    "description": ""
+  },
+  {
+    "id": "asma_047",
+    "language": "ur",
+    "meaning": "بہت محبت کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_048",
+    "language": "ur",
+    "meaning": "بہت بزرگ",
+    "description": ""
+  },
+  {
+    "id": "asma_049",
+    "language": "ur",
+    "meaning": "دوبارہ زندہ کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_050",
+    "language": "ur",
+    "meaning": "گواہ",
+    "description": ""
+  },
+  {
+    "id": "asma_051",
+    "language": "ur",
+    "meaning": "سچا، حق",
+    "description": ""
+  },
+  {
+    "id": "asma_052",
+    "language": "ur",
+    "meaning": "کارساز",
+    "description": ""
+  },
+  {
+    "id": "asma_053",
+    "language": "ur",
+    "meaning": "سب طاقت کا مالک",
+    "description": ""
+  },
+  {
+    "id": "asma_054",
+    "language": "ur",
+    "meaning": "بہت مضبوط",
+    "description": ""
+  },
+  {
+    "id": "asma_055",
+    "language": "ur",
+    "meaning": "مددگار، دوست",
+    "description": ""
+  },
+  {
+    "id": "asma_056",
+    "language": "ur",
+    "meaning": "سب تعریفوں کے لائق",
+    "description": ""
+  },
+  {
+    "id": "asma_057",
+    "language": "ur",
+    "meaning": "ہر چیز کا شمار رکھنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_058",
+    "language": "ur",
+    "meaning": "پہلی بار پیدا کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_059",
+    "language": "ur",
+    "meaning": "دوبارہ پیدا کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_060",
+    "language": "ur",
+    "meaning": "زندگی دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_061",
+    "language": "ur",
+    "meaning": "موت دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_062",
+    "language": "ur",
+    "meaning": "ہمیشہ زندہ",
+    "description": ""
+  },
+  {
+    "id": "asma_063",
+    "language": "ur",
+    "meaning": "سب کو قائم رکھنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_064",
+    "language": "ur",
+    "meaning": "پانے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_065",
+    "language": "ur",
+    "meaning": "بزرگی والا",
+    "description": ""
+  },
+  {
+    "id": "asma_066",
+    "language": "ur",
+    "meaning": "ایک، یکتا",
+    "description": ""
+  },
+  {
+    "id": "asma_067",
+    "language": "ur",
+    "meaning": "اکیلا",
+    "description": ""
+  },
+  {
+    "id": "asma_068",
+    "language": "ur",
+    "meaning": "بے نیاز، سب کا سہارا",
+    "description": ""
+  },
+  {
+    "id": "asma_069",
+    "language": "ur",
+    "meaning": "قدرت والا",
+    "description": ""
+  },
+  {
+    "id": "asma_070",
+    "language": "ur",
+    "meaning": "پوری قدرت رکھنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_071",
+    "language": "ur",
+    "meaning": "آگے کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_072",
+    "language": "ur",
+    "meaning": "پیچھے کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_073",
+    "language": "ur",
+    "meaning": "سب سے پہلا",
+    "description": ""
+  },
+  {
+    "id": "asma_074",
+    "language": "ur",
+    "meaning": "سب سے آخر",
+    "description": ""
+  },
+  {
+    "id": "asma_075",
+    "language": "ur",
+    "meaning": "ظاہر",
+    "description": ""
+  },
+  {
+    "id": "asma_076",
+    "language": "ur",
+    "meaning": "پوشیدہ",
+    "description": ""
+  },
+  {
+    "id": "asma_077",
+    "language": "ur",
+    "meaning": "سب کا والی",
+    "description": ""
+  },
+  {
+    "id": "asma_078",
+    "language": "ur",
+    "meaning": "سب سے بلند و برتر",
+    "description": ""
+  },
+  {
+    "id": "asma_079",
+    "language": "ur",
+    "meaning": "احسان کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_080",
+    "language": "ur",
+    "meaning": "توبہ قبول کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_081",
+    "language": "ur",
+    "meaning": "بدلہ لینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_082",
+    "language": "ur",
+    "meaning": "معاف کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_083",
+    "language": "ur",
+    "meaning": "بہت شفقت کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_084",
+    "language": "ur",
+    "meaning": "سارے ملک کا مالک",
+    "description": ""
+  },
+  {
+    "id": "asma_085",
+    "language": "ur",
+    "meaning": "عظمت اور بزرگی والا",
+    "description": ""
+  },
+  {
+    "id": "asma_086",
+    "language": "ur",
+    "meaning": "انصاف کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_087",
+    "language": "ur",
+    "meaning": "جمع کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_088",
+    "language": "ur",
+    "meaning": "بے نیاز، غنی",
+    "description": ""
+  },
+  {
+    "id": "asma_089",
+    "language": "ur",
+    "meaning": "غنی کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_090",
+    "language": "ur",
+    "meaning": "روکنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_091",
+    "language": "ur",
+    "meaning": "نقصان پہنچانے والے کا خالق",
+    "description": ""
+  },
+  {
+    "id": "asma_092",
+    "language": "ur",
+    "meaning": "نفع پہنچانے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_093",
+    "language": "ur",
+    "meaning": "نور",
+    "description": ""
+  },
+  {
+    "id": "asma_094",
+    "language": "ur",
+    "meaning": "ہدایت دینے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_095",
+    "language": "ur",
+    "meaning": "بے نمونہ پیدا کرنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_096",
+    "language": "ur",
+    "meaning": "ہمیشہ باقی رہنے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_097",
+    "language": "ur",
+    "meaning": "سب کا وارث",
+    "description": ""
+  },
+  {
+    "id": "asma_098",
+    "language": "ur",
+    "meaning": "درست راہ دکھانے والا",
+    "description": ""
+  },
+  {
+    "id": "asma_099",
+    "language": "ur",
+    "meaning": "بہت صبر کرنے والا",
+    "description": ""
+  }
+]

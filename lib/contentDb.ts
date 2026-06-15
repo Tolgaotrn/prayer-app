@@ -19,7 +19,7 @@ import { supabase } from './supabase';
 import { OFFLINE_CONTENT, type OfflineLang } from '../data/offlineContent';
 
 // ── Tipler ───────────────────────────────────────────────────
-export type Lang = 'en' | 'tr' | 'fr' | 'id';
+export type Lang = 'en' | 'tr' | 'fr' | 'id' | 'de' | 'ur';
 
 export interface FeedItem {
   id:          string;
@@ -68,6 +68,8 @@ export function resolveLang(stored: string | undefined): Lang {
   if (stored === 'Turkish')    return 'tr';
   if (stored === 'French')     return 'fr';
   if (stored === 'Indonesian') return 'id';
+  if (stored === 'German')     return 'de';
+  if (stored === 'Urdu')       return 'ur';
   // 'English', 'Arabic' → English translation kullanır
   return 'en';
 }

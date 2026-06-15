@@ -4,10 +4,12 @@ import { Redirect } from 'expo-router';
 import { useOnboardingStore } from '../stores/useOnboardingStore';
 import { useAppStore } from '../stores/useAppStore';
 import { colors } from '../constants/theme';
+import { registerSession } from '../lib/monetization';
 
 export default function Index() {
-  const isCompleted = useOnboardingStore((s) => s.isCompleted);
-  const [hydrated, setHydrated] = React.useState(false);
+  // Gate hedefi — hydration + session sayacına göre belirlenir.
+  // null = henüz karar verilmedi (splash gösterilir).
+  const [target, setTarget] = React.useState<string | null>(null);
 
   const progress = React.useRef(new Animated.Value(0)).current;
 
@@ -32,7 +34,18 @@ export default function Index() {
     const maybeFinish = () => {
       if (!finished && onbDone && appDone) {
         finished = true;
-        setHydrated(true);
+        const completed = useOnboardingStore.getState().isCompleted;
+        const premium   = useAppStore.getState().isPremium;
+        const base = completed ? '/(tabs)/feed' : '/(onboarding)/welcome';
+        // Free kullanıcıda 2. açılışta paywall, 3+. açılışta tek seferlik
+        // indirimli teklif (lib/monetization). Hata olursa normal akış.
+        registerSession(completed, premium)
+          .then((show) => {
+            if (show === 'paywall') setTarget('/(onboarding)/paywall?source=second_open');
+            else if (show === 'offer') setTarget('/special-offer?source=auto');
+            else setTarget(base);
+          })
+          .catch(() => setTarget(base));
       }
     };
 
@@ -48,8 +61,8 @@ export default function Index() {
     return () => { clearTimeout(safety); unsubs.forEach((u) => u()); };
   }, []);
 
-  if (hydrated) {
-    return <Redirect href={isCompleted ? '/(tabs)/feed' : '/(onboarding)/welcome'} />;
+  if (target) {
+    return <Redirect href={target as any} />;
   }
 
   const barWidth = progress.interpolate({

@@ -32,6 +32,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DevSettings } from 'react-native';
 import { ScreenContainer } from '../../components/layout/ScreenContainer';
 import { ToggleSwitch } from '../../components/ui/ToggleSwitch';
 import { BackButton } from '../../components/ui/BackButton';
@@ -129,7 +131,7 @@ export default function Profile() {
           <Animated.View entering={FadeInDown.delay(110).duration(400)}>
             <Pressable
               style={styles.premiumBanner}
-              onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall'); }}
+              onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall?source=profile'); }}
               accessibilityRole="button"
               accessibilityLabel={t('profile.unlockTitle')}
             >
@@ -301,6 +303,37 @@ export default function Profile() {
             />
           </View>
         </Animated.View>
+
+        {/* ── DEV RESET — sadece geliştirme build'inde görünür ── */}
+        {__DEV__ && (
+          <Animated.View entering={FadeInDown.delay(370).duration(400)}>
+            <SectionLabel label="Developer" tc={tc} />
+            <View style={[styles.settingsCard, { backgroundColor: tc.cardBg, borderColor: tc.border }]}>
+              <NavRow
+                icon="refresh-circle-outline"
+                label="Reset app data (dev)"
+                tc={tc}
+                onPress={() => {
+                  Alert.alert(
+                    'Reset app data?',
+                    'Onboarding, premium, streak, sayaçlar — her şey sıfırlanır.',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Reset',
+                        style: 'destructive',
+                        onPress: async () => {
+                          await AsyncStorage.clear();
+                          DevSettings.reload();
+                        },
+                      },
+                    ],
+                  );
+                }}
+              />
+            </View>
+          </Animated.View>
+        )}
 
         {/* ── VERSION FOOTER ── */}
         <Animated.View entering={FadeInDown.delay(390).duration(400)} style={styles.footer}>

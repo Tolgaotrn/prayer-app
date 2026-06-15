@@ -63,6 +63,25 @@ async function upsert(table, rows, chunkSize = 200) {
 const MAX_ARABIC = 500;
 const MAX_TEXT   = 300;
 
+// Ek diller (de/ur): mevcut en/tr/fr/id base setini KÜÇÜLTMEDEN additive yüklenir.
+// Her çeviri kendi uzunluğuna göre süzülür; uzun olan o dilde gizlenir, başka
+// dilleri etkilemez. Yalnız base sette KALAN (keepIds) id'ler için yüklenir.
+const EXTRA_LANGS = ['de', 'ur'];
+
+/** Metin tabanlı çeviri tablolarına (verse/hadith/quote) de/ur ekle. */
+async function upsertExtraLangs(transTable, dir, keepIds) {
+  for (const lang of EXTRA_LANGS) {
+    let trans;
+    try { trans = await readJson(`content/${dir}/translations/${lang}.json`); }
+    catch { continue; }
+    const rows = trans
+      .filter(t => keepIds.has(t.id) && (t.text || '').length <= MAX_TEXT)
+      .map(t => ({ id: t.id, language: lang, text: t.text, verified: false }));
+    if (rows.length) await upsert(transTable, rows);
+    else console.log(`  ⚠ ${dir}/${lang}: yüklenecek satır yok`);
+  }
+}
+
 /** HERHANGİ bir dildeki çevirisi çok uzun olan ID'lerin set'i */
 function tooLongTextIds(...transArrays) {
   const skip = new Set();
@@ -130,6 +149,8 @@ async function importVerses() {
     const trows = trans.filter(t => !skip.has(t.id)).map(t => ({ id: t.id, language: lang, text: t.text, verified: false }));
     await upsert('verse_translations', trows);
   }
+
+  await upsertExtraLangs('verse_translations', 'verses', keepIds);
 }
 
 async function importHadiths() {
@@ -165,6 +186,8 @@ async function importHadiths() {
       await upsert('hadith_translations', trows);
     } catch { console.log(`  ⚠ hadiths/${lang}: dosya yok, atlandı`); }
   }
+
+  await upsertExtraLangs('hadith_translations', 'hadiths', keepIds);
 }
 
 async function importDuas() {
@@ -234,12 +257,14 @@ async function importQuotes() {
       await upsert('quote_translations', trows);
     } catch { console.log(`  ⚠ quotes/${lang}: dosya yok, atlandı`); }
   }
+
+  await upsertExtraLangs('quote_translations', 'quotes', keepIds);
 }
 
 // Reflections (özlü/manevi sözler) → KENDİ tablosu. Sadece General feed'i besler,
 // başka hiçbir konuya/tabloya sızmaz. Her dilin kendi native seti (çeviri değil).
 // content/reflections/<lang>.json = [{id, text}]
-const REFL_LANGS = ['tr', 'en', 'fr', 'id', 'ar'];
+const REFL_LANGS = ['tr', 'en', 'fr', 'id', 'ar', 'de', 'ur'];
 async function importReflections() {
   console.log('\n── Reflections (General özlü sözler) ──');
   const rows = [];
@@ -277,7 +302,7 @@ async function importAsmaulHusna() {
     console.log('    Önce çalıştırın: node tools/import-asmaul-husna.mjs');
     return;
   }
-  const langs = ['en', 'tr', 'fr', 'id'];
+  const langs = ['en', 'tr', 'fr', 'id', 'de', 'ur'];
   const allTrans = await Promise.all(
     langs.map(l => readJson(`content/asmaul-husna/translations/${l}.json`).catch(() => []))
   );

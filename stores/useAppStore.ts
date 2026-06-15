@@ -27,7 +27,6 @@ interface AppActions {
   isSaved: (id: string) => boolean;
   registerOpen: () => void;
   setPremium: (v: boolean) => void;
-  redeemPromo: () => void;                          // promo kod → kalıcı premium taban
   applyRevenueCatPremium: (active: boolean) => void; // RC entitlement → premium (promo tabanını korur)
   setDarkMode: (v: boolean) => void;
   setCurrentVerseIndex: (i: number) => void;
@@ -93,10 +92,9 @@ export const useAppStore = create<AppState & AppActions>()(
 
       setPremium: (v) => set({ isPremium: v }),
 
-      // Promo kod → kalıcı premium tabanı. RevenueCat bunu artık ezemez.
-      redeemPromo: () => set({ promoUnlocked: true, isPremium: true }),
-
       // RevenueCat entitlement durumu → premium. Promo tabanı korunur:
+      // (promo kod ekranı kaldırıldı; geçmişte redeem etmiş kullanıcıların
+      //  promoUnlocked=true değeri persist'te yaşamaya devam eder.)
       // RC pasif dönse bile promo kullanıcısı premium kalır.
       applyRevenueCatPremium: (active) =>
         set((state) => ({ isPremium: active || state.promoUnlocked })),

@@ -13,6 +13,7 @@ import { useAppStore, type WidgetContentType } from '../stores/useAppStore';
 import { haptic } from '../lib/haptics';
 import { syncWidget } from '../lib/widgetSync';
 import { backgroundThemes, resolveWidgetBgURL, sortedThemes, getTheme } from '../data/themes';
+import { localThemeThumb } from '../data/themeAssets';
 
 type ContentOption = {
   key: WidgetContentType;
@@ -49,10 +50,12 @@ function ContentSelector({
   value,
   onChange,
   isPremium,
+  onLockedPress,
 }: {
   value: WidgetContentType;
   onChange: (t: WidgetContentType) => void;
   isPremium: boolean;
+  onLockedPress: () => void;
 }) {
   const tc = useThemeColors();
   return (
@@ -64,7 +67,7 @@ function ContentSelector({
           <Pressable
             key={opt.key}
             onPress={() => {
-              if (locked) return;
+              if (locked) { haptic.medium(); onLockedPress(); return; }
               haptic.select();
               onChange(opt.key);
             }}
@@ -180,7 +183,7 @@ function BackgroundSelector({
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.bgRow}>
       {/* App teması — her zaman serbest (içerik kilidini açmaz, sadece yansıtır) */}
       <Tile selected={value === null} onPress={() => onChange(null)} label="App theme">
-        <Image source={{ uri: appTheme.image.uri }} style={styles.bgImg} contentFit="cover" transition={150} />
+        <Image source={localThemeThumb(appTheme.image)} style={styles.bgImg} contentFit="cover" transition={150} />
       </Tile>
 
       {/* Temalar — video temalar (badge=Live) widget'ta çalışmaz, gizlenir.
@@ -195,7 +198,7 @@ function BackgroundSelector({
             onPress={() => onChange(th.id)}
             label={th.name}
           >
-            <Image source={{ uri: th.image.uri }} style={styles.bgImg} contentFit="cover" transition={150} />
+            <Image source={localThemeThumb(th.image)} style={styles.bgImg} contentFit="cover" transition={150} />
           </Tile>
         );
       })}
@@ -298,7 +301,7 @@ export default function WidgetSettings() {
               Choose the content that appears on your Home Screen widget. You can also change it by long-pressing the widget.
             </Animated.Text>
             <Animated.View entering={FadeInDown.delay(120)}>
-              <ContentSelector value={homeContent} onChange={setHomeContent} isPremium={isPremium} />
+              <ContentSelector value={homeContent} onChange={setHomeContent} isPremium={isPremium} onLockedPress={() => router.push('/(onboarding)/paywall?source=widget')} />
             </Animated.View>
             <Animated.Text entering={FadeInDown.delay(180)} style={[styles.sectionTitle, { color: tc.heading, marginTop: spacing.lg }]}>
               How to add
@@ -316,7 +319,7 @@ export default function WidgetSettings() {
               Pick the content for your wallpaper / lock screen widget — visible without unlocking your phone.
             </Animated.Text>
             <Animated.View entering={FadeInDown.delay(120)}>
-              <ContentSelector value={lockContent} onChange={setLockContent} isPremium={isPremium} />
+              <ContentSelector value={lockContent} onChange={setLockContent} isPremium={isPremium} onLockedPress={() => router.push('/(onboarding)/paywall?source=widget')} />
             </Animated.View>
             <Animated.Text entering={FadeInDown.delay(180)} style={[styles.sectionTitle, { color: tc.heading, marginTop: spacing.lg }]}>
               How to add
@@ -340,7 +343,7 @@ export default function WidgetSettings() {
             appThemeId={selectedTheme}
             isPremium={isPremium}
             onChange={setWidgetThemeId}
-            onLockedPress={() => router.push('/(onboarding)/paywall')}
+            onLockedPress={() => router.push('/(onboarding)/paywall?source=widget')}
           />
         </Animated.View>
 

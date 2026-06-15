@@ -135,6 +135,39 @@ export async function getRevenueCatPackages() {
   }
 }
 
+/**
+ * Special offer için indirimli paket:
+ *  1. RevenueCat dashboard'da "winback" offering varsa → onun ANNUAL (ya da ilk) paketi
+ *  2. Yoksa current offering'in ANNUAL paketi (ekran yine indirim yüzdesini
+ *     aylık fiyat üzerinden hesaplayıp gösterir)
+ */
+export async function getSpecialOfferPackage(): Promise<{
+  pack: PurchasesPackage | null;
+  monthly: PurchasesPackage | null;
+}> {
+  const Purchases = await loadPurchases();
+  if (!Purchases) return { pack: null, monthly: null };
+  try {
+    const offerings = await Purchases.getOfferings();
+    const current = offerings.current
+      ?? Object.values(offerings.all).find((o) => o.availablePackages.length > 0)
+      ?? null;
+    const monthly = current?.availablePackages.find((p) => p.packageType === 'MONTHLY') ?? null;
+
+    const winback = offerings.all['winback'];
+    const fromWinback =
+      winback?.availablePackages.find((p) => p.packageType === 'ANNUAL') ??
+      winback?.availablePackages[0];
+    if (fromWinback) return { pack: fromWinback, monthly };
+
+    const annual = current?.availablePackages.find((p) => p.packageType === 'ANNUAL') ?? null;
+    return { pack: annual, monthly };
+  } catch (e) {
+    console.warn('[RC] getSpecialOfferPackage hata:', e);
+    return { pack: null, monthly: null };
+  }
+}
+
 export async function purchaseRevenueCatPackage(pack: PurchasesPackage) {
   const Purchases = await loadPurchases();
   if (!Purchases) return false;

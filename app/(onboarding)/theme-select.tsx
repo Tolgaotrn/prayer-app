@@ -1,19 +1,19 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { OnboardingShell } from '../../components/layout/OnboardingShell';
 import { ThemeTile } from '../../components/ui/ThemeTile';
 import { spacing } from '../../constants/theme';
-import { backgroundThemes, sortedThemes, allThemeImageURLs } from '../../data/themes';
+import { backgroundThemes, sortedThemes } from '../../data/themes';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 
 // Tema listesi bir kez sıralanır — her render'da yeniden hesaplanmaz.
 const THEMES = sortedThemes(backgroundThemes);
 
-// Yedek prefetch (preparing'de başlamış olabilir) — TÜM temalar, tam çözünürlük.
-Image.prefetch(allThemeImageURLs(), 'memory-disk');
+// Not: Eskiden burada TÜM temalar (38, tam çözünürlük) prefetch ediliyordu →
+// cached-egress patlıyordu. Kaldırıldı; aşağıdaki grid tile'ları ExpoImage ile
+// scroll'da lazy yükler (yalnız görünenler iner).
 
 export default function ThemeSelect() {
   const router = useRouter();
