@@ -20,7 +20,12 @@ interface AppState {
   dhikrTodayDate: string | null; // bugünün tarihi (gün dönüşü için)
   widgetThemeId: number | null;  // widget arka planı: null=app teması, 0=minimal, diğer=tema id
   promoUnlocked: boolean;        // promo kod ile açılan premium "taban"ı — RC bunu ezemez
+  freeViewsDate: string | null;  // günlük free swipe sayacının tarihi (YYYY-MM-DD, yerel)
+  freeViewsUsed: number;         // bugün görülen ücretsiz içerik sayısı
 }
+
+/** Free kullanıcının bir günde ücretsiz kaydırabileceği içerik sayısı. */
+export const FREE_DAILY_LIMIT = 15;
 
 interface AppActions {
   toggleSave: (verse: Verse) => void;
@@ -37,6 +42,8 @@ interface AppActions {
   addDhikr: (n?: number) => void;            // app içi dokunuşta artır
   absorbDhikrTotal: (total: number) => void; // widget'taki çekimleri içeri al
   setWidgetThemeId: (id: number | null) => void;
+  registerContentView: () => number; // free içerik görüntüleme sayar (gün dönüşünde sıfırlar), KALAN hakkı döner
+  freeLimitReached: () => boolean;    // bugünkü ücretsiz hak bitti mi
 }
 
 /** YEREL tarih anahtarı (YYYY-MM-DD). toISOString() UTC verir ve gece yarısı
@@ -69,6 +76,8 @@ export const useAppStore = create<AppState & AppActions>()(
       dhikrTodayDate: null,
       widgetThemeId: null,
       promoUnlocked: false,
+      freeViewsDate: null,
+      freeViewsUsed: 0,
 
       toggleSave: (verse) =>
         set((state) => ({
@@ -138,6 +147,28 @@ export const useAppStore = create<AppState & AppActions>()(
         }),
 
       setWidgetThemeId: (id) => set({ widgetThemeId: id }),
+
+      // Bir ücretsiz içerik görüntülemesini sayar. Gün değiştiyse (yerel) önce
+      // sayacı sıfırlar. Premium kullanıcı limitsizdir → çağrılsa bile sınırsız döner.
+      // KALAN hak sayısını döner (0 = bu görüntülemeyle hak bitti).
+      registerContentView: () => {
+        const state = get();
+        if (state.isPremium) return FREE_DAILY_LIMIT;
+        const today = todayKey();
+        const used = state.freeViewsDate === today ? state.freeViewsUsed : 0;
+        const next = used + 1;
+        set({ freeViewsDate: today, freeViewsUsed: next });
+        return Math.max(0, FREE_DAILY_LIMIT - next);
+      },
+
+      // Bugünkü ücretsiz hak tükendi mi? Premium'da asla.
+      freeLimitReached: () => {
+        const state = get();
+        if (state.isPremium) return false;
+        const today = todayKey();
+        const used = state.freeViewsDate === today ? state.freeViewsUsed : 0;
+        return used >= FREE_DAILY_LIMIT;
+      },
     }),
     {
       name: 'huda-app',

@@ -28,6 +28,7 @@ import { StreakWidget } from '../../components/ui/StreakWidget';
 import { colors, fonts, radii, spacing } from '../../constants/theme';
 import { getTheme } from '../../data/themes';
 import { localThemeSource } from '../../data/themeAssets';
+import { usePostHog } from 'posthog-react-native';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { useAppStore } from '../../stores/useAppStore';
 import { haptic } from '../../lib/haptics';
@@ -41,16 +42,6 @@ import { LOCATION_PROMPTED_KEY } from '../location-setup';
 
 const { height: SCREEN_H, width: SCREEN_W } = Dimensions.get('window');
 
-/* ── Free kullanıcı upsell slide'ı ──
-   Her ~9 kartta bir gerçek bir premium içeriğin blur'lu önizlemesi + CTA.
-   Feed sonunda end-card varyantı ("ücretsiz içeriğin sonu"). */
-type UpsellItem = { id: string; upsell: true; teaser: FeedItem | null; endCard?: boolean };
-type Slide = FeedItem | UpsellItem;
-const UPSELL_EVERY = 9;
-function isUpsell(s: Slide): s is UpsellItem {
-  return (s as UpsellItem).upsell === true;
-}
-
 export default function Feed() {
   const router  = useRouter();
   const t       = useT();
@@ -62,12 +53,19 @@ export default function Feed() {
   const showArabic    = rawLang === 'Arabic';
   const theme         = getTheme(themeId);
 
+  const posthog        = usePostHog();
   const followedTopics = useAppStore((s) => s.followedTopics);
   const savedIds       = useAppStore((s) => s.savedVerseIds);
   const isPremium      = useAppStore((s) => s.isPremium);
   const toggleSave     = useAppStore((s) => s.toggleSave);
   const registerOpen   = useAppStore((s) => s.registerOpen);
   const streakDays     = useAppStore((s) => s.streakDays);
+  const registerContentView = useAppStore((s) => s.registerContentView);
+  const freeLimitReached    = useAppStore((s) => s.freeLimitReached);
+
+  const listRef       = React.useRef<FlatList>(null);
+  // Bugün sayılmış en yüksek içerik indeksi (geri/aynı kaydırma tekrar saymaz).
+  const maxViewedRef  = React.useRef(-1);
 
   const [items,       setItems]       = React.useState<FeedItem[]>([]);
   const [loading,     setLoading]     = React.useState(true);
@@ -88,7 +86,6 @@ export default function Feed() {
     setItems([]);
     setLoading(true);
     registerOpen();
-    const t = setTimeout(() => setShowBanner(false), 3200);
 
     let cancelled = false;
     fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged, showArabic)
@@ -103,11 +100,18 @@ export default function Feed() {
         setLoading(false);
       });
 
-    return () => { cancelled = true; clearTimeout(t); };
+    return () => { cancelled = true; };
     // savedIds yalnızca Favorites konusunda feed içeriğini etkiler → sadece o durumda
     // yeniden çek (aksi halde her kaydetme tüm feed'i sıfırlardı).
   }, [lang, showArabic, followedTopics.join(','), isPremium,
       followedTopics.includes('Favorites') ? savedIds.join(',') : '']);
+
+  // Streak banner'ı SADECE uygulama ilk açıldığında (mount) gösterilir, 3.2 sn
+  // sonra kaybolur. Paywall/başka ekran kapanıp feed'e dönüldüğünde TEKRAR ÇIKMAZ.
+  React.useEffect(() => {
+    const id = setTimeout(() => setShowBanner(false), 3200);
+    return () => clearTimeout(id);
+  }, []);
 
   // Widget verisini her açılışta senkronize et (home-card'a girmese bile)
   React.useEffect(() => {
@@ -147,30 +151,43 @@ export default function Feed() {
     return () => { cancelled = true; };
   }, []);
 
-  // Free kullanıcıda araya upsell kartları serpilir; premium'da feed olduğu gibi.
-  const slides = React.useMemo<Slide[]>(() => {
-    if (isPremium || items.length === 0) return items;
-    const out: Slide[] = [];
-    items.forEach((it, i) => {
-      out.push(it);
-      if ((i + 1) % UPSELL_EVERY === 0 && i < items.length - 1) {
-        out.push({ id: `upsell-${i}`, upsell: true, teaser: items[(i + 3) % items.length] });
-      }
-    });
-    out.push({ id: 'upsell-end', upsell: true, teaser: null, endCard: true });
-    return out;
-  }, [items, isPremium]);
+  // Feed artık herkes için düz içerik listesi — gating günlük swipe limitiyle yapılır.
+  const slides = items;
 
-  const activeSlide = slides[activeIndex] ?? slides[0];
-  const activeItem  = activeSlide && !isUpsell(activeSlide) ? activeSlide : null;
+  const activeItem  = slides[activeIndex] ?? slides[0] ?? null;
   const isSaved     = activeItem ? savedIds.includes(activeItem.id) : false;
 
+  // FlatList onViewableItemsChanged render arası değişemez → stabil handler,
+  // değişken değerleri ref üzerinden okur.
+  const viewCtx = React.useRef({ isPremium, posthog, router, registerContentView, freeLimitReached });
+  viewCtx.current = { isPremium, posthog, router, registerContentView, freeLimitReached };
+
+  // Görünür içerik değişince: aktif indeksi güncelle + free kullanıcıda günlük
+  // swipe limitini uygula. 5. içerikten sonra ileri kaydırınca paywall'a düşer.
   const onViewable = React.useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const first = viewableItems[0];
-    if (first?.index != null) {
-      setActiveIndex(first.index);
-      haptic.light();
+    if (first?.index == null) return;
+    const i = first.index;
+    setActiveIndex(i);
+    haptic.light();
+
+    const ctx = viewCtx.current;
+    if (ctx.isPremium) return;
+    if (i <= maxViewedRef.current) return; // geri / aynı içerik → sayma, gating yok
+
+    // İleri yeni bir içeriğe geçiliyor:
+    if (ctx.freeLimitReached()) {
+      // Bugünkü hak zaten bitmiş. İlk açılışta index 0'ı görmesine izin ver
+      // (boş ekran olmasın), sonraki ilerlemede duvar.
+      if (maxViewedRef.current < 0 && i === 0) { maxViewedRef.current = 0; return; }
+      ctx.posthog?.capture('daily_limit_hit');
+      listRef.current?.scrollToIndex({ index: Math.max(0, maxViewedRef.current), animated: true });
+      ctx.router.push('/(onboarding)/paywall?source=daily_limit');
+      return;
     }
+
+    maxViewedRef.current = i;
+    ctx.registerContentView();
   }).current;
 
   // Belirli bir item'ı kaydet/kaldır (hem Like butonu hem çift-tık kullanır)
@@ -195,28 +212,16 @@ export default function Feed() {
   }, [savedIds, likeItem]);
 
   const renderItem = React.useCallback(
-    ({ item, index }: { item: Slide; index: number }) => (
-      isUpsell(item) ? (
-        <UpsellSlide
-          teaser={item.teaser}
-          endCard={item.endCard}
-          image={theme.image}
-          gradient={theme.gradient}
-          video={theme.video}
-          t={t}
-          onPress={() => { haptic.medium(); router.push('/(onboarding)/paywall?source=feed_interstitial'); }}
-        />
-      ) : (
-        <FeedSlide
-          item={item}
-          active={index === activeIndex}
-          image={theme.image}
-          gradient={theme.gradient}
-          video={theme.video}
-          showArabic={showArabic}
-          onDoubleLike={onDoubleLike}
-        />
-      )
+    ({ item, index }: { item: FeedItem; index: number }) => (
+      <FeedSlide
+        item={item}
+        active={index === activeIndex}
+        image={theme.image}
+        gradient={theme.gradient}
+        video={theme.video}
+        showArabic={showArabic}
+        onDoubleLike={onDoubleLike}
+      />
     ),
     [activeIndex, theme.image, theme.gradient, theme.video, showArabic, onDoubleLike, t, router],
   );
@@ -307,6 +312,7 @@ export default function Feed() {
         />
       )}
       <FlatList
+        ref={listRef}
         data={slides}
         keyExtractor={(v) => v.id}
         renderItem={renderItem}
@@ -528,63 +534,6 @@ function FeedSlide({
       </View>
     </View>
     </GestureDetector>
-  );
-}
-
-/* ── Upsell slide — blur'lu premium önizleme + paywall CTA ── */
-function UpsellSlide({
-  teaser, endCard, image, gradient, video, t, onPress,
-}: {
-  teaser: FeedItem | null;
-  endCard?: boolean;
-  image: { uri: string };
-  gradient: readonly [string, string, ...string[]];
-  video?: { uri: string };
-  t: ReturnType<typeof useT>;
-  onPress: () => void;
-}) {
-  return (
-    <View style={styles.slide}>
-      {!video && <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} />}
-      {!video && (
-        <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={250} cachePolicy="memory-disk" />
-      )}
-      <LinearGradient
-        colors={['rgba(7,10,20,0.55)', 'rgba(7,10,20,0.35)', 'rgba(7,10,20,0.65)', 'rgba(7,10,20,0.94)']}
-        locations={[0, 0.35, 0.62, 1]}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <View style={styles.slideContent}>
-        {/* Gerçek premium içeriğin blur'lu önizlemesi */}
-        {teaser && !endCard ? (
-          <View style={styles.upsellPreview}>
-            <Text style={[styles.translation, styles.translationLarge]} numberOfLines={5}>
-              {teaser.translation || teaser.arabic}
-            </Text>
-            <BlurView intensity={28} tint="dark" style={StyleSheet.absoluteFill} />
-          </View>
-        ) : null}
-
-        <View style={styles.upsellLock}>
-          <Ionicons name="lock-closed" size={26} color={colors.gold.bright} />
-        </View>
-        <Text style={styles.upsellTitle}>
-          {endCard ? t('upsell.end') : t('upsell.title')}
-        </Text>
-        <Text style={styles.upsellSub}>{t('upsell.sub')}</Text>
-
-        <Pressable
-          onPress={onPress}
-          accessibilityRole="button"
-          accessibilityLabel={t('upsell.cta')}
-          style={styles.upsellBtn}
-        >
-          <Ionicons name="sparkles" size={16} color={colors.bg.midnight} />
-          <Text style={styles.upsellBtnText}>{t('upsell.cta')}</Text>
-        </Pressable>
-      </View>
-    </View>
   );
 }
 

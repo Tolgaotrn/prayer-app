@@ -6,7 +6,7 @@ export default function Intention() {
   useOnboardingTracking('intention');
   return (
     <SelectScreen
-      step={2}
+      step={3}
       multi
       storeKey="intentions"
       title="What is your intention?"

@@ -1,115 +1,231 @@
 /**
- * build-offline-content.mjs — Supabase'ten ÇOK DİLLİ çevrimdışı içerik üretir.
+ * build-offline-content.mjs — LOKAL content/ klasöründen çok dilli GÖMÜLÜ içerik
+ * üretir. Supabase'e bağlı DEĞİL (Supabase tamamen kaldırıldı 2026-06).
  *
- * Her öğe: en/tr/fr/id çevirisi (hepsi zorunlu) + Arapça (verse/hadith için).
- * Konu etiketleri (topics[]) dahil → offline konu filtreleme çalışır.
- * EL İLE ÇEVİRİ YOK — tümü DB kaynaklı.
+ * Çıktı: data/offlineContent.ts
+ *   • OFFLINE_CONTENT     → verse + hadith + quote + dua (arabic + t[lang], ref, topics)
+ *   • OFFLINE_REFLECTIONS → General/Daily Wisdom feed (dil başına bağımsız, ar dahil)
+ *   • OFFLINE_NAMES       → 99 Names of Allah (asmaul-husna)
  *
  * Çalıştır: node tools/build-offline-content.mjs
  */
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const BASE = 'https://hvxrsscrsqdbfewpmfhl.supabase.co';
-const KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2eHJzc2Nyc3FkYmZld3BtZmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTI2NTksImV4cCI6MjA5NTcyODY1OX0.qBtfyL9mpzwLVHgq_Unvm99Q63T_IVloSHTte-xlArw';
-const h = { apikey: KEY, Authorization: 'Bearer ' + KEY };
-const need = ['en', 'tr', 'fr', 'id'];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.join(__dirname, '..');
+const C = (p) => path.join(ROOT, 'content', p);
 
-// Hedef sayılar (mevcut veriyle sınırlı)
-const TARGET = { verse: 140, hadith: 80, quote: 80 };
-const MAXLEN = 300;
+const LANGS = ['en', 'tr', 'fr', 'id', 'de', 'ur'];
+const TR_MAXLEN = 400;   // çeviri uzunluk sınırı (feed okunabilirliği)
+const AR_MAXLEN = 700;   // Arapça uzunluk sınırı
 
+const readJSON = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const esc = (s) =>
-  String(s).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+  String(s ?? '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
 
-function emit(it) {
-  return (
-    `  { id: ${JSON.stringify(it.id)}, kind: ${JSON.stringify(it.kind)}, ref: ${JSON.stringify(it.ref)},\n` +
-    `    topics: ${JSON.stringify(it.topics || [])},\n` +
-    `    arabic: \`${esc(it.arabic || '')}\`,\n` +
-    `    t: { en: \`${esc(it.t.en)}\`, tr: \`${esc(it.t.tr)}\`, fr: \`${esc(it.t.fr)}\`, id: \`${esc(it.t.id)}\` } },`
-  );
+// translations/{lang}.json → { lang: { id: text } }
+function transMap(dir, field = 'text') {
+  const out = {};
+  for (const lang of LANGS) {
+    const fp = C(`${dir}/translations/${lang}.json`);
+    if (!fs.existsSync(fp)) continue;
+    const rows = readJSON(fp);
+    const m = {};
+    for (const r of rows) if (r && r.id != null) m[r.id] = r[field] ?? '';
+    out[lang] = m;
+  }
+  return out;
 }
 
-async function getAll(path) {
-  const res = await fetch(`${BASE}/rest/v1/${path}`, { headers: h });
-  return res.json();
+function buildTField(id, maps) {
+  const parts = [];
+  for (const lang of LANGS) {
+    const txt = maps[lang]?.[id];
+    if (txt && txt.trim() && txt.length <= TR_MAXLEN) {
+      parts.push(`${lang}: \`${esc(txt)}\``);
+    }
+  }
+  return parts;
 }
 
-async function main() {
-  const items = [];
+const items = [];
+let nVerse = 0, nHadith = 0, nQuote = 0, nDua = 0;
 
-  // VERSES (Arapça dahil)
-  const vr = await getAll(
-    'verses?select=id,surah_name,ayah,arabic,topics,popularity,verse_translations(language,text)&display_safe=eq.true&order=popularity.desc&limit=400',
-  );
-  let vc = 0;
-  for (const row of vr) {
-    const m = {};
-    (row.verse_translations || []).forEach((t) => (m[t.language] = t.text));
-    if (row.arabic && need.every((l) => m[l] && m[l].length <= MAXLEN)) {
-      items.push({ id: row.id, kind: 'verse', ref: `${row.surah_name} ${row.ayah}`, arabic: row.arabic, topics: row.topics || [], t: { en: m.en, tr: m.tr, fr: m.fr, id: m.id } });
-      if (++vc >= TARGET.verse) break;
+// ── VERSES ───────────────────────────────────────────────────
+{
+  const base = readJSON(C('verses/base.json'));
+  const tr = transMap('verses');
+  for (const v of base) {
+    if (v.displaySafe === false) continue;
+    if (!v.arabic || v.arabic.length > AR_MAXLEN) continue;
+    const t = buildTField(v.id, tr);
+    if (t.length === 0) continue; // hiçbir dilde uygun çeviri yok
+    const ref = `${v.surahName ?? 'Quran'} · Ayah ${v.ayah}`;
+    items.push({ id: v.id, kind: 'verse', ref, topics: v.topics ?? [], arabic: v.arabic, t });
+    nVerse++;
+  }
+}
+
+// ── HADITHS ──────────────────────────────────────────────────
+{
+  const base = readJSON(C('hadiths/base.json'));
+  const tr = transMap('hadiths');
+  const OK_GRADE = new Set(['sahih', 'hasan', 'mixed_canonical']);
+  for (const h of base) {
+    if (h.displaySafe === false) continue;
+    if (h.grade && !OK_GRADE.has(h.grade)) continue;
+    if (!h.arabic || h.arabic.length > AR_MAXLEN) continue;
+    const t = buildTField(h.id, tr);
+    if (t.length === 0) continue;
+    const ref = `${h.collectionName ?? 'Hadith'} ${h.reference ?? ''}`.trim();
+    items.push({ id: h.id, kind: 'hadith', ref, topics: h.topics ?? [], arabic: h.arabic, t });
+    nHadith++;
+  }
+}
+
+// ── QUOTES (Arapça yok) ──────────────────────────────────────
+{
+  const base = readJSON(C('quotes/base.json'));
+  const tr = transMap('quotes');
+  for (const q of base) {
+    const t = buildTField(q.id, tr);
+    if (t.length === 0) continue;
+    const ref = q.author ?? 'Islamic Quote';
+    items.push({ id: q.id, kind: 'quote', ref, topics: q.topics ?? [], arabic: '', t });
+    nQuote++;
+  }
+}
+
+// ── DUAS (sadece en/id çeviri; uzunluk sınırı yok) ───────────
+{
+  const base = readJSON(C('duas/base.json'));
+  const tr = transMap('duas');
+  for (const d of base) {
+    if (d.displaySafe === false) continue;
+    const parts = [];
+    for (const lang of ['en', 'id']) {
+      const txt = tr[lang]?.[d.id];
+      if (txt && txt.trim()) parts.push(`${lang}: \`${esc(txt)}\``);
+    }
+    if (parts.length === 0) continue;
+    const ref = d.occasion ?? 'Dua';
+    items.push({ id: d.id, kind: 'dua', ref, topics: [d.category ?? 'dua'], arabic: d.arabic ?? '', t: parts });
+    nDua++;
+  }
+}
+
+// ── REFLECTIONS (dil başına bağımsız, ar dahil) ──────────────
+const reflections = [];
+for (const lang of [...LANGS, 'ar']) {
+  const fp = C(`reflections/${lang}.json`);
+  if (!fs.existsSync(fp)) continue;
+  for (const r of readJSON(fp)) {
+    if (r && r.id != null && r.text && r.text.trim()) {
+      reflections.push({ lang, id: r.id, text: r.text });
     }
   }
+}
 
-  // HADITHS (Arapça dahil)
-  const hr = await getAll(
-    'hadiths?select=id,collection_name,reference,arabic,topics,grade,hadith_translations(language,text)&display_safe=eq.true&grade=in.(sahih,hasan)&limit=500',
-  );
-  let hc = 0;
-  for (const row of hr) {
-    const m = {};
-    (row.hadith_translations || []).forEach((t) => (m[t.language] = t.text));
-    if (row.arabic && need.every((l) => m[l] && m[l].length <= MAXLEN + 120)) {
-      items.push({ id: row.id, kind: 'hadith', ref: `${row.collection_name || 'Hadith'} ${row.reference || ''}`.trim(), arabic: row.arabic, topics: row.topics || [], t: { en: m.en, tr: m.tr, fr: m.fr, id: m.id } });
-      if (++hc >= TARGET.hadith) break;
+// ── 99 NAMES ─────────────────────────────────────────────────
+const names = [];
+{
+  const base = readJSON(C('asmaul-husna/base.json'));
+  const meaning = transMap('asmaul-husna', 'meaning');
+  for (const n of base) {
+    const m = [];
+    for (const lang of LANGS) {
+      const txt = meaning[lang]?.[n.id];
+      if (txt && txt.trim()) m.push(`${lang}: \`${esc(txt)}\``);
     }
+    names.push({ id: n.id, number: n.number, arabic: n.arabic, translit: n.transliteration ?? '', m });
   }
+}
 
-  // QUOTES (Arapça YOK — sadece en/tr/fr/id; Arapça modda otomatik dışlanır)
-  const qr = await getAll(
-    'quotes?select=id,author,topics,popularity,quote_translations(language,text)&order=popularity.desc&limit=400',
-  );
-  let qc = 0;
-  for (const row of qr) {
-    const m = {};
-    (row.quote_translations || []).forEach((t) => (m[t.language] = t.text));
-    if (need.every((l) => m[l] && m[l].length <= MAXLEN)) {
-      items.push({ id: row.id, kind: 'quote', ref: row.author || 'Islamic Quote', arabic: '', topics: row.topics || [], t: { en: m.en, tr: m.tr, fr: m.fr, id: m.id } });
-      if (++qc >= TARGET.quote) break;
-    }
+// ── EMIT ─────────────────────────────────────────────────────
+const emitItem = (it) =>
+  `  { id: ${JSON.stringify(it.id)}, kind: ${JSON.stringify(it.kind)}, ref: \`${esc(it.ref)}\`,\n` +
+  `    topics: ${JSON.stringify(it.topics)}, arabic: \`${esc(it.arabic)}\`,\n` +
+  `    t: { ${it.t.join(', ')} } },`;
+
+const emitRefl = (r) =>
+  `  { lang: ${JSON.stringify(r.lang)}, id: ${JSON.stringify(r.id)}, text: \`${esc(r.text)}\` },`;
+
+const emitName = (n) =>
+  `  { id: ${JSON.stringify(n.id)}, number: ${n.number}, arabic: \`${esc(n.arabic)}\`,\n` +
+  `    translit: ${JSON.stringify(n.translit)}, m: { ${n.m.join(', ')} } },`;
+
+// Büyük diziyi parçalara böl — tek dev literal TS2590 ("union too complex")
+// veriyor. Her parça ayrı annotate'li const → küçük birleşim, sonra spread.
+const CHUNK = 150;
+function chunkArray(type, prefix, arr, emit) {
+  const out = [];
+  for (let i = 0; i * CHUNK < arr.length; i++) {
+    const slice = arr.slice(i * CHUNK, (i + 1) * CHUNK);
+    out.push(`const ${prefix}${i}: ${type}[] = [\n${slice.map(emit).join('\n')}\n];`);
   }
+  return out.join('\n');
+}
+function chunkRefs(prefix, arr) {
+  const n = Math.ceil(arr.length / CHUNK);
+  return Array.from({ length: n }, (_, i) => `...${prefix}${i}`).join(', ');
+}
 
-  const header = `/**
- * offlineContent — ÇOK DİLLİ çevrimdışı varsayılan içerik (DB'den üretildi).
+const out = `/**
+ * offlineContent — GÖMÜLÜ çok dilli içerik (content/ klasöründen üretildi).
  *
- * İnternet + cache yokken feed ve bildirimler kullanıcının SEÇTİĞİ dilde çalışsın diye.
- * 5 dil: en/tr/fr/id → t[lang]; Arapça → arabic alanı (verse/hadith'te var, quote'ta yok).
- * topics[] → offline konu filtreleme. EL İLE ÇEVİRİ YOK — node tools/build-offline-content.mjs.
+ * Supabase TAMAMEN kaldırıldı (2026-06). Tüm içerik app bundle'ında → 0 egress,
+ * offline çalışır, anında açılır. İçeriği değiştirmek için content/'i güncelle +
+ * \`node tools/build-offline-content.mjs\` çalıştır + app güncellemesi yayınla.
+ *
+ * EL İLE DÜZENLEME YOK — bu dosya generator çıktısıdır.
  */
-export type OfflineLang = 'en' | 'tr' | 'fr' | 'id';
+export type OfflineLang = 'en' | 'tr' | 'fr' | 'id' | 'de' | 'ur';
+
+// NOT: Açık opsiyonel alanlar — Partial<Record<...>> 1390 büyük literal üstünde
+// TS2590 ("union type too complex") veriyordu. Düz alanlar ucuz tip kontrolü sağlar.
+export interface OfflineTexts {
+  en?: string; tr?: string; fr?: string; id?: string; de?: string; ur?: string;
+}
 
 export interface OfflineItem {
   id: string;
-  kind: 'verse' | 'hadith' | 'quote';
+  kind: 'verse' | 'hadith' | 'quote' | 'dua';
   ref: string;
   topics: string[];
   arabic: string;
-  t: Record<OfflineLang, string>;
+  t: OfflineTexts;
 }
 
-export const OFFLINE_CONTENT: OfflineItem[] = [
+export interface OfflineReflection {
+  lang: string; // 'en' | 'tr' | ... | 'ar'
+  id: string;
+  text: string;
+}
+
+export interface OfflineName {
+  id: string;
+  number: number;
+  arabic: string;
+  translit: string;
+  m: OfflineTexts;
+}
+
+${chunkArray('OfflineItem', '_C', items, emitItem)}
+export const OFFLINE_CONTENT: OfflineItem[] = [${chunkRefs('_C', items)}];
+
+export const OFFLINE_REFLECTIONS: OfflineReflection[] = [
+${reflections.map(emitRefl).join('\n')}
+];
+
+export const OFFLINE_NAMES: OfflineName[] = [
+${names.map(emitName).join('\n')}
+];
 `;
-  fs.writeFileSync('data/offlineContent.ts', header + items.map(emit).join('\n') + '\n];\n');
 
-  // ── Rapor ──
-  const byKind = { verse: vc, hadith: hc, quote: qc };
-  console.log('TOPLAM offline öğe:', items.length, byKind);
-  // Konu histogramı
-  const topicHist = {};
-  for (const it of items) for (const tag of it.topics) topicHist[tag] = (topicHist[tag] || 0) + 1;
-  console.log('OFFLINE_REPORT_JSON', JSON.stringify({ total: items.length, byKind, topicHist }));
-}
-
-main();
+fs.writeFileSync(path.join(ROOT, 'data', 'offlineContent.ts'), out, 'utf8');
+console.log('✓ offlineContent.ts yazıldı');
+console.log(`  verses=${nVerse} hadiths=${nHadith} quotes=${nQuote} duas=${nDua}`);
+console.log(`  reflections=${reflections.length} names=${names.length}`);
+console.log(`  toplam item=${items.length}`);

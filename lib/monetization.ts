@@ -58,15 +58,12 @@ export async function registerSession(
 
     if (!isCompleted || isPremium) return null;
 
-    if (count === 2) {
-      const reshown = await AsyncStorage.getItem(PAYWALL_RESHOWN_KEY);
-      if (!reshown) {
-        await AsyncStorage.setItem(PAYWALL_RESHOWN_KEY, '1');
-        return 'paywall';
-      }
-    }
-    // Special offer tetiği ŞİMDİLİK DEVRE DIŞI (Tolga kararı 2026-06).
-    // Tekrar açmak için: if (count >= 3 && !(await isOfferSeen())) { await markOfferSeen(); return 'offer'; }
+    // 2. açılış paywall'ı KALDIRILDI (Tolga 2026-06). Tek gating mekanizması artık
+    // feed'deki günlük 5-swipe limiti. Tekrar açmak için:
+    //   if (count === 2 && !(await AsyncStorage.getItem(PAYWALL_RESHOWN_KEY))) {
+    //     await AsyncStorage.setItem(PAYWALL_RESHOWN_KEY, '1'); return 'paywall'; }
+    // Special offer tetiği de DEVRE DIŞI:
+    //   if (count >= 3 && !(await isOfferSeen())) { await markOfferSeen(); return 'offer'; }
     return null;
   } catch {
     return null;

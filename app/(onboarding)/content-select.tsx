@@ -26,7 +26,7 @@ export default function ContentSelect() {
 
   return (
     <OnboardingShell
-      step={5}
+      step={4}
       title="What would you like to see every day?"
       subtitle="Pick everything you'd love in your feed"
       ctaDisabled={selected.length === 0}

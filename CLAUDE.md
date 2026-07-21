@@ -36,7 +36,7 @@
 npx expo start --tunnel --clear   # telefon (Expo Go SDK 54)
 npx expo start --clear            # web → 'w'
 npm run typecheck                  # 0 hata olmalı
-npm run db:import                  # content/ → Supabase
+node tools/build-offline-content.mjs  # content/ → data/offlineContent.ts (gömülü, Supabase YOK)
 eas build --profile development --platform ios  # Swift değişikliklerinde
 ```
 
@@ -74,7 +74,6 @@ location.reload();
 | Notifications | expo-notifications | ~0.32.17 |
 | Konum | expo-location | ~19.0.8 |
 | Namaz vakti | adhan | ^4.4.3 |
-| Supabase | @supabase/supabase-js | ^2.x |
 | RevenueCat | react-native-purchases | — |
 | Analytics | posthog-react-native | — |
 | RN | react-native | 0.81.5 |
@@ -104,8 +103,9 @@ islam-app/
 │   │   ├── preparing.tsx         ← SparkleField + auto-advance
 │   │   ├── streak-intro.tsx      ← Tesbih ring animasyonu (33 bead, dönen, altın) — Crescent KALDIRILDI
 │   │   ├── reminders.tsx         ← Stepper + RangeSlider + bildirim izni
-│   │   ├── theme-select.tsx      ← Gerçek fotoğraf grid
-│   │   └── paywall.tsx           ← 3 plan (Annual/Monthly/Weekly), RevenueCat, complete() çağırır
+│   │   ├── theme-select.tsx      ← Gerçek fotoğraf grid → first-verse'e gider
+│   │   ├── first-verse.tsx       ← Aha-moment: seçili tema üstünde Daily Wisdom, swipe-up → complete()+paywall
+│   │   └── paywall.tsx           ← Akışın SON adımı (2026-07'de geri eklendi) — 3 plan, RevenueCat, ?source=onboarding
 │   │   [ORPHAN — akışta değil]: feeling.tsx, usage.tsx, notifications.tsx, translation.tsx
 │   │
 │   ├── (tabs)/
@@ -118,7 +118,7 @@ islam-app/
 │   │
 │   ├── verse/[id].tsx            ← Ayet detay (slide_from_bottom)
 │   ├── explore-topics.tsx        ← Browse + followed topics (slide_from_bottom)
-│   ├── saved-verses.tsx          ← Supabase'den Favorites
+│   ├── saved-verses.tsx          ← Gömülü havuzdan Favorites (fetchFeedItems(['Favorites']))
 │   ├── dhikr.tsx                 ← Tesbih sayacı — custom dhikr modal ile
 │   ├── qibla.tsx                 ← SVG pusula + expo-location heading
 │   ├── prayer-times.tsx          ← Tam günlük takvim
@@ -170,8 +170,7 @@ islam-app/
 ├── lib/
 │   ├── useThemeColors.ts         ← TÜM ekranlar bunu kullanır
 │   ├── i18n.ts                   ← useT() + useLocaleTag()
-│   ├── supabase.ts               ← anon key (service_role SADECE tools/'da)
-│   ├── contentDb.ts              ← offline-first: cache→Supabase→stale→seed
+│   ├── contentDb.ts              ← GÖMÜLÜ içerik, senkron, Supabase YOK (2026-06 kaldırıldı)
 │   ├── prayerTimes.ts            ← usePrayerTimes() + computeSlots + resolveLocation
 │   ├── prayerSettings.ts         ← Namaz hesap ayarları
 │   ├── widgetSync.ts             ← iOS widget sync: feed items + weather + prayers
@@ -193,18 +192,21 @@ islam-app/
 │
 ├── data/
 │   ├── types.ts
-│   ├── verses.ts                 ← ~52 seed (offline fallback)
-│   ├── duas.ts, hadiths.ts, quotes.ts
-│   └── themes.ts                 ← 38 tema, Supabase Storage URL'leri
+│   ├── offlineContent.ts         ← GERÇEK içerik kaynağı: OFFLINE_CONTENT + OFFLINE_REFLECTIONS +
+│   │                                OFFLINE_NAMES. Generator çıktısı, EL İLE DÜZENLEME YOK.
+│   ├── verses.ts, duas.ts, hadiths.ts, quotes.ts  ← ESKİ seed dosyaları, contentDb.ts ARTIK KULLANMIYOR
+│   │                                (widget-studio.tsx hâlâ verses.ts import ediyor — kontrol et)
+│   ├── themeAssets.ts            ← tema görsellerini bundle'a gömen require() haritası
+│   └── themes.ts                 ← 38 tema; `image.uri` Supabase URL formatında ama
+│                                    localThemeSource()/localThemeThumb() ile gömülü görsele çevrilir.
+│                                    TEK istisna: iOS widget (Swift) bu URL'yi native tarafta kullanıyor.
 │
 └── tools/
-    ├── import-hadith.mjs
-    ├── import-quran-verses.mjs
-    ├── import-duas.mjs
+    ├── build-offline-content.mjs ← content/ → data/offlineContent.ts (GÜNCEL üretim yolu)
+    ├── import-hadith.mjs, import-quran-verses.mjs, import-duas.mjs, import-asmaul-husna.mjs
     ├── build-quotes-from-content.mjs
-    ├── supabase-schema.sql
-    ├── supabase-import.mjs
-    └── upload-themes-to-supabase.mjs
+    └── supabase-schema.sql, supabase-import.mjs, upload-themes-to-supabase.mjs, vb.
+        ← ESKİ Supabase araçları, artık kullanılmıyor (silinmedi, gerekirse temizlenebilir)
 ```
 
 ---
@@ -214,8 +216,19 @@ islam-app/
 ```
 welcome → attribution → name → age → faith-intro
 → intention → content-select → home-pref
-→ language → preparing → streak-intro → reminders → theme-select → paywall
+→ language → preparing → streak-intro → reminders → theme-select → first-verse → paywall → feed
 ```
+
+**Not (2026-07 güncel):** `paywall.tsx` akışın SON adımı — `first-verse.tsx` `complete()`
+çağırıp `router.replace('/(onboarding)/paywall?source=onboarding')` yapar. Paywall'ın
+`finish()`'i `source==='onboarding'` özel durumunda `router.back()` DEĞİL, direkt
+`router.replace('/(tabs)/feed')` yapar (aksi halde X'e basınca first-verse'e geri dönerdi).
+Paywall ayrıca crown/locked-topic/locked-theme/günlük-limit gibi diğer noktalardan da
+`?source=` ile açılıyor — oralarda davranış değişmedi (`router.back()`).
+
+**ProgressDots:** `OnboardingShell` `totalSteps=9`, adımlar sırayla
+attribution(0)·name(1)·age(2)·intention(3)·content-select(4)·home-pref(5)·language(6)·
+reminders(7)·theme-select(8). Yeni bir form ekranı eklenirse/sıra değişirse BU numaraları güncelle.
 
 **Kaldırılanlar (akışta YOK):**
 - `feeling.tsx` — "What is most present in your heart" → ÇIKARILDI
@@ -241,7 +254,7 @@ welcome → attribution → name → age → faith-intro
 /home-card             Today hub: namaz kartı + 6 tile grid
 /explore-topics        Browse topics (slide_from_bottom)
 /profile               Identity + premium banner + quick actions + settings
-  → /saved-verses      Kayıtlı içerik (Supabase Favorites)
+  → /saved-verses      Kayıtlı içerik (gömülü havuzdan fetchFeedItems(['Favorites']))
   → /notifications-settings
   → /name-settings
   → /language-settings
@@ -338,51 +351,47 @@ text:   #F5F0E1 (heading), #C3C9DE (body), #828BAD (muted)
 
 ---
 
-## Supabase
+## Supabase — TAMAMEN KALDIRILDI (2026-06-19)
 
-**URL:** `https://hvxrsscrsqdbfewpmfhl.supabase.co`
-**App Group:** `group.com.tolgaoturan.huda`
+Sebep: egress kotası dolunca proje (storage + DB REST) **HTTP 402 Payment Required**
+dönmeye başladı → içerik + welcome video + widget görselleri yüklenmiyordu. Geri
+dönülmeyecek bir karar — Supabase artık kullanılmıyor.
 
-**Tablolar:**
-```
-verses              id, arabic, surah_name, ayah, juz, page, topics[], popularity
-verse_translations  id + language (PK), text
-hadiths             id, collection, arabic, grade, topics[], source_priority
-hadith_translations id + language (PK), text
-duas                id, arabic, transliteration, occasion, category, source
-dua_translations    id + language (PK), text, title
-quotes              id, source_type, author, text, topics[], popularity
-quote_translations  id + language (PK), text
-themes              id, name, image_url, gradient[], badge, is_free, is_active, sort_order
-```
+**Ne değişti:** Tüm içerik (`verses`/`hadiths`/`duas`/`quotes`/reflections/99 isim) artık
+`content/` klasöründen `tools/build-offline-content.mjs` ile üretilip **app bundle'ına
+gömülü** (`data/offlineContent.ts`, ~1.8MB, 1390 item). `lib/supabase.ts` silindi,
+`@supabase/supabase-js` package.json'dan kaldırıldı. İçerik değiştirmek artık
+**app güncellemesi** gerektirir (canlı DB yok).
 
-**Sayılar (filtreli):** verses 395, hadiths 500, duas 78, quotes 198
-
-**RLS:** Tüm tablolar public read, write yok.
-
-**Tema görselleri:** Supabase Storage `themes` bucket (public).
-`BASE = https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/themes/`
+**KALAN tek istisna:** `data/themes.ts`'teki tema görsel URL'leri (Supabase Storage
+formatında) — SADECE iOS widget (native Swift, bundle'a erişemiyor) bunları kullanır.
+Uygulama içi tüm görseller `themeAssets.ts` üzerinden gömülü. Yani Supabase 402 hâlâ
+çözülmezse **widget arka planları** yüklenmez ama uygulama içi hiçbir şey etkilenmez.
+Widget bg'yi de App Group'a gömme işi bilinçli olarak ileriye bırakıldı.
 
 ---
 
-## lib/contentDb.ts
+## lib/contentDb.ts — GÖMÜLÜ içerik katmanı (senkron, ağ çağrısı yok)
 
 ```typescript
-fetchFeedItems(lang, limit, followedTopics, isPremium, savedIds, forceFresh) → FeedItem[]
-fetchDailyVerse(lang) → FeedItem | null
-fetchThemes() → ThemeItem[]
-clearContentCache() → void
-resolveLang(stored) → Lang   // 'Turkish'→'tr', 'French'→'fr', 'Indonesian'→'id', diğer→'en'
+fetchFeedItems(lang, limit, followedTopics, isPremium, savedIds, _forceFresh, arabicOnly) → Promise<FeedItem[]>
+                                  // _forceFresh imza uyumluluğu için duruyor, artık anlamsız (cache yok)
+getOfflineFeedItems(lang, arabicOnly, topics) → FeedItem[]   // senkron havuz erişimi
+getDailyReflection(lang, arabicOnly) → FeedItem | null       // first-verse.tsx aha-moment
+fetchItemById(id, lang) → Promise<FeedItem | null>
+clearContentCache() → void   // geriye dönük: eski Supabase-dönemi cache anahtarlarını siler
+resolveLang(stored) → Lang   // 'Turkish'→tr,'French'→fr,'Indonesian'→id,'German'→de,'Urdu'→ur, diğer→en
 ```
 
 **İçerik erişim:**
-- Ücretsiz: `General`, `Quran Verses`, `Favorites`, `Duas & Prayers`
-- Premium: `Hadiths`, `Islamic Quotes`, `99 Names`, `Dhikr`, diğer konular
-- `Favorites` → 4 tablodan savedIds ile çeker, boşsa seed'e düşmez (boş ekran)
-- Duas TR/FR çevirisi yok → her zaman EN (ID hariç)
-- Feed limit: **100**
-
-**Import filtresi:** Arapça ≤500, çeviri ≤300 karakter. Eşik üstü yüklenmez + `removeOrphans()` siler.
+- Ücretsiz: `General` (Daily Wisdom = reflections), `Favorites`
+- Premium: `Quran Verses`, `Hadiths`, `Duas & Prayers`, `Islamic Quotes`, `99 Names`, diğer konular
+- **General feed ASLA Quran ayeti göstermez** — `isDailyWisdomFeed` guard'ı `kind==='verse'`
+  öğelerini eler. İstisna: saf `Favorites` (saved-verses) — kullanıcının kaydettiği ayetler
+  gösterilir, filtre uygulanmaz.
+- Dilde reflection yetersizse (< 8) İngilizce ile tamamlanır (Arapça hariç — RTL kuralı)
+- Duas TR/FR çevirisi yok → sadece `en`/`id` (`DUA_LANGS`)
+- `de` dilinde hadis çevirisi YOK → o kombinasyonda hadith feed boş kalır (içerik boşluğu, kod hatası değil)
 
 ---
 
@@ -395,7 +404,7 @@ t('home.today')                           // → 'Bugün'
 t('profile.savedCount', { n: 3 })         // → '3 saved'
 ```
 
-**resolveLang:** 'Turkish'→'tr', 'French'→'fr', 'Indonesian'→'id', 'Arabic'→'en', diğer→'en'
+**resolveLang:** 'Turkish'→'tr', 'French'→'fr', 'Indonesian'→'id', 'German'→'de', 'Urdu'→'ur', 'Arabic'→'en', diğer→'en'
 
 **RTL:** `lib/rtl.ts` → `syncRTLOnStartup(lang)` — Arapça seçilince I18nManager.forceRTL(true) + reload.
 `lib/useRTL.ts` — ekranlarda RTL durumunu okumak için.
@@ -420,20 +429,33 @@ Altta "CHOOSE DHIKR" + "+ Custom" butonlu yatay kaydırmalı seçici.
 
 ## Monetizasyon Akışı (lib/monetization.ts)
 
+**İki gating mekanizması birlikte çalışıyor:**
+
+1. **Onboarding sonu paywall (2026-07'de geri eklendi).** `theme-select.tsx` →
+   `first-verse.tsx` (aha-moment) → `complete()` + `paywall?source=onboarding` →
+   satın al/restore veya X ile kapat → `feed`. Bu adımda `source==='onboarding'`
+   olduğu için paywall'ın `finish()`'i `router.back()` YAPMAZ (first-verse'e
+   dönmesin diye), direkt `router.replace('/(tabs)/feed')` yapar.
+2. **Günlük swipe-limiti (2026-06-18'den beri).** `useAppStore`: `FREE_DAILY_LIMIT = 15`
+   (`stores/useAppStore.ts`), `freeViewsDate`/`freeViewsUsed`, `registerContentView()` /
+   `freeLimitReached()`. Gece yarısı (yerel saat) sıfırlanır. Feed `onViewable`'da her
+   yeni içerik sayılır (geri kaydırma saymaz); limit dolunca ileri kaydırma
+   `paywall?source=daily_limit`'e düşer + son görülebilir karta snap-back.
+   PostHog: `daily_limit_hit`. Bu noktada paywall `router.back()` ile geldiği karta döner.
+
+2. açılış paywall'ı ve feed-içi interstitial/end-card (UpsellSlide) hâlâ KALDIRILMIŞ
+durumda — geri getirilmedi, sadece onboarding-sonu paywall'ı geri geldi.
+
+**Diğer kararlar:**
 - **Promo kod sistemi KALDIRILDI** (sızıntı riski). `promoUnlocked` alanı store'da
   duruyor — geçmişte redeem etmiş kullanıcılar premium kalır, yeni redeem yolu yok.
-- **Paywall**: Annual default seçili, X butonu 2.5 sn gecikmeli, tüm girişler
-  `?source=` paramı taşır (onboarding/feed_crown/profile/locked_topic/locked_theme/
-  widget/topics_banner/feed_interstitial/second_open/special_offer).
+- **Paywall**: Annual default seçili, X butonu 2.5 sn gecikmeli.
 - **special-offer.tsx**: TETİKLERİ DEVRE DIŞI (Tolga kararı 2026-06). Ekran + altyapı
   duruyor; açmak için paywall.tsx skip'i ve monetization.ts registerSession'daki
   yorum satırlarını geri al. RevenueCat `winback` offering, 24h sayaç hazır.
-- **index.tsx gate**: `registerSession()` — free kullanıcıda 2. açılışta paywall bir kez daha.
-- **Feed interstitial**: free kullanıcıda her 9 kartta bir blur'lu premium teaser +
-  feed sonunda end-card (feed.tsx `UpsellSlide`).
 - **Kilitli topic**: explore-topics'te direkt paywall yerine örnek içerikli BottomSheet.
 - **Trial bildirimi**: `scheduleTrialEndReminder()` — trial bitmeden 1 gün önce 11:00.
-- PostHog: `trial_started`, `special_offer_*` eventleri eklendi.
+- PostHog: `trial_started`, `daily_limit_hit`, `special_offer_*` eventleri.
 
 ---
 
@@ -562,10 +584,11 @@ syncWidget({
 5. **İkonlar** → İslami ikonlar serbest (Kâbe, cami, hilal, yıldız, tesbih, geometrik, altın). Diğer dinlerin sembolleri (haç, Davud yıldızı) YASAK.
 6. **Dark/Light** → `useThemeColors()`. Hardcoded renk yasak.
 7. **Input** → LOCAL state kullan, submit'te store'a yaz (`name.tsx` örneği).
-8. **Supabase key** → anon key app'te, service_role SADECE tools/'da.
+8. **İçerik** → Supabase YOK, her şey `data/offlineContent.ts`'e gömülü. Değiştirmek için
+   `content/` güncelle → `node tools/build-offline-content.mjs` → app güncellemesi yayınla.
 9. **RangeSlider** → store'da "HH:MM" string, slider dakika (number). Dönüşüm reminders-settings.tsx'te.
-10. **Dil değişimi** → `clearContentCache()` + `fetchFeedItems(forceFresh=true)`. Feed'de `prevLangRef` ile tespit.
-11. **Arka planlar** → Supabase Storage `{ uri }` + `expo-image`. `require()` sadece onboarding'de.
+10. **Dil değişimi** → Feed'de `prevLangRef` ile tespit edilir (ağ çağrısı yok, anında yeniden hesaplanır).
+11. **Arka planlar** → `themeAssets.ts` üzerinden gömülü `require()` + `expo-image`. Widget (Swift) İSTİSNA: hâlâ Supabase URL.
 12. **Accessibility** → `accessibilityRole` + `accessibilityLabel` her interaktif elemana.
 
 ---
@@ -588,7 +611,7 @@ syncWidget({
 
 ## Feed Ekranı
 
-- `fetchFeedItems(lang, 100, followedTopics, isPremium, savedIds)` — limit 100
+- `fetchFeedItems(lang, 250, followedTopics, isPremium, savedIds, langChanged, showArabic)` — limit 250
 - Çift-tık → kaydet + kalp burst animasyonu (`heartBurst`)
 - "Swipe up" chevron → `withRepeat` zıplama (`SwipeHint`)
 - Kind badge yok
@@ -600,33 +623,44 @@ syncWidget({
 
 | Ekran | Amaç | Açılış |
 |---|---|---|
-| `/(onboarding)/paywall.tsx` | Onboarding sonu — Annual default, gecikmeli X, `?source=` | onboarding akışı + tüm kilit noktaları |
-| `/special-offer.tsx` | İndirimli yıllık (winback) + 24h sayaç | paywall skip + 3. açılış (`registerSession`) |
+| `/(onboarding)/paywall.tsx` | Annual default, gecikmeli X, `?source=` | **onboarding akışının son adımı** (first-verse sonrası) + crown/locked_topic/locked_theme/widget/daily_limit |
+| `/special-offer.tsx` | İndirimli yıllık (winback) + 24h sayaç | TETİKLERİ DEVRE DIŞI (bkz. Monetizasyon) |
 
 ---
 
 ## Temalar (data/themes.ts)
 
-38 tema — `backgroundThemes` dizisi. ID 1-38.
+38 tema — `backgroundThemes` dizisi. ID 1-38. Tüm görseller `themeAssets.ts` üzerinden gömülü.
 - **Free:** Sunset Arch (2), Grand Interior (3), Bird's Eye Dusk (7)
-- **Live (video):** Living Light I (9), Living Light II (10)
+- **ID 9-10:** ~~Living Light I/II (video)~~ KALDIRILDI (2026-07) — video Supabase 402 +
+  yerel gömülü değildi, tile'lar yüklenmiyordu. Statik temaya çevrildi: **Radiant Light** (9,
+  quran-light.jpg) ve **Golden Glow** (10, golden-mosque.jpg). `video`/`badge:'Live'` alanları silindi.
 - **New badge:** ID 11-38 (Desert Prayer, Blue Night, Golden Arabesque, Iznik Birds, Forest Prayer, Golden Mosque, Kaaba Aerial, Al-Madinah, Ortaköy Sunset, White Dome, Iznik Tulips, Sheikh Zayed Grand, Ottoman Courtyard, Topkapi Corridor, Persian Dome, Ottoman Sunrise, Cedar Forest Light, Wadi Rum (new-theme-1.png)... Riad Fountain, vb.)
 - `DEFAULT_THEME_ID = 2` (Sunset Arch)
-- `sortedThemes()` → Free → Live → New → düz sıralama
-- `resolveWidgetBgURL(widgetThemeId, appThemeId)` → widget bg URL
+- `sortedThemes()` → Free → New → düz sıralama
+- `resolveWidgetBgURL(widgetThemeId, appThemeId)` → widget bg URL (Supabase — widget istisnası, bkz. yukarı)
+- `ThemeTile.tsx`: gömülü görsel HER ZAMAN altta render edilir (video/uzak kaynak üstte, varsa) —
+  yüklenemezse tile siyah kalmaz, fallback görünür.
 
 ---
 
 ## Sonraki Adımlar
 
-- **Supabase Auth:** Kullanıcı hesabı, streak sync, cross-device
+- **Kullanıcı hesabı / streak sync / cross-device:** Şu an backend yok (Supabase kaldırıldı).
+  İleride gerekirse yeniden değerlendirilecek — şimdilik gündemde değil.
+- **Widget bg'yi gömme:** Widget arka planı hâlâ Supabase URL'sine bağımlı (402 riski taşıyor).
+  App Group'a gömmek ayrı bir iş olarak ileriye bırakıldı (Tolga 2026-06).
 - **Widget liked sync:** `hudaWidgetLiked` → app açılınca `savedVerseIds`'e merge
 - **Duas TR/FR:** Güvenilir kaynak yok, şimdilik EN+ID
+- **Hadis DE çevirisi:** Yok — `de` dilinde hadith feed boş kalıyor
 - **special-offer tetikleyici:** Hangi senaryoda çıkacak? (X gün sonra, crown butonu vb.)
-- **themes.tsx:** Hâlâ lokal `data/themes.ts` kullanıyor → `fetchThemes()` Supabase'e geçirilecek
 - **`settings.tsx` (tabs):** Orphan — silinebilir
 - **`translation.tsx`:** Orphan — silinebilir
 - **`feeling.tsx`, `usage.tsx`:** Orphan — silinebilir
+- **`data/verses.ts`, `duas.ts`, `hadiths.ts`, `quotes.ts`:** contentDb.ts artık kullanmıyor
+  (`offlineContent.ts`'e geçti). `widget-studio.tsx` hâlâ `verses.ts` import ediyor — kontrol edilip
+  o da geçirilirse bu 4 dosya tamamen silinebilir.
+- **`tools/supabase-*`:** Artık kullanılmayan eski Supabase araçları — temizlik adayı.
 
 ---
 

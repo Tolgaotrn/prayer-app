@@ -111,22 +111,19 @@ export default function Paywall() {
       });
     }
     // Anonim super property'ler — TÜM sonraki event'lere eklenir. PII yok:
-    // sadece kaynak + dil (kimlik değil). identify() kullanmıyoruz → privacy
-    // manifest'iyle (NSPrivacyTracking=false, kimliğe bağlı veri yok) çelişmez.
+    // sadece kaynak + dil (kimlik değil).
     const ob = useOnboardingStore.getState();
     posthog?.register({
       signup_source: ob.attribution ?? 'unknown',
       app_language: ob.language ?? 'unknown',
     });
-    posthog?.capture('onboarding_completed', {
-      signup_source: ob.attribution ?? 'unknown',
-      premium,
-    });
-    complete();
-    // Special offer tetiği ŞİMDİLİK DEVRE DIŞI (Tolga kararı 2026-06).
-    // Ekran (special-offer.tsx) ve altyapı (lib/monetization) duruyor —
-    // tekrar açmak için skip'te isOfferSeen/markOfferSeen yönlendirmesini geri ekle.
-    router.replace('/(tabs)/feed');
+    // Onboarding sonundan geldiyse (first-verse.tsx → replace) geri gidilecek
+    // onboarding ekranı YOK sayılır — direkt feed'e girilir. Diğer tüm girişlerde
+    // (crown/locked/daily_limit) feed'i yeniden MOUNT ETMEME için (streak banner'ı
+    // tekrar tetikler) geldiği ekrana geri dönülür.
+    if (src === 'onboarding') router.replace('/(tabs)/feed');
+    else if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)/feed');
   };
 
   const findPackage = React.useCallback(
@@ -275,15 +272,6 @@ export default function Paywall() {
       </ScrollView>
 
       <View style={styles.footer}>
-        {/* Sosyal kanıt — gerçek dışı sayı YOK, sadece yıldız + genel ifade */}
-        <View style={styles.proofRow}>
-          {[0, 1, 2, 3, 4].map((i) => (
-            <Ionicons key={i} name="star" size={13} color={tc.gold} />
-          ))}
-          <Text style={[styles.proofText, { color: tc.muted }]}>
-            Loved by Muslims around the world
-          </Text>
-        </View>
         <View style={styles.plansRow}>
           <PlanCard
             tc={tc}

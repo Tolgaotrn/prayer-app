@@ -46,7 +46,7 @@ export default function NameScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <OnboardingShell
-        step={0}
+        step={1}
         icon={<Star size={30} />}
         title="What is your name?"
         subtitle="We'll use it to make your daily reflections feel personal."

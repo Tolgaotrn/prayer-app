@@ -57,20 +57,19 @@ export function ThemeTile({
       style={[{ flex: 1 }, style]}
     >
       <Animated.View style={[styles.tile, { aspectRatio }, selected && styles.selected, anim]}>
-        {/* Video temalar için mini player, diğerleri için image */}
-        {isLive && theme.video ? (
-          <LiveVideoThumb uri={theme.video.uri} />
-        ) : (
-          <Image
-            source={localThemeThumb(theme.image)}
-            style={StyleSheet.absoluteFill}
-            contentFit="cover"
-            transition={200}
-            cachePolicy="memory-disk"
-            recyclingKey={String(theme.id)}
-            placeholder={{ blurhash: 'L37nIw00~q9F4n%MD%xu00~q-;%M' }}
-          />
-        )}
+        {/* Gömülü görsel HER ZAMAN altta — video yüklenemezse (ör. Supabase egress
+            402) tile siyah kalmaz, fallback görsel görünür. */}
+        <Image
+          source={localThemeThumb(theme.image)}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={200}
+          cachePolicy="memory-disk"
+          recyclingKey={String(theme.id)}
+          placeholder={{ blurhash: 'L37nIw00~q9F4n%MD%xu00~q-;%M' }}
+        />
+        {/* Video temalar için üstte mini player (oynayınca görseli kapatır) */}
+        {isLive && theme.video ? <LiveVideoThumb uri={theme.video.uri} /> : null}
         <LinearGradient
           colors={isLive
             ? ['rgba(0,0,0,0.1)', 'transparent', 'rgba(0,0,0,0.6)']

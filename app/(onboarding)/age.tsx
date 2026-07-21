@@ -19,7 +19,7 @@ export default function AgeScreen() {
 
   return (
     <OnboardingShell
-      step={1}
+      step={2}
       title="How old are you?"
       subtitle="We'll adapt content tone and depth for your age group"
       ctaDisabled={!age}

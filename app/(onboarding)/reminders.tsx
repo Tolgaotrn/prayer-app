@@ -43,7 +43,7 @@ export default function Reminders() {
 
   return (
     <OnboardingShell
-      step={5}
+      step={7}
       title="Get words throughout the day"
       subtitle="Allow notifications to get daily verses"
       ctaLabel="Allow and Save"

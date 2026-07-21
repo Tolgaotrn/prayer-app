@@ -10,8 +10,10 @@ import { PRIVACY_URL, TERMS_URL } from '../../constants/legal';
 import { useOnboardingStore } from '../../stores/useOnboardingStore';
 import { firstOnboardingRoute, type FlowVariant } from '../../lib/onboardingFlow';
 
-const WELCOME_VIDEO_URL =
-  'https://hvxrsscrsqdbfewpmfhl.supabase.co/storage/v1/object/public/media/0532.mp4';
+// Video app BUNDLE'ına gömülü → 0 Supabase egress + her zaman çalışır.
+// Eskiden Supabase Storage'dan stream ediliyordu; egress kotası dolunca 402
+// dönüp video görünmez olmuştu (data/themeAssets ile aynı egress kararı).
+const WELCOME_VIDEO_SOURCE = require('../../assets/video/welcome.mp4');
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,7 +50,7 @@ export default function Welcome() {
     return () => clearTimeout(t);
   }, []);
 
-  const player = useVideoPlayer(WELCOME_VIDEO_URL, (p) => {
+  const player = useVideoPlayer(WELCOME_VIDEO_SOURCE, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();

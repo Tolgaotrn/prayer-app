@@ -30,7 +30,7 @@ interface OnboardingShellProps {
  */
 export function OnboardingShell({
   step,
-  totalSteps = 6,
+  totalSteps = 9,
   title,
   subtitle,
   children,

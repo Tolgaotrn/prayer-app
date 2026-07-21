@@ -10,7 +10,7 @@ export default function Attribution() {
   useOnboardingTracking('attribution');
   return (
     <SelectScreen
-      step={5}
+      step={0}
       multi={false}
       variant="radio"
       storeKey="attribution"

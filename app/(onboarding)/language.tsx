@@ -27,7 +27,7 @@ export default function Language() {
 
   return (
     <OnboardingShell
-      step={5}
+      step={6}
       title="Which language do you prefer?"
       ctaDisabled={!language}
       onContinue={async () => { await clearContentCache(); router.push('/(onboarding)/preparing'); }}
